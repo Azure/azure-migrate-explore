@@ -1,5 +1,5 @@
 [![Build Status](https://dev.azure.com/AzureMigrate-OpenSource/azure-migrate-export/_apis/build/status/Azure.azure-migrate-export?branchName=main)](https://dev.azure.com/AzureMigrate-OpenSource/azure-migrate-export/_build/latest?definitionId=1&branchName=main)
-# <img src="./src/icons/azure_migrate_icon_logo.png" alt="Azure Migrate Icon" style="width:27px; height=27px"> Azure Migrate Export
+# <img src="./src/icons/azure_migrate_icon_logo.png" alt="Azure Migrate Icon" style="width:27px; height=27px"> Azure Migrate Explore
 
 This repository contains the Azure Migrate Export utility package that uses Azure Migrate's discovery and assessment information from and already deployed Azure Migrate project to generate a cohesive presentation for executives.
 
