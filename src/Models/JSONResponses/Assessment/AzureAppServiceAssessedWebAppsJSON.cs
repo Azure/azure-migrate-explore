@@ -52,23 +52,38 @@ namespace Azure.Migrate.Export.Models
         [JsonProperty("appServicePlanName")]
         public string AppServicePlanName { get; set; }
 
+        [JsonProperty("createdTimestamp")]
+        public string CreatedTimestamp { get; set; }
+
+        [JsonProperty("updatedTimestamp")]
+        public string UpdatedTimestamp { get; set; }
+
+        [JsonProperty("webAppType")]
+        public string WebAppType { get; set; }
+
+        [JsonProperty("targetSpecificResult")]
+        public Dictionary<string, TargetSpecificResult> TargetSpecificResult { get; set; }
+
+        [JsonProperty("confidenceRatingInPercentage")]
+        public float? ConfidenceRatingInPercentage { get; set; }
+    }
+
+    public class AssessmentResult
+    {
+        [JsonProperty("appServicePlanName")]
+        public string AppServicePlanName { get; set; }
+
         [JsonProperty("suitability")]
         public Suitabilities Suitability { get; set; }
+
+        [JsonProperty("securitySuitability")]
+        public Suitabilities SecuritySuitability { get; set; }
 
         [JsonProperty("webAppSkuName")]
         public string WebAppSkuName { get; set; }
 
         [JsonProperty("webAppSkuSize")]
         public string WebAppSkuSize { get; set; }
-
-        [JsonProperty("migrationIssues")]
-        public List<AzureAppServiceAssessedWebAppMigrationIssueInfo> MigrationIssues { get; set; }
-
-        [JsonProperty("createdTimestamp")]
-        public string CreatedTimestamp { get; set; }
-
-        [JsonProperty("updatedTimestamp")]
-        public string UpdatedTimestamp { get; set; }
     }
 
     public class AzureAppServiceAssessedWebAppMigrationIssueInfo
@@ -81,5 +96,15 @@ namespace Azure.Migrate.Export.Models
 
         [JsonProperty("issueDescriptionList")]
         public List<string> IssueDescriptionList { get; set; }
+    }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class TargetSpecificResult
+    {
+        [JsonProperty("assessmentResult")]
+        public AssessmentResult AssessmentResult { get; set; }
+
+        [JsonProperty("migrationIssues")]
+        public List<AzureAppServiceAssessedWebAppMigrationIssueInfo> MigrationIssues { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Azure.Migrate.Export.Models;
 using Azure.Migrate.Export.HttpRequestHelper;
@@ -175,10 +176,23 @@ namespace Azure.Migrate.Export.Assessment.Parser
             else if (assessmentInfo.AssessmentName.Contains("Prod"))
                 AzureWebAppData[key].Environment = "Prod";
             
-            AzureWebAppData[key].Suitability = value.Properties.Suitability;
-            AzureWebAppData[key].MigrationIssues = GetAssessedMigrationIssueList(value.Properties.MigrationIssues);
-            AzureWebAppData[key].AppServicePlanName = value.Properties.AppServicePlanName;
-            AzureWebAppData[key].WebAppSkuName = value.Properties.WebAppSkuName;
+            var assessmentResult = value.Properties.TargetSpecificResult != null && value.Properties.TargetSpecificResult.Count > 0
+                ? value.Properties.TargetSpecificResult.Values.FirstOrDefault()?.AssessmentResult
+                : null;
+            AzureWebAppData[key].Suitability = (Suitabilities)(assessmentResult?.Suitability);
+            
+            var migrationIssues = new List<AzureAppServiceAssessedWebAppMigrationIssueInfo>();
+            if (value.Properties.TargetSpecificResult != null)
+            {
+                foreach (var tsr in value.Properties.TargetSpecificResult.Values)
+                {
+                    if (tsr.MigrationIssues != null)
+                        migrationIssues.AddRange(tsr.MigrationIssues);
+                }
+            }
+            AzureWebAppData[key].MigrationIssues = GetAssessedMigrationIssueList(migrationIssues);
+            AzureWebAppData[key].AppServicePlanName = assessmentResult?.AppServicePlanName;
+            AzureWebAppData[key].WebAppSkuName = assessmentResult?.WebAppSkuName;
             AzureWebAppData[key].GroupName = assessmentInfo.GroupName;
         }
 
