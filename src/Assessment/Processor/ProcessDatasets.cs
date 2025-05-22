@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Azure.Migrate.Export.Common;
 using Azure.Migrate.Export.Excel;
 using Azure.Migrate.Export.Models;
+using Microsoft.IdentityModel.Abstractions;
 
 namespace Azure.Migrate.Export.Assessment.Processor
 {
@@ -105,6 +106,8 @@ namespace Azure.Migrate.Export.Assessment.Processor
             List<AVS_Summary> AVS_Summary_List = new List<AVS_Summary>();
             List<AVS_IaaS_Rehost_Perf> AVS_IaaS_Rehost_Perf_List = new List<AVS_IaaS_Rehost_Perf>();
             List<Decommissioned_Machines> Decommissioned_Machines_List = new List<Decommissioned_Machines>();
+            List<YOY_Emissions> YOY_Emissions_List = new List<YOY_Emissions>();
+            List<EmissionsDetails> EmissionsDetails_List = new List<EmissionsDetails>();
 
             // Opportunity report models
             List<SQL_MI_Issues_and_Warnings> SQL_MI_Issues_and_Warnings_List = new List<SQL_MI_Issues_and_Warnings>();
@@ -150,6 +153,8 @@ namespace Azure.Migrate.Export.Assessment.Processor
             Process_AVS_Summary_Model(AVS_Summary_List);
             Process_AVS_IaaS_Rehost_Perf_Model(AVS_IaaS_Rehost_Perf_List);
             Process_Decommissioned_Machines_Model(Decommissioned_Machines_List);
+            Process_EmissionsDetails_Model(EmissionsDetails_List);
+            Process_YOY_Emissions_Model(YOY_Emissions_List);
 
             // Opportunity report tabs
             Process_SQL_MI_Issues_and_Warnings_Model(SQL_MI_Issues_and_Warnings_List);
@@ -247,7 +252,9 @@ namespace Azure.Migrate.Export.Assessment.Processor
                     Cash_Flows_Data,
                     AVS_Summary_List,
                     AVS_IaaS_Rehost_Perf_List,
-                    Decommissioned_Machines_List
+                    Decommissioned_Machines_List,
+                    EmissionsDetails_List,
+                    YOY_Emissions_List
                 );
             exportCoreReportObj.GenerateCoreReportExcel();
             UserInputObj.LoggerObj.LogInformation(93 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated core report excel sheet");
@@ -2541,7 +2548,9 @@ namespace Azure.Migrate.Export.Assessment.Processor
 
             Cash_Flows_Data.IaaSYOYCosts = BusinessCaseData.IaaSYOYCashFlows;
             Cash_Flows_Data.AvsYOYCosts = BusinessCaseData.AvsYOYCashFlows;
-            Cash_Flows_Data.TotalYOYCosts = BusinessCaseData.TotalYOYCashFlows;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY;
 
             if (UserInputObj.BusinessProposal == BusinessProposal.Comprehensive.ToString())
             {
@@ -2601,6 +2610,60 @@ namespace Azure.Migrate.Export.Assessment.Processor
 
             UserInputObj.LoggerObj.LogInformation($"Updated Decommissioned_Machines excel model with data of {Decommissioned_Machines_List.Count} machines");
             return true;
+        }
+
+        private void Process_YOY_Emissions_Model(List<YOY_Emissions> YOY_Emissions_List)
+        {
+            if (BusinessCaseData == null)
+                return;
+            var yoyEmissionsAzure = new YOY_Emissions
+            {
+                Source = "Azure",
+                Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureEmissionsEstimates[0].Emissions ?? 0,
+                Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureEmissionsEstimates[1].Emissions ?? 0,
+                Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureEmissionsEstimates[2].Emissions ?? 0,
+                Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureEmissionsEstimates[3].Emissions ?? 0
+            };
+            var yoyEmissionsOnPremises = new YOY_Emissions
+            {
+                Source = "OnPremises",
+                Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesEmissionsEstimates[0].Emissions ?? 0,
+                Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesEmissionsEstimates[1].Emissions ?? 0,
+                Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesEmissionsEstimates[2].Emissions ?? 0,
+                Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesEmissionsEstimates[3].Emissions ?? 0
+            };
+            YOY_Emissions_List.Add(yoyEmissionsAzure);
+            YOY_Emissions_List.Add(yoyEmissionsOnPremises);
+        }
+
+        private void Process_EmissionsDetails_Model(List<EmissionsDetails> Emissions_Details_List)
+        {
+            if (BusinessCaseData == null)
+                return;
+            if (BusinessCaseData.TotalAzureSustainabilityDetails == null || BusinessCaseData.TotalOnPremisesSustainabilityDetails == null)
+                return;
+            var azureEmissionsDetails = new EmissionsDetails
+            {
+                Source = "Azure",
+                Scope1Compute = BusinessCaseData.TotalAzureSustainabilityDetails.Scope1.Compute,
+                Scope1Storage = BusinessCaseData.TotalAzureSustainabilityDetails.Scope1.Storage,
+                Scope2Compute = BusinessCaseData.TotalAzureSustainabilityDetails.Scope2.Compute,
+                Scope2Storage = BusinessCaseData.TotalAzureSustainabilityDetails.Scope2.Storage,
+                Scope3Compute = BusinessCaseData.TotalAzureSustainabilityDetails.Scope3.Compute,
+                Scope3Storage = BusinessCaseData.TotalAzureSustainabilityDetails.Scope3.Storage,
+            };
+            var onPremisesEmissionsDetails = new EmissionsDetails
+            {
+                Source = "OnPremises",
+                Scope1Compute = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope1.Compute,
+                Scope1Storage = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope1.Storage,
+                Scope2Compute = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope2.Compute,
+                Scope2Storage = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope2.Storage,
+                Scope3Compute = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope3.Compute,
+                Scope3Storage = BusinessCaseData.TotalOnPremisesSustainabilityDetails.Scope3.Storage,
+            };
+            Emissions_Details_List.Add(azureEmissionsDetails);
+            Emissions_Details_List.Add(onPremisesEmissionsDetails);
         }
     }
 }

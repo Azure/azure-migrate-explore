@@ -41,7 +41,7 @@ namespace Azure.Migrate.Export.Common
         public const string ImportSitesApiVersion = @"2023-06-06";
         public const string AssessmentMachineListApiVersion = @"2023-03-03";
         public const string AvsAssessmentApiVersion = @"2023-05-01-preview";
-        public const string BusinessCaseApiVersion = @"2023-09-09-preview";
+        public const string BusinessCaseApiVersion = @"2024-03-03-preview";
         public const string QueryParameterApiVersion = @"api-version";
         public const string AzureMigrateQueryParameterFilter = @"filter";
         public const string AzureMigrateQueryPathProperties = @"Properties";
