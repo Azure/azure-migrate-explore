@@ -118,7 +118,9 @@ namespace Azure.Migrate.Export.Assessment.Parser
             BusinessCaseData.SqlServerLicense.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.SqlAhubSavings ?? 0.00;
             BusinessCaseData.EsuSavings.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.EsuSavingsFor4years ?? 0.00;
 
-            BusinessCaseData.TotalYOYCashFlows = bizCaseOverviewSummariesJsonObj.Properties.YearOnYearEstimates;
+            BusinessCaseData.TotalYOYCashFlowsAndEmissions = bizCaseOverviewSummariesJsonObj.Properties.YearOnYearEstimates;
+            BusinessCaseData.TotalAzureSustainabilityDetails = bizCaseOverviewSummariesJsonObj.Properties.TotalAzureSustainabilityDetails;
+            BusinessCaseData.TotalOnPremisesSustainabilityDetails = bizCaseOverviewSummariesJsonObj.Properties.TotalOnPremisesSustainabilityDetails;
             if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
                 BusinessCaseData.AvsYOYCashFlows = bizCaseAvsSummariesJsonObj.Properties.AzureAvsSummary.YearOnYearEstimates;
             else

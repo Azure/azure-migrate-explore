@@ -658,5 +658,25 @@ namespace Azure.Migrate.Export.Common
             "Machine Name",
             "Machine ID"
         };
+        public const string YOY_Emissions_TabName = "YOY_Emissions";
+        public static readonly List<string> YOY_Emissions_Columns = new List<string>
+        {
+            "Source",
+            "Year 0",
+            "Year 1",
+            "Year 2",
+            "Year 3"
+        };
+        public const string Emissions_Details_TabName = "Emissions_Details";
+        public static readonly List<string> Emissions_Details_Columns = new List<string>
+        {
+            "Source",
+            "Scope 1 Compute",
+            "Scope 1 Storage",
+            "Scope 2 Compute",
+            "Scope 2 Storage",
+            "Scope 3 Compute",
+            "Scope 3 Storage"
+        };
     }
 }
