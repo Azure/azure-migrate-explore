@@ -277,6 +277,9 @@
     <None Include="Azure_Migration_and_Modernization.pbit">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="AVS_Migration.pbit">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
