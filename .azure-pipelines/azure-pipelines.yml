@@ -93,7 +93,7 @@ stages:
             Contents: '**\Azure_Migration_and_Modernization.pbit'
 
         - task: CopyFiles@2
-          displayName: 'Copy PBIT to AzMigExport'
+          displayName: 'Copy PBIT2 to AzMigExport'
           inputs:
             SourceFolder: '$(CopySourceFolder)'
             TargetFolder: '$(CopyTargetFolder)'
