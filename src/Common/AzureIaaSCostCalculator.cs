@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
 
     public class AzureIaaSCostCalculator

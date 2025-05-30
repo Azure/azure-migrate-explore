@@ -1,10 +1,12 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using ClosedXML.Excel;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Models;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Excel
+namespace Azure.Migrate.Explore.Excel
 {
     public class ExportClashReport
     {

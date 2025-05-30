@@ -1,4 +1,8 @@
-using System.Drawing;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI; // Add this using directive
 
 namespace System.Windows.Forms
 {
@@ -6,14 +10,14 @@ namespace System.Windows.Forms
     {
         public static void EnableActionButton(this Button button)
         {
-            button.Enabled = true;
-            button.BackColor = Color.FromArgb(165, 206, 255);
+            button.Enabled = true; // Use IsEnabled instead of Enabled
+            //button.Background = new SolidColorBrush(ColorHelper.FromArgb(255, 165, 206, 255)); // Use Background instead of BackgroundColor
         }
 
         public static void DisableActionButton(this Button button)
         {
             button.Enabled = false;
-            button.BackColor = Color.FromArgb(135, 135, 135);
+            //button.Background = new SolidColorBrush(ColorHelper.FromArgb(255, 135, 135, 135)); // Use Background instead of BackgroundColor
         }
     }
 }

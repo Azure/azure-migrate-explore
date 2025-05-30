@@ -1,4 +1,6 @@
-namespace Azure.Migrate.Export.Common
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Common
 {
     public class Routes
     {

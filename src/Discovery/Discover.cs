@@ -1,15 +1,17 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Excel;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Excel;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Discovery
+namespace Azure.Migrate.Explore.Discovery
 {
     public class Discover
     {
@@ -85,6 +87,7 @@ namespace Azure.Migrate.Export.Discovery
             if (DiscoveredData.Count == 0)
             {
                 UserInputObj.LoggerObj.LogError($"Consolidated discovery data has no discovered machines");
+                DiscoveredMachinesCount.DiscoveredDataCount = DiscoveredData.Count;
                 return false;
             }
 
@@ -98,6 +101,7 @@ namespace Azure.Migrate.Export.Discovery
 
             UserInputObj.LoggerObj.LogInformation(excelCreationPercentProgress, "Discovery report excel created successfully"); // IsExpressWorkflow ? 20 : 100 % Complete
 
+            DiscoveredMachinesCount.DiscoveredDataCount = DiscoveredData.Count;
             return true;
         }
 
@@ -297,6 +301,11 @@ namespace Azure.Migrate.Export.Discovery
                 VCenterHostData.Hosts += hostAndVCenterList[0].Value;
                 VCenterHostData.vCenters += hostAndVCenterList[1].Value;
             };
+        }
+
+        public static class DiscoveredMachinesCount
+        {
+            public static int DiscoveredDataCount { get; set; }
         }
     }
 }

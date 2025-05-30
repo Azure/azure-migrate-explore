@@ -1,21 +1,24 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Models;
+using Microsoft.Extensions.Logging;
 
-namespace Azure.Migrate.Export.Assessment
+namespace Azure.Migrate.Explore.Assessment
 {
     public class DiscoveryDataValidation
     {
-        public void BeginValidation(UserInput userInputObj, List<DiscoveryData> discoveredData)
+        public void BeginValidation(Logger.LogHandler logger, List<DiscoveryData> discoveredData)
         {
-            bool isEnvironmentValid = ValidateEnvironmentType(userInputObj, discoveredData);
+            bool isEnvironmentValid = ValidateEnvironmentType(logger, discoveredData);
             if (!isEnvironmentValid)
-                userInputObj.LoggerObj.LogWarning(2, "Discovery data validated with assumptions"); // IsExpressWorkflow ? 22 : 2 % complete
+                logger.LogWarning(2, "Discovery data validated with assumptions"); // IsExpressWorkflow ? 22 : 2 % complete
             else
-                userInputObj.LoggerObj.LogInformation(2, "Discovery data validated successfully"); // IsExpressWorkflow ? 22 : 2 % complete
+                logger.LogInformation(2, "Discovery data validated successfully"); // IsExpressWorkflow ? 22 : 2 % complete
         }
 
-        private bool ValidateEnvironmentType(UserInput userInputObj, List<DiscoveryData> discoveredData)
+        private bool ValidateEnvironmentType(Logger.LogHandler logger, List<DiscoveryData> discoveredData)
         {
             bool isValid = true;
             foreach (var machine in discoveredData)
@@ -39,7 +42,7 @@ namespace Azure.Migrate.Export.Assessment
                 }
 
                 // Invalid/Un-recognized envrionment type
-                userInputObj.LoggerObj.LogWarning($"Treating environment type for {machine.MachineName} as 'Prod' because received input is invalid");
+                logger.LogWarning($"Treating environment type for {machine.MachineName} as 'Prod' because received input is invalid");
                 machine.EnvironmentType = "Prod";
                 isValid = false;
             }

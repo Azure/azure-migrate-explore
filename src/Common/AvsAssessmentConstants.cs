@@ -1,7 +1,9 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.Command;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using DocumentFormat.OpenXml.Office2016.Drawing.Command;
 using System.Collections.Generic;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
     public class AvsAssessmentConstants
     {

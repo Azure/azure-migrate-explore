@@ -1,4 +1,6 @@
-﻿namespace Azure.Migrate.Export.Models
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Models
 {
     public class Business_Case
     {
@@ -12,7 +14,7 @@
         public BusinessCaseDatasetCostDetails TotalAzureCost { get; set; }
         public BusinessCaseDatasetCostDetails WindowsServerLicense { get; set; }
         public BusinessCaseDatasetCostDetails SqlServerLicense { get; set; }
-        public BusinessCaseDatasetCostDetails EsuSavings {  get; set; }
+        public BusinessCaseDatasetCostDetails EsuSavings { get; set; }
 
         public Business_Case()
         {

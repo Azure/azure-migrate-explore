@@ -1,12 +1,14 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Assessment.Parser
+namespace Azure.Migrate.Explore.Assessment.Parser
 {
     public class AVSAssessmentParser
     {
@@ -204,7 +206,7 @@ namespace Azure.Migrate.Export.Assessment.Parser
             foreach (var item in avsPropertiesObj.Properties.AvsEstimatedExternalStorages)
             {
                 string storageType = item.StorageType.Substring(0, 3).ToUpper() + "-" + item.StorageType.Substring(3);
-                recommendedExternalStorages += item.TotalStorageInGB/1024 + " TB of " + storageType + ", ";
+                recommendedExternalStorages += item.TotalStorageInGB / 1024 + " TB of " + storageType + ", ";
             }
 
             if (recommendedExternalStorages.Length > 0)
@@ -242,7 +244,7 @@ namespace Azure.Migrate.Export.Assessment.Parser
             AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresFree = AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresAvailable - AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresUsed;
             AVSAssessmentsData[assessmentInfo].MemoryInTBFree = AVSAssessmentsData[assessmentInfo].MemoryInTBAvailable - AVSAssessmentsData[assessmentInfo].MemoryInTBUsed;
             AVSAssessmentsData[assessmentInfo].StorageInTBFree = AVSAssessmentsData[assessmentInfo].StorageInTBAvailable - AVSAssessmentsData[assessmentInfo].StorageInTBUsed;
-            AVSAssessmentsData[assessmentInfo].ConfidenceRating = UtilityFunctions.GetConfidenceRatingInStars(avsPropertiesObj.Properties.ConfidenceRatingInPercentage?? 0);
+            AVSAssessmentsData[assessmentInfo].ConfidenceRating = UtilityFunctions.GetConfidenceRatingInStars(avsPropertiesObj.Properties.ConfidenceRatingInPercentage ?? 0);
 
             AvsAssessmentConstants.VCpuOversubscription = ((int)(avsPropertiesObj.Properties.VCpuOversubscription)).ToString() + ":1";
             AvsAssessmentConstants.DedupeCompression = avsPropertiesObj.Properties.DedupeCompression ?? 1.5;

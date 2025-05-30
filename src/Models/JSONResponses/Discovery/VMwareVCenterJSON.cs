@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class VMwareVCenterJSON
     {

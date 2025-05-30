@@ -1,3 +1,5 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -6,15 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Logger
+namespace Azure.Migrate.Explore.Logger
 {
     public class LogHandler : ILogHandler
     {
         private BlockingCollection<LogParameters> LogsConsumer;
         private static readonly object _FileLock = new object();
-        private static readonly string _FilePath = LoggerConstants.LogFileName;
+        private static readonly string _FilePath = Path.Combine(AppContext.BaseDirectory, LoggerConstants.LogFileName);
 
         public EventHandler<LogEventHandler> ReportProgress;
 
@@ -37,31 +39,31 @@ namespace Azure.Migrate.Export.Logger
                     switch (log.Ltype)
                     {
                         case LogParameters.LogType.Information:
-                            message = LoggerConstants.InformationLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
+                            message = currentTimeStamp() + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.InformationLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
                             writeLogToFile(message);
                             PercentProgress = log.ProgressIncrease + PercentProgress;
                             ReportProgress?.Invoke(this, new LogEventHandler(PercentProgress, message));
                             break;
                         case LogParameters.LogType.Warning:
-                            message = LoggerConstants.WarningLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
+                            message = currentTimeStamp() + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.WarningLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
                             writeLogToFile(message);
                             PercentProgress = log.ProgressIncrease + PercentProgress;
                             ReportProgress?.Invoke(this, new LogEventHandler(PercentProgress, message));
                             break;
                         case LogParameters.LogType.Debug:
-                            message = LoggerConstants.DebugLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
+                            message = currentTimeStamp() + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.DebugLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
                             writeLogToFile(message);
                             PercentProgress = log.ProgressIncrease + PercentProgress;
                             ReportProgress?.Invoke(this, new LogEventHandler(PercentProgress, message));
                             break;
                         case LogParameters.LogType.Error:
-                            message = LoggerConstants.ErrorLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
+                            message = currentTimeStamp() + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.ErrorLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
                             writeLogToFile(message);
                             PercentProgress = log.ProgressIncrease + PercentProgress;
                             ReportProgress?.Invoke(this, new LogEventHandler(PercentProgress, message));
                             break;
                         default:
-                            message = LoggerConstants.UnknownLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
+                            message = currentTimeStamp() + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.UnknownLogTypePrefix + LoggerConstants.LogTypeMessageSeparator + log.Message;
                             writeLogToFile(message);
                             PercentProgress = log.ProgressIncrease + PercentProgress;
                             ReportProgress?.Invoke(this, new LogEventHandler(PercentProgress, message));
@@ -134,22 +136,35 @@ namespace Azure.Migrate.Export.Logger
         {
             try
             {
-                lock(_FileLock)
+                lock (_FileLock)
                 {
                     using (StreamWriter writer = File.AppendText(_FilePath))
                     {
-                        writer.WriteLine(currentTimeStamp() + LoggerConstants.LogTimeStampSeparator + message);
+                        writer.WriteLine(message);
                     }
                 }
             }
-            catch
-            { }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Log the exception details
+                Console.WriteLine($"UnauthorizedAccessException: {ex.Message}");
+            }
+            catch (System.Runtime.InteropServices.COMException ex)
+            {
+                // Log the exception details
+                Console.WriteLine($"COMException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log any other exceptions
+                Console.WriteLine($"Exception: {ex.Message}");
+            }
         }
 
         private string currentTimeStamp()
         {
-            DateTime now = DateTime.Now;
-            return now.ToShortDateString() + "-" + now.ToLongTimeString();
+            DateTime now = DateTime.UtcNow;
+            return now.ToString("yyyy-MM-dd-HH:mm:ss");
         }
     }
 }

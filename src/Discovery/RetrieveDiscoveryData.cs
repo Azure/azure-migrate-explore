@@ -1,18 +1,20 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Discovery
+namespace Azure.Migrate.Explore.Discovery
 {
     public class RetrieveDiscoveryData
     {
-        public List<DiscoveryData> BeginRetrieval(UserInput userInputObj ,List<string> siteUrls, DiscoverySites site)
+        public List<DiscoveryData> BeginRetrieval(UserInput userInputObj, List<string> siteUrls, DiscoverySites site)
         {
             List<DiscoveryData> discoveredData = new List<DiscoveryData>();
             string discoverySitesApiVersion = Routes.DiscoverySitesApiVersion;
@@ -45,7 +47,7 @@ namespace Azure.Migrate.Export.Discovery
                     {
                         jsonResponse = new HttpClientHelper().GetHttpRequestJsonStringResponse(url, userInputObj).Result;
                     }
-                    catch(OperationCanceledException)
+                    catch (OperationCanceledException)
                     {
                         throw;
                     }
@@ -130,41 +132,36 @@ namespace Azure.Migrate.Export.Discovery
             {
                 DiscoveryData discoveryDataObj = new DiscoveryData();
 
-                // Assign values with null checks
-                discoveryDataObj.MachineName = value.Properties?.DisplayName ?? string.Empty;
+                // Assign values
+                discoveryDataObj.MachineName = value.Properties.DisplayName;
                 discoveryDataObj.EnvironmentType = ""; // only 'Dev' is treated as 'Dev' environment
 
-                discoveryDataObj.SoftwareInventory = value.Properties?.NumberOfApplications ?? 0;
-                discoveryDataObj.SqlDiscoveryServerCount = value.Properties?.SqlDiscovery?.TotalServerCount ?? 0;
+                discoveryDataObj.SoftwareInventory = value.Properties.NumberOfApplications;
+                discoveryDataObj.SqlDiscoveryServerCount = value.Properties.SqlDiscovery.TotalServerCount;
                 discoveryDataObj.IsSqlServicePresent = false;
-                discoveryDataObj.WebAppCount = value.Properties?.WebAppDiscovery?.TotalWebApplicationCount ?? 0;
+                discoveryDataObj.WebAppCount = value.Properties.WebAppDiscovery.TotalWebApplicationCount;
 
-                discoveryDataObj.OperatingSystem = value.Properties?.OperatingSystemDetails?.OSName ?? string.Empty;
-                discoveryDataObj.Cores = value.Properties?.NumberOfProcessorCore ?? 0;
-                discoveryDataObj.MemoryInMB = value.Properties?.AllocatedMemoryInMB ?? 0.0;
-                discoveryDataObj.TotalDisks = value.Properties?.Disks?.Count ?? 0;
+                discoveryDataObj.OperatingSystem = value.Properties.OperatingSystemDetails.OSName;
+                discoveryDataObj.Cores = value.Properties.NumberOfProcessorCore;
+                discoveryDataObj.MemoryInMB = value.Properties.AllocatedMemoryInMB;
+                discoveryDataObj.TotalDisks = value.Properties.Disks.Count;
 
                 // parse IP Address and MAC Address
                 Dictionary<string, List<string>> macIpAddressMap = new Dictionary<string, List<string>>();
-                if (value.Properties?.NetworkAdapters != null)
-                {
-                    foreach (var networkAdapter in value.Properties.NetworkAdapters)
-                    {
-                        if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
-                            macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
-                    }
-                }
+                foreach (var networkAdapter in value.Properties.NetworkAdapters)
+                    if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
+                        macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
                 KeyValuePair<string, string> parsedMacIpAddressMap = ParseMacIpAddressMap(macIpAddressMap, userInputObj);
 
-                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value ?? string.Empty;
-                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key ?? string.Empty;
-                discoveryDataObj.TotalNetworkAdapters = value.Properties?.NetworkAdapters?.Count ?? 0;
+                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value;
+                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key;
+                discoveryDataObj.TotalNetworkAdapters = value.Properties.NetworkAdapters.Count;
 
-                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties?.Firmware) ? "" : value.Properties.Firmware.ToUpper();
-                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties?.PowerStatus) ? "" : value.Properties.PowerStatus;
-                discoveryDataObj.SupportStatus = value.Properties?.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
-                discoveryDataObj.FirstDiscoveryTime = value.Properties?.CreatedTimeStamp ?? string.Empty;
-                discoveryDataObj.LastUpdatedTime = value.Properties?.UpdatedTimestamp;
+                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties.Firmware) ? "" : value.Properties.Firmware.ToUpper();
+                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties.PowerStatus) ? "" : value.Properties.PowerStatus;
+                discoveryDataObj.SupportStatus = value.Properties.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
+                discoveryDataObj.FirstDiscoveryTime = value.Properties.CreatedTimeStamp;
+                discoveryDataObj.LastUpdatedTime = value.Properties.UpdatedTimestamp;
 
                 discoveryDataObj.MachineId = value.Id?.ToLower();
 
@@ -182,41 +179,36 @@ namespace Azure.Migrate.Export.Discovery
             {
                 DiscoveryData discoveryDataObj = new DiscoveryData();
 
-                // Assign values with null checks
-                discoveryDataObj.MachineName = value.Properties?.DisplayName ?? string.Empty;
+                // Assign values
+                discoveryDataObj.MachineName = value.Properties.DisplayName;
                 discoveryDataObj.EnvironmentType = ""; // only 'Dev' is treated as 'Dev' environment
 
-                discoveryDataObj.SoftwareInventory = value.Properties?.NumberOfApplications ?? 0;
-                discoveryDataObj.SqlDiscoveryServerCount = value.Properties?.SqlDiscovery?.TotalServerCount ?? 0;
+                discoveryDataObj.SoftwareInventory = value.Properties.NumberOfApplications;
+                discoveryDataObj.SqlDiscoveryServerCount = value.Properties.SqlDiscovery.TotalServerCount;
                 discoveryDataObj.IsSqlServicePresent = false;
-                discoveryDataObj.WebAppCount = value.Properties?.WebAppDiscovery?.TotalWebApplicationCount ?? 0;
+                discoveryDataObj.WebAppCount = value.Properties.WebAppDiscovery.TotalWebApplicationCount;
 
-                discoveryDataObj.OperatingSystem = value.Properties?.OperatingSystemDetails?.OSName ?? string.Empty;
-                discoveryDataObj.Cores = value.Properties?.NumberOfProcessorCore ?? 0;
-                discoveryDataObj.MemoryInMB = value.Properties?.AllocatedMemoryInMB ?? 0.0;
-                discoveryDataObj.TotalDisks = value.Properties?.Disks?.Count ?? 0;
+                discoveryDataObj.OperatingSystem = value.Properties.OperatingSystemDetails.OSName;
+                discoveryDataObj.Cores = value.Properties.NumberOfProcessorCore;
+                discoveryDataObj.MemoryInMB = value.Properties.AllocatedMemoryInMB;
+                discoveryDataObj.TotalDisks = value.Properties.Disks.Count;
 
                 // parse IP Address and MAC Address
                 Dictionary<string, List<string>> macIpAddressMap = new Dictionary<string, List<string>>();
-                if (value.Properties?.NetworkAdapters != null)
-                {
-                    foreach (var networkAdapter in value.Properties.NetworkAdapters)
-                    {
-                        if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
-                            macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
-                    }
-                }
+                foreach (var networkAdapter in value.Properties.NetworkAdapters)
+                    if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
+                        macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
                 KeyValuePair<string, string> parsedMacIpAddressMap = ParseMacIpAddressMap(macIpAddressMap, userInputObj);
 
-                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value ?? string.Empty;
-                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key ?? string.Empty;
-                discoveryDataObj.TotalNetworkAdapters = value.Properties?.NetworkAdapters?.Count ?? 0;
+                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value;
+                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key;
+                discoveryDataObj.TotalNetworkAdapters = value.Properties.NetworkAdapters.Count;
 
-                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties?.Firmware) ? "" : value.Properties.Firmware.ToUpper();
-                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties?.PowerStatus) ? "" : value.Properties.PowerStatus;
-                discoveryDataObj.SupportStatus = value.Properties?.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
-                discoveryDataObj.FirstDiscoveryTime = value.Properties?.CreatedTimeStamp ?? string.Empty;
-                discoveryDataObj.LastUpdatedTime = value.Properties?.UpdatedTimestamp;
+                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties.Firmware) ? "" : value.Properties.Firmware.ToUpper();
+                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties.PowerStatus) ? "" : value.Properties.PowerStatus;
+                discoveryDataObj.SupportStatus = value.Properties.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
+                discoveryDataObj.FirstDiscoveryTime = value.Properties.CreatedTimeStamp;
+                discoveryDataObj.LastUpdatedTime = value.Properties.UpdatedTimestamp;
 
                 discoveryDataObj.MachineId = value.Id?.ToLower();
 
@@ -234,41 +226,36 @@ namespace Azure.Migrate.Export.Discovery
             {
                 DiscoveryData discoveryDataObj = new DiscoveryData();
 
-                // Assign values with null checks
-                discoveryDataObj.MachineName = value.Properties?.DisplayName ?? string.Empty;
+                // Assign values
+                discoveryDataObj.MachineName = value.Properties.DisplayName;
                 discoveryDataObj.EnvironmentType = ""; // only 'Dev' is treated as 'Dev' environment
 
-                discoveryDataObj.SoftwareInventory = value.Properties?.NumberOfApplications ?? 0;
-                discoveryDataObj.SqlDiscoveryServerCount = value.Properties?.SqlDiscovery?.TotalServerCount ?? 0;
+                discoveryDataObj.SoftwareInventory = value.Properties.NumberOfApplications;
+                discoveryDataObj.SqlDiscoveryServerCount = value.Properties.SqlDiscovery.TotalServerCount;
                 discoveryDataObj.IsSqlServicePresent = false;
-                discoveryDataObj.WebAppCount = value.Properties?.WebAppDiscovery?.TotalWebApplicationCount ?? 0;
+                discoveryDataObj.WebAppCount = value.Properties.WebAppDiscovery.TotalWebApplicationCount;
 
-                discoveryDataObj.OperatingSystem = value.Properties?.OperatingSystemDetails?.OSName ?? string.Empty;
-                discoveryDataObj.Cores = value.Properties?.NumberOfProcessorCore ?? 0;
-                discoveryDataObj.MemoryInMB = value.Properties?.AllocatedMemoryInMB ?? 0.0;
-                discoveryDataObj.TotalDisks = value.Properties?.Disks?.Count ?? 0;
+                discoveryDataObj.OperatingSystem = value.Properties.OperatingSystemDetails.OSName;
+                discoveryDataObj.Cores = value.Properties.NumberOfProcessorCore;
+                discoveryDataObj.MemoryInMB = value.Properties.AllocatedMemoryInMB;
+                discoveryDataObj.TotalDisks = value.Properties.Disks.Count;
 
                 // parse IP Address and MAC Address
                 Dictionary<string, List<string>> macIpAddressMap = new Dictionary<string, List<string>>();
-                if (value.Properties?.NetworkAdapters != null)
-                {
-                    foreach (var networkAdapter in value.Properties.NetworkAdapters)
-                    {
-                        if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
-                            macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
-                    }
-                }
+                foreach (var networkAdapter in value.Properties.NetworkAdapters)
+                    if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
+                        macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
                 KeyValuePair<string, string> parsedMacIpAddressMap = ParseMacIpAddressMap(macIpAddressMap, userInputObj);
 
-                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value ?? string.Empty;
-                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key ?? string.Empty;
-                discoveryDataObj.TotalNetworkAdapters = value.Properties?.NetworkAdapters?.Count ?? 0;
+                discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value;
+                discoveryDataObj.MacAddress = parsedMacIpAddressMap.Key;
+                discoveryDataObj.TotalNetworkAdapters = value.Properties.NetworkAdapters.Count;
 
-                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties?.Firmware) ? "" : value.Properties.Firmware.ToUpper();
-                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties?.PowerStatus) ? "" : value.Properties.PowerStatus;
-                discoveryDataObj.SupportStatus = value.Properties?.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
-                discoveryDataObj.FirstDiscoveryTime = value.Properties?.CreatedTimeStamp ?? string.Empty;
-                discoveryDataObj.LastUpdatedTime = value.Properties?.UpdatedTimestamp;
+                discoveryDataObj.BootType = string.IsNullOrEmpty(value.Properties.Firmware) ? "" : value.Properties.Firmware.ToUpper();
+                discoveryDataObj.PowerStatus = string.IsNullOrEmpty(value.Properties.PowerStatus) ? "" : value.Properties.PowerStatus;
+                discoveryDataObj.SupportStatus = value.Properties.ProductSupportStatus?.SupportStatus ?? SupportabilityStatus.Unknown.ToString();
+                discoveryDataObj.FirstDiscoveryTime = value.Properties.CreatedTimeStamp;
+                discoveryDataObj.LastUpdatedTime = value.Properties.UpdatedTimestamp;
 
                 discoveryDataObj.MachineId = value.Id?.ToLower();
 
@@ -298,7 +285,7 @@ namespace Azure.Migrate.Export.Discovery
                 discoveryDataObj.OperatingSystem = value.Properties.OperatingSystemDetails?.OSName;
                 discoveryDataObj.Cores = value.Properties.NumberOfProcessorCore ?? 0;
                 discoveryDataObj.MemoryInMB = value.Properties.AllocatedMemoryInMB ?? 0.0;
-                discoveryDataObj.TotalDisks = value.Properties.Disks?.Count?? 0;                
+                discoveryDataObj.TotalDisks = value.Properties.Disks?.Count ?? 0;
                 discoveryDataObj.IpAddress = value.Properties.IPAddresses != null ? string.Join(",", value.Properties.IPAddresses.Select(ip => $"[{ip}]")) + ";" : "";
                 discoveryDataObj.MacAddress = value.Properties.MacAddress;
                 discoveryDataObj.TotalNetworkAdapters = value.Properties.NumberOfNetworkAdapters ?? 0;
@@ -319,7 +306,7 @@ namespace Azure.Migrate.Export.Discovery
         #endregion
 
         #region Utilities
-        private KeyValuePair<string, string> ParseMacIpAddressMap(Dictionary<string, List<string>>macIpAddressMap, UserInput userInputObj)
+        private KeyValuePair<string, string> ParseMacIpAddressMap(Dictionary<string, List<string>> macIpAddressMap, UserInput userInputObj)
         {
             string macAddresses = "";
             string ipAddresses = "";
@@ -344,7 +331,7 @@ namespace Azure.Migrate.Export.Discovery
             while (!string.IsNullOrEmpty(hostUrl))
             {
                 if (userInputObj.CancellationContext.IsCancellationRequested)
-                    UtilityFunctions.InitiateCancellation(userInputObj);               
+                    UtilityFunctions.InitiateCancellation(userInputObj);
 
                 string jsonResponse = "";
                 try
@@ -427,7 +414,7 @@ namespace Azure.Migrate.Export.Discovery
                 vcenterUrl = jsonObj.NextLink;
             }
 
-            keyValuePair.Add( new KeyValuePair<string, int>("VMWare VCenter Count", vmwareVCenterCount));
+            keyValuePair.Add(new KeyValuePair<string, int>("VMWare VCenter Count", vmwareVCenterCount));
             userInputObj.LoggerObj.LogInformation($"Retrieved hosts and vCenter data for VMWare site {siteUrl}");
             return keyValuePair;
         }

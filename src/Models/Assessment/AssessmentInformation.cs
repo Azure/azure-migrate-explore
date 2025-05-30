@@ -1,6 +1,8 @@
-using Azure.Migrate.Export.Common;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class AssessmentInformation
     {

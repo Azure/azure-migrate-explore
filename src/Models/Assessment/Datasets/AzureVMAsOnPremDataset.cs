@@ -1,8 +1,10 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class AzureVMAsOnPremDataset
     {

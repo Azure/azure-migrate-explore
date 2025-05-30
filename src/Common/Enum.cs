@@ -1,9 +1,11 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
     public enum GroupPollResponse
     {
@@ -184,6 +186,12 @@ namespace Azure.Migrate.Export.Common
     {
         Comprehensive,
         AVS,
+    }
+
+    public enum CommunicationProtocol
+    {
+        Https,
+        WebSockets
     }
 
     public class EnumDescriptionHelper

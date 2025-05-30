@@ -1,6 +1,8 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 
-namespace Azure.Migrate.Export.Logger
+namespace Azure.Migrate.Explore.Logger
 {
     public class LogEventHandler : EventArgs
     {

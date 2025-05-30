@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class BusinessCasePaaSSummaryJSON
     {

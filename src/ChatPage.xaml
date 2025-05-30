@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AzureMigrateExplore.ChatPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AzureMigrateExplore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="White">
+
+    <Page.Resources>
+        <!-- Define colors using SolidColorBrush -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#0078D7"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#32CD32"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+
+        <!-- Define styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <ThemeShadow/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Define text styles -->
+        <Style x:Key="MessageTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="IsTextSelectionEnabled" Value="True"/>
+        </Style>
+
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="TimestampTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+
+        <Style x:Key="SenderNameTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+
+        <!-- Define PivotItem header style -->
+        <Style x:Key="PivotItemHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Define custom style for the arrow button -->
+        <Style x:Key="ScrollToBottomButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource BackgroundColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Empty row to push content down -->
+        <Grid Grid.Row="0" Height="50">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+        </Grid>
+        <!-- Main content -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="Auto" />
+                <!-- Separator column -->
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Tabs Section -->
+            <Pivot Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Margin="0,0,0,70" x:Name="MainPivot" Foreground="{StaticResource PrimaryColor}" Title="Review Summary" SelectionChanged="Pivot_SelectionChanged">
+                <Pivot.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Style="{StaticResource PivotItemHeaderStyle}"/>
+                    </DataTemplate>
+                </Pivot.HeaderTemplate>
+                <PivotItem Header="Company Profile" x:Name="CompanyProfileHeader">
+                <Border Style="{StaticResource CardStyle}" Margin="5">
+                        <!--<ScrollViewer VerticalScrollBarVisibility="Visible">-->
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                            <controls:WebView2 x:Name="CompanyProfileContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationStarting="WebView_NavigationStarting" />
+                            </Grid>
+                        <!--</ScrollViewer>-->
+                    </Border>
+                </PivotItem>
+
+
+                <PivotItem Header="Migration Details" x:Name="MigrationDetailsHeader">
+                    <Border Style="{StaticResource CardStyle}" Margin="5">
+                        <!--<ScrollViewer VerticalScrollBarVisibility="Visible">-->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:WebView2 x:Name="MigrationDetailsContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationStarting="WebView_NavigationStarting" />
+                        </Grid>
+                        <!--</ScrollViewer>-->
+                    </Border>
+                </PivotItem>
+                <PivotItem Header="AI Opportunities" x:Name="AIOpportunitiesHeader">
+                    <Border Style="{StaticResource CardStyle}" Margin="5">
+                        <!--<ScrollViewer VerticalScrollBarVisibility="Visible">-->
+                        <Grid x:Name="AIGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:WebView2 x:Name="AIOpportunitiesContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationStarting="WebView_NavigationStarting" />
+                        </Grid>
+                        <!--</ScrollViewer>-->
+                    </Border>
+                </PivotItem>
+            </Pivot>
+
+            <!-- Separator -->
+            <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="2">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="DarkBlue" Offset="0.0" />
+                        <GradientStop Color="White" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- Chat Section -->
+            <Grid Grid.Column="2" Grid.Row="0" Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Messages Section -->
+                <Border Style="{StaticResource CardStyle}" Grid.Row="1" Background="WhiteSmoke">
+                    <Grid>
+                        <ScrollViewer x:Name="MessagesScrollViewer" VerticalScrollBarVisibility="Auto" ViewChanged="MessagesScrollViewer_ViewChanged">
+                            <!-- Predefined Nudges -->
+                            <StackPanel x:Name="MessagesPanel" Margin="25" LayoutUpdated="MessagesPanel_LayoutUpdated">
+                                <!-- Receiver Message -->
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="0,5" Visibility="Collapsed">
+                                    <TextBlock Text="Receiver Name" Style="{StaticResource SenderNameTextStyle}" />
+                                    <Border Background="DarkGray" CornerRadius="10" Padding="10" MaxWidth="300">
+                                        <TextBox Style="{StaticResource TextBoxStyle}" AcceptsReturn="True"/>
+                                    </Border>
+                                    <TextBlock Text="10:30 AM" Style="{StaticResource TimestampTextStyle}" HorizontalAlignment="Left" />
+                                </StackPanel>
+
+                                <!-- Sender Message -->
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="0,5" Visibility="Collapsed">
+                                    <TextBlock Text="Sender Name" Style="{StaticResource SenderNameTextStyle}" />
+                                    <Border Background="ForestGreen" CornerRadius="10" Padding="10" MaxWidth="300">
+                                        <TextBox Style="{StaticResource TextBoxStyle}" AcceptsReturn="True" IsReadOnly="True"/>
+                                    </Border>
+                                    <TextBlock Text="10:32 AM" Style="{StaticResource TimestampTextStyle}" HorizontalAlignment="Right" />
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Overlay Down Arrow Button -->
+                        <Button x:Name="ScrollToBottomButton" Click="ScrollToBottomButton_Click" Style="{StaticResource ScrollToBottomButtonStyle}" Visibility="Collapsed">
+                            <FontIcon Glyph="&#xE74B;" FontSize="20"/>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Input Section -->
+            <Grid Grid.Row="1" Grid.Column="2" Background="WhiteSmoke" Margin="0,0,10,0">
+                <Border Style="{StaticResource CardStyle}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBox x:Name="MessageTextBox" Height="90" KeyDown="MessageTextBox_KeyDown" PlaceholderText="Type a message..." VerticalAlignment="Center" TextWrapping="Wrap" Style="{StaticResource TextBoxStyle}" />
+                            <Button Name="UpdateSummaryButton" Click="SendButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Width="Auto" Height="40" Background="GhostWhite" BorderThickness="0" Foreground="Black" >
+                                <FontIcon Glyph="&#xE122;" />
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <TextBlock Text="**Responses are generated by AI. While we strive for accuracy, we recommend verifying critical details.**" HorizontalAlignment="Center" VerticalAlignment="Bottom" TextWrapping="Wrap" Grid.Row="1" Margin="0,0,0,50" FontSize="14" FontWeight="Medium" Foreground="OrangeRed"/>
+
+            <!-- Pagination and Like/Dislike Buttons -->
+            <StackPanel x:Name="PaginationView" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="1" Margin="40,0,0,0">
+                <Button Style="{StaticResource PrimaryButtonStyle}" Click="LikeButton_Click" AutomationProperties.Name="Like" x:Name="LikeButton">
+                    <FontIcon Glyph="&#xE8E1;" />
+                </Button>
+                <Button Style="{StaticResource PrimaryButtonStyle}" Click="DislikeButton_Click" AutomationProperties.Name="Dislike" x:Name="DislikeButton">
+                    <FontIcon Glyph="&#xE8E0;" />
+                </Button>
+                <Button x:Name="RegenerateSummaryButton" Style="{StaticResource PrimaryButtonStyle}" Click="RegenerateSummaryButton_Click" AutomationProperties.Name="Regenerate Summary" ToolTipService.ToolTip="Update Summary">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE117;" Margin="0,0,5,0"/>
+                        <TextBlock Text="Update Summary" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Margin="0,0,40,0">
+                <Button HorizontalAlignment="Right"  Margin="90,0,0,0" Click="PreviousPage_Click" Style="{StaticResource SecondaryButtonStyle}" AutomationProperties.Name="Previous Version">
+                    <FontIcon Glyph="&#xE112;" />
+                </Button>
+                <TextBlock HorizontalAlignment="Right" x:Name="PageIndicator" Text="1 of 1" VerticalAlignment="Center" Margin="10,0" />
+                <Button HorizontalAlignment="Right"  Click="NextPage_Click" Style="{StaticResource SecondaryButtonStyle}" AutomationProperties.Name="Next Version">
+                    <FontIcon Glyph="&#xE111;" />
+                </Button>
+                <Button HorizontalAlignment="Right" Name="ExportSummaryButton" Click="ExportSummaryButton_Click" Style="{StaticResource SecondaryButtonStyle}" AutomationProperties.Name="Export Summary">
+                    <FontIcon Glyph="&#xE74E;" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Empty row to push content down -->
+        <Grid Grid.Row="2" Height="50" />
+        <!--<TextBlock Text="**Responses are generated by AI. While we strive for accuracy, we recommend verifying critical details.**" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="60,0,0,0" FontSize="14" FontWeight="Medium" Foreground="OrangeRed"/>
+        </Grid>-->
+
+        <!--<Grid Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" x:Name="OverlayGrid" Background="Gray" Opacity="0.5">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressRing IsActive="True" Width="50" Height="50" Foreground="Black"/>
+                <TextBlock Text="Please wait while the summary is being generated..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="24"/>
+            </StackPanel>
+        </Grid>-->
+    </Grid>
+</Page>

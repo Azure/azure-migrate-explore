@@ -1,11 +1,13 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 using Newtonsoft.Json;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Discovery
+namespace Azure.Migrate.Explore.Discovery
 {
     public class IdentifySqlServices
     {

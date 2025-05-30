@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using Newtonsoft.Json;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class BusinessCaseOverviewSummaryJSON
     {
         [JsonProperty("properties")]
-        public BusinessCaseOverviewSummaryProperties Properties { get; set; }        
+        public BusinessCaseOverviewSummaryProperties Properties { get; set; }
     }
 
     public class BusinessCaseOverviewSummaryProperties

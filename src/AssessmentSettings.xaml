@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AzureMigrateExplore.AssessmentSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AzureMigrateExplore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="White">
+
+    <Page.Resources>
+        <!-- Define colors using SolidColorBrush -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#0078D7"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#32CD32"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+        <SolidColorBrush x:Key="ProgressBarColor" Color="#FF4500"/>
+
+        <!-- Define styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <ThemeShadow/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Fancy ProgressBar Style -->
+        <Style x:Key="FancyProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Foreground" Value="{StaticResource ProgressBarColor}"/>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Background="{StaticResource BackgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Empty row to push content down -->
+            <Grid Grid.Row="0" Height="50"/>
+
+            <!-- Main content -->
+            <Grid Grid.Row="1" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Info Bar Section -->
+                <InfoBar
+                    Grid.Row="1"
+                    IsOpen="True"
+                    CornerRadius="10"
+                    Severity="Informational"
+                    Title="Pre-Read"
+                    IsClosable="False"
+                    Message="Select the strategy for migrating workloads to Azure. The workloads are recommended for respective Azure Targets as per the logic below:&#x0a;&#x0a;1. Modernize - Workloads that have SQL Server or web application running on them are first assessed for Migration to respective PaaS targets; if the workload is not ready for migration to the respective PaaS target, then the workload will be considered for migration to Azure VM.&#x0a;2. Minimize time with Azure VM - Workloads are assessed for migration to Azure VM.&#x0a;3. Migrate to AVS - Workloads are assessed for migration to Azure VMware Solution."
+                    Margin="20"/>
+
+                <!-- Form Fields in Card-Style Container -->
+                <Grid Grid.Row="0" Margin="10">
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Assessment Settings" Padding="0,0,0,30" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Foreground="{StaticResource PrimaryColor}" />
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Target Region Field -->
+                                <TextBlock Text="Target Region:" FontWeight="Bold" Margin="0,0,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                                <ComboBox x:Name="TargetRegionPicker" PlaceholderText="Select Target Region" Width="360" Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Background="White" Foreground="{StaticResource TextColor}" SelectionChanged="TargetRegionPicker_SelectedIndexChanged"/>
+
+                                <!-- Currency Field -->
+                                <TextBlock Text="Currency:" FontWeight="Bold" Margin="0,20,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                                <ComboBox x:Name="CurrencyPicker" PlaceholderText="Select Currency" Width="360" Grid.Row="1" Grid.Column="1" Margin="10,20,0,0" Background="White" Foreground="{StaticResource TextColor}"/>
+
+                                <!-- Assessment Duration Field -->
+                                <TextBlock Text="Assessment Duration:" FontWeight="Bold" Margin="0,20,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                                <ComboBox x:Name="AssessmentDurationPicker" PlaceholderText="Select Duration" Width="360" Grid.Row="2" Grid.Column="1" Margin="10,20,0,0" Background="White" Foreground="{StaticResource TextColor}">
+                                    <ComboBoxItem Content="Day"/>
+                                    <ComboBoxItem Content="Week"/>
+                                    <ComboBoxItem Content="Month"/>
+                                </ComboBox>
+
+                                <!-- Migration Strategy Field -->
+                                <TextBlock Text="Migration Strategy:" FontWeight="Bold" Margin="0,20,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0"/>
+                                <ComboBox x:Name="MigrationStrategyPicker" PlaceholderText="Select Strategy" Width="360" Grid.Row="3" Grid.Column="1" Margin="10,20,0,0" Background="White" Foreground="{StaticResource TextColor}">
+                                    <ComboBoxItem Content="Modernize"/>
+                                    <ComboBoxItem Content="Minimize time with Azure VM"/>
+                                </ComboBox>
+                                <!-- Assess SQL Services Separately GroupBox -->
+                                <Grid Grid.Row="5" Grid.ColumnSpan="2" Margin="10,20,0,0">
+                                    <Border x:Name="AssessSqlServicesSeparatelyGroupBox" Visibility="Collapsed" Background="{StaticResource CardBackgroundColor}" Padding="10">
+                                        <Border.Shadow>
+                                            <ThemeShadow/>
+                                        </Border.Shadow>
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox x:Name="AssessSqlServicesSeparatelyCheckBox" VerticalAlignment="Center" />
+                                            <TextBlock x:Name="AssessSqlServicesSeparatelyLabel" Text="Assess SQL Services Separately" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" />
+                                            <Button x:Name="AssessSqlServicesSeparatelyInfoPictureBox" Content="i" Width="16" Height="16" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Progress TextBlock and ProgressBar -->
+            <StackPanel Grid.Row="2" Margin="10">
+                <TextBlock Text="Assessment Progress" FontWeight="Bold" Foreground="{StaticResource TextColor}" Margin="20,0,0,5"/>
+                <ProgressBar Height="40" x:Name="ProgressBar" Style="{StaticResource FancyProgressBarStyle}" IsIndeterminate="False" Margin="20,0,20,5"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20,0,20,5">
+                    <ProgressRing x:Name="ProgressRing" IsActive="False" Foreground="{StaticResource ProgressBarColor}" Margin="0,0,10,10"/>
+                    <TextBlock x:Name="ProcessLogsTextBlock" Foreground="{StaticResource TextColor}" Height="40" TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>
+

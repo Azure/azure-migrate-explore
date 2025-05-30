@@ -83,15 +83,15 @@ _This project has adopted the [Microsoft Open Source Code of Conduct][CodeOfCond
 <!-- References -->
 
 <!-- Local -->
-[LatestReleaseLink]: https://github.com/Azure/azure-migrate-export/releases/latest
+[LatestReleaseLink]: https://github.com/Azure/azure-migrate-explore/releases/latest
 [DownloadLink]: https://aka.ms/azuremigrateexport
-[AllReleasesLink]: https://github.com/Azure/azure-migrate-export/releases
+[AllReleasesLink]: https://github.com/Azure/azure-migrate-explore/releases
 
-[NoticeMarkDown]: https://github.com/Azure/azure-migrate-export/blob/main/NOTICE.md
-[SecurityMarkDown]: https://github.com/Azure/azure-migrate-export/blob/main/SECURITY.md
-[ContributingMarkDown]: https://github.com/Azure/azure-migrate-export/blob/main/CONTRIBUTING.md
-[License]: https://github.com/Azure/azure-migrate-export/blob/main/LICENSE
-[GithubRepositoryIssues]: (https://github.com/Azure/azure-migrate-export/issues)
+[NoticeMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/NOTICE.md
+[SecurityMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/SECURITY.md
+[ContributingMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/CONTRIBUTING.md
+[License]: https://github.com/Azure/azure-migrate-explore/blob/main/LICENSE
+[GithubRepositoryIssues]: (https://github.com/Azure/azure-migrate-explore/issues)
 
 <!-- Global -->
 [AzureCommunitySupportLink]: https://aka.ms/azurecommunitysupport

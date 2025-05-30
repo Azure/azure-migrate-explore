@@ -1,12 +1,14 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Assessment.Parser
+namespace Azure.Migrate.Explore.Assessment.Parser
 {
     public class AzureSQLAssessedInstancesParser
     {

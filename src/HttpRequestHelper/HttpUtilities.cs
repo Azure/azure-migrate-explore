@@ -1,3 +1,5 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -5,9 +7,9 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.HttpRequestHelper
+namespace Azure.Migrate.Explore.HttpRequestHelper
 {
     public static class HttpUtilities
     {

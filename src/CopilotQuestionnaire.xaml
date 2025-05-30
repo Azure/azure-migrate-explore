@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AzureMigrateExplore.CopilotQuestionnaire"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AzureMigrateExplore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="White">
+
+    <Page.Resources>
+        <!-- Define colors using SolidColorBrush -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#0078D7"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#32CD32"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+
+        <!-- Define styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <ThemeShadow/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Background="{StaticResource BackgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Empty row to push content down -->
+            <Grid Grid.Row="0" Height="50"/>
+
+            <!-- Main content -->
+            <Grid Grid.Row="1" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Form Fields in Card-Style Container -->
+                <Grid Grid.Row="0" Margin="10">
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock x:Name="FilesPresent" Padding="0,0,0,30" FontWeight="Medium" FontSize="13" Foreground="OrangeRed" TextWrapping="Wrap"/>
+
+                            <TextBlock Text="Copilot Summary" Padding="0,0,0,30" FontWeight="Bold" FontSize="16" Foreground="{StaticResource PrimaryColor}"/>
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Customer Name -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="Bold" Text="Customer Name*" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <TextBox Name="CustomerNameTextBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,20" Width="360"/>
+
+                                <!-- Customer Industry -->
+                                <TextBlock Grid.Row="1" Grid.Column="0" FontWeight="Bold" Text="Customer Industry*" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <TextBox Name="CustomerIndustryTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,20" Width="360"/>
+
+                                <!-- Current Data Center Location -->
+                                <TextBlock Grid.Row="2" Grid.Column="0" FontWeight="Bold" Text="Current Data Center Location" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <TextBox Name="DatacenterLocationTextBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,20" Width="360"/>
+
+                                <!-- Motivation for Migration -->
+                                <TextBlock Grid.Row="3" Grid.Column="0" FontWeight="Bold" Text="Motivation for Migration*" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <ComboBox Name="MotivationComboBox" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,20" Width="360">
+                                    <x:String>Datacenter exit</x:String>
+                                    <x:String>Cloud transformation</x:String>
+                                    <x:String>Legacy servers</x:String>
+                                    <x:String>Business innovation</x:String>
+                                    <x:String>Security protection</x:String>
+                                    <x:String>Other</x:String>
+                                </ComboBox>
+
+                                <!-- AI Opportunities -->
+                                <TextBlock Grid.Row="4" Grid.Column="0" FontWeight="Bold" Text="AI Opportunities" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <TextBox x:Name="AIOpportunitiesTextBox" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,20" Width="360" PlaceholderText="Migrating your infrastructure to Azure unlocks the power of AI to accelerate your business growth. &#x0a;Share top pain points for your business or applications that you would like to solve using AI. &#x0a;Please share the details about your application, the user personas of your application, any specific scenario if you have identified that you would like to solve." AcceptsReturn="True" TextWrapping="Wrap"/>
+
+                                <!-- Specify Other Relevant Information -->
+                                <TextBlock Grid.Row="5" Grid.Column="0" FontWeight="Bold" Text="Specify Other Relevant Information" VerticalAlignment="Center" Margin="0,0,10,20" Foreground="{StaticResource TextColor}"/>
+                                <TextBox x:Name="OtherDetailsRichTextBox" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0" Width="360" PlaceholderText="Please provide other relevant details regarding customer's migration scenarios like:&#x0a;Migration pain points&#x0a;Details on motivation for migration&#x0a;Industry and compliance requirements&#x0a;Migration preference - PaaS/IaaS&#x0a;Details about licenses available with the customer. # of licenses available of each type&#x0a;Migration goals" AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </Grid>
+                            <!-- AI Consent Box -->
+                            <Grid Grid.Row="6" Grid.Column="0" Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Name="AIAgreementCheckBox" Checked="AIAgreementCheckBox_Checked" Unchecked="AIAgreementCheckBox_Checked" IsChecked="False" VerticalAlignment="Center" Margin="0,20,0,0"/>
+                                <TextBlock Grid.Column="0" Margin="40,20,0,0" Text="I agree to share the Azure Migrate assessment and business case reports created for the discovered inventory with AI to generate summaries." VerticalAlignment="Center" Foreground="{StaticResource TextColor}" TextWrapping="Wrap"/>
+                                
+                            </Grid>
+                            <Grid  Grid.Row="7" Grid.Column="0" Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="Disclaimer: Kindly refrain from entering any Personally Identifiable Information (PII) in the questionnaire form or chat." VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource TextColor}" TextWrapping="Wrap"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+            
+            <!-- Bottom Info Bar -->
+            <Border Grid.Row="2" Background="{StaticResource CardBackgroundColor}" Padding="10" Margin="30,-20,30,0" CornerRadius="10">
+                <TextBlock Text="*Mandatory Fields" Foreground="Black"/>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

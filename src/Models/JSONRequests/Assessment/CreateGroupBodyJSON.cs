@@ -1,6 +1,8 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class CreateGroupBodyJSON
     {

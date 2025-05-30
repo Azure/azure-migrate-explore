@@ -1,9 +1,9 @@
-# Azure Migrate Export Notice
+# Azure Migrate Explore Notice
 
 ## Third-party Open Source Softwares
 
 ### Newtonsoft.Json
-- Usage: Newtonsoft.Json is used to parse JSON requests and responses to and from Azure Migrate Export APIs.
+- Usage: Newtonsoft.Json is used to parse JSON requests and responses to and from Azure Migrate Explore APIs.
 - GitHub Repository: [Newtonsoft.Json GitHub Repository][NewtonsoftJsonGitHub]
 - License: Newtonsoft.Json is licensed under the [MIT][NewtonsoftJsonLicense] License.
 

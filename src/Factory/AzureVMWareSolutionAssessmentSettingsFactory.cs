@@ -1,11 +1,13 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Factory
+namespace Azure.Migrate.Explore.Factory
 {
     public class AzureVMWareSolutionAssessmentSettingsFactory
     {
@@ -42,8 +44,8 @@ namespace Azure.Migrate.Export.Factory
             {
                 externalStorageTypes.Add("AnfStandard");
             }
-            
-            if (AvsAssessmentConstants.anfPremiumStorageRegionList.Contains (userInputObj.TargetRegion.Key))
+
+            if (AvsAssessmentConstants.anfPremiumStorageRegionList.Contains(userInputObj.TargetRegion.Key))
             {
                 externalStorageTypes.Add("AnfPremium");
             }
@@ -125,12 +127,12 @@ namespace Azure.Migrate.Export.Factory
                 AssessmentTag.AsOnPremises_RI1Year,
                 JsonConvert.SerializeObject(obj5)
             ));
-            
+
             // As- Onpremises - Pay as you go + RI 3 Year
             AzureVMWareSolutionAssessmentSettingsJSON obj6 = new AzureVMWareSolutionAssessmentSettingsJSON();
             obj6.Properties.SizingCriterion = "AsOnPremises";
             obj6.Properties.ReservedInstance = "RI3Year";
-            obj6.Properties.Currency = userInputObj.Currency.Key; 
+            obj6.Properties.Currency = userInputObj.Currency.Key;
             obj6.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj6.Properties.NodeTypes = nodeTypes;
             obj6.Properties.ExternalStorageTypes = externalStorageTypes;

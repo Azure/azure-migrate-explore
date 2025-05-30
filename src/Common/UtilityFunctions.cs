@@ -1,11 +1,20 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using ClosedXML.Excel;
 using System;
+using System.IO;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Forex;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Forex;
+using Azure.Migrate.Explore.Models;
+using Azure.Migrate.Explore.Models.CopilotSummary;
+using Azure.Migrate.Explore.Models.CopilotSummary.MigrationSummary;
+using System.Reflection;
+using System.ComponentModel;
+using Newtonsoft.Json;
+using Orionsoft.MarkdownToPdfLib;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
     public static class UtilityFunctions
     {
@@ -54,6 +63,12 @@ namespace Azure.Migrate.Export.Common
         {
             userInputObj.LoggerObj.LogInformation("Initiating process termination upon user request");
             userInputObj.CancellationContext.Token.ThrowIfCancellationRequested();
+        }
+
+        public static void InitiateCopilotCancellation(CopilotInput copilotInputObj)
+        {
+            copilotInputObj.LoggerObj.LogInformation("Initiating process termination upon user request");
+            copilotInputObj.CancellationContext.Token.ThrowIfCancellationRequested();
         }
 
         public static string PrependErrorLogType()
@@ -319,6 +334,108 @@ namespace Azure.Migrate.Export.Common
                     return component.Value;
 
             return 0;
+        }
+
+        public static void ValidateReportPresence(string directoryPath, string filePath)
+        {
+            if (!Directory.Exists(directoryPath))
+                throw new Exception($"Report directory {directoryPath} not found.");
+            if (!File.Exists(filePath))
+                throw new Exception($"Report file {filePath} not found");
+        }
+
+        public static bool IsReportPresentForTabVisibility(string directoryPath, string filePath)
+        {
+            try
+            {
+                ValidateReportPresence(directoryPath, filePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static bool CheckCopilotQuestionnaireTabVisibility()
+        {
+            string reportsPath = Path.Combine(AppContext.BaseDirectory, "Reports");
+            bool isDiscoveryReportPresent = IsReportPresentForTabVisibility(
+                reportsPath,
+                DiscoveryReportConstants.DiscoveryReportPath
+            );
+
+            bool isCoreReportPresent = IsReportPresentForTabVisibility(
+                reportsPath,
+                CoreReportConstants.CoreReportPath
+            );
+
+            bool isOpportunityReportPresent = IsReportPresentForTabVisibility(
+                reportsPath,
+                OpportunityReportConstants.OpportunityReportPath
+            );
+
+            return (isDiscoveryReportPresent && isCoreReportPresent && isOpportunityReportPresent);
+        }
+
+        public static List<MigrationDataProperty> FetchProperties(Type dataClassType, object dataClassInstance)
+        {
+            var properties = dataClassType.GetProperties();
+            var copilotProperties = new List<MigrationDataProperty>();
+            foreach (var property in properties)
+            {
+                copilotProperties.Add(new MigrationDataProperty
+                {
+                    Label = GetLabel(property) ?? property.Name,
+                    Value = property.GetValue(dataClassInstance)?.ToString()
+                });
+            }
+            return copilotProperties;
+        }
+
+        public static string GetLabel(PropertyInfo property)
+        {
+            var attribute = (DescriptionAttribute)Attribute.GetCustomAttribute(property, typeof(DescriptionAttribute));
+            return attribute?.Description;
+        }
+
+        public static class SaveAmeSummary
+        {
+            public static void PersistResponse(string response)
+            {
+                if (!Directory.Exists(SummaryConstants.SummaryDirectory))
+                {
+                    Directory.CreateDirectory(SummaryConstants.SummaryDirectory);
+                }
+                string migrateDataPath = Path.Combine(
+                    SummaryConstants.SummaryDirectory,
+                    $"{SummaryConstants.SummaryPath}_{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.md"
+                );
+
+                // Pretty-print the JSON
+                var parsedJson = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+                string readableString = parsedJson["Result"];
+                // var prettyPrintedJson = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+
+                // Write the JSON to a .md file
+                File.WriteAllText(migrateDataPath, readableString);
+
+                string pdfPath = Path.Combine(
+                    SummaryConstants.SummaryDirectory,
+                    $"{SummaryConstants.SummaryPath}_{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.pdf"
+                );
+
+                var pdf = new MarkdownToPdf();
+                pdf
+                 .PaperSize(Orionsoft.MarkdownToPdfLib.PaperSize.A4)
+                 .DefalutDpi(200)
+                 .Title("AzureMigrateExplore Insights")
+                 .DefaultFont("Calibri", 12)
+                 .PageMargins("1cm", "1cm", "1cm", "1.5cm")
+                 .Add(readableString)
+                 .Save(pdfPath);
+
+            }           
         }
     }
 }

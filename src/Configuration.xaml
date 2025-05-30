@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AzureMigrateExplore.Configuration"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AzureMigrateExplore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="White">
+
+    <Page.Resources>
+        <!-- Define colors using SolidColorBrush -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#0078D7"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#32CD32"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+
+        <!-- Define styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <ThemeShadow/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Background="{StaticResource BackgroundColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Empty row to push content down -->
+            <Grid Grid.Row="0" Height="50"/>
+
+            <!-- Main content -->
+            <Grid Grid.Row="1" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Info Bar Section -->
+                <InfoBar
+                    Grid.Row="1"
+                    IsOpen="True"
+                    CornerRadius="10"
+                    Severity="Informational"
+                    Title="Pre-Read"
+                    IsClosable="False"
+                    Message="Azure Migrate Explore can be used to assess servers in VMware, Hyper-V and Physical/Bare-Metal environments.&#x0a;&#x0a;To create a business proposal, you can use the inventory of servers either discovered using appliance or via import:&#x0a;1. In case of you have used import-based discovery via .csv or RVTools, select Import.&#x0a;2. In case of appliance-based discovery, select appropriate source appliance stacks that were used to discover the inventory.​&#x0a;&#x0a;&#x0a;Azure Migrate Explore supports two workflows:&#x0a;1. Express - Enables you to generate reports and presentations quickly - assuming all discovered servers are in-scope and are production servers.&#x0a;2. Custom - Enables you to make customizations before generating the reports and presentations - classifying workloads into 'Dev' or 'Prod', moving servers out of scope, and scoping discovered servers to IaaS assessments. This will help you present advantages of Dev/Test pricing and customize the scope of presentation.&#x0a;&#x0a;&#x0a;Business Proposal:&#x0a;1. Create a comprehensive business proposal that includes IaaS, PaaS and AVS targets for your servers and databases. The proposal includes in-depth analysis for transformations to recommended targets.&#x0a;2. Create a Quick AVS proposal if you want to quickly migrate your VMware hosted servers to Azure VMware service."
+                    Margin="20"/>
+
+                <!-- Form Fields in Card-Style Container -->
+                <Grid Grid.Row="0" Margin="10">
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Configuration" Padding="0,0,0,30" FontWeight="Bold" FontSize="16" Foreground="{StaticResource PrimaryColor}" />
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Azure Migrate Source Appliance -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                                    <TextBlock Text="Discovery Source" FontWeight="Bold" Foreground="{StaticResource TextColor}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="ImportRadioButton" GroupName="DiscoverySourceGroup" Checked="ImportRadioButton_Checked" />
+                                        <TextBlock Text="Import" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="ApplianceRadioButton" GroupName="DiscoverySourceGroup" Checked="ApplianceRadioButton_Checked" />
+                                        <TextBlock Text="Appliance" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel x:Name="ApplianceOptionsPanel" Orientation="Vertical" Visibility="Collapsed" Margin="20,0,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox x:Name="VMwareCheckBox" Checked="VMWare_CheckedChanged" />
+                                            <TextBlock Text="VMWare" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox x:Name="HyperVCheckBox" Checked="HyperV_CheckedChanged" />
+                                            <TextBlock Text="HyperV" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <CheckBox x:Name="PhysicalCheckBox" Checked="Physical_CheckedChanged" />
+                                            <TextBlock Text="Physical" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Workflow -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                                    <TextBlock Text="Workflow" FontWeight="Bold" Foreground="{StaticResource TextColor}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="ExpressWorkflowRadioButton" GroupName="WorkflowGroup" Checked="Express_CheckedChanged" />
+                                        <TextBlock Text="Express" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="CustomWorkflowRadioButton" GroupName="WorkflowGroup" Checked="Custom_CheckedChanged" />
+                                        <TextBlock Text="Custom" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                    <ComboBox x:Name="CustomWorkflowPicker" PlaceholderText="Select Workflow" Foreground="{StaticResource TextColor}" SelectionChanged="CustomWorkflowPicker_SelectedIndexChanged">
+                                        <x:String>Discovery</x:String>
+                                        <x:String>Assessment</x:String>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+                                    <TextBlock Text="Business Proposal" FontWeight="Bold" Foreground="{StaticResource TextColor}" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="ComprehensiveRadioButton" GroupName="BusinessProposalGroup" Checked="ComprehensiveRadioButton_Checked" />
+                                        <TextBlock Text="Comprehensive Proposal for IaaS, PaaS and AVS targets" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="QuickAVSRadioButton" GroupName="BusinessProposalGroup" Checked="QuickAVSRadioButton_Checked" />
+                                        <TextBlock Text="Quick AVS Proposal" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Empty row to push content down -->
+            <Grid Grid.Row="2" Height="50"/>
+        </Grid>
+    </ScrollViewer>
+</Page>
+

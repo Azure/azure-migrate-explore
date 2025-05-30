@@ -1,5 +1,5 @@
-# Contributing to Azure Migrate Export
-This repository contains the Azure Migrate Export utility package that uses Azure Migrate's discovery and assessment information from and already
+# Contributing to Azure Migrate Explore
+This repository contains the Azure Migrate Explore utility package that uses Azure Migrate's discovery and assessment information from and already
 deployed Azure Migrate project to generate a cohesive presentation for executives.
 
 ## Basics
@@ -8,7 +8,7 @@ If you would like to become a contributor to this project (or any other open sou
 ## Before Starting
 
 ### Onboarding
-All users must sign the[Microsoft Contributor License Agreement (CLA)][CLAMicrosoftLink] before makingany code contributions.
+All users must sign the [Microsoft Contributor License Agreement (CLA)][CLAMicrosoftLink] before makingany code contributions.
 For Microsoft employees, make sure that your GitHub account is part of theAzure organization.
 [Use this page][LinkGithubAccount] to link your account.
 

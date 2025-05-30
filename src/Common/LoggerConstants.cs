@@ -1,8 +1,10 @@
-namespace Azure.Migrate.Export.Common
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Common
 {
     public class LoggerConstants
     {
-        public const string LogFileName = "Azure-Migrate-Export-logs.txt";
+        public const string LogFileName = "Azure-Migrate-Explore-logs.txt";
         public const string InformationLogTypePrefix = "INFO";
         public const string WarningLogTypePrefix = "WARN";
         public const string DebugLogTypePrefix = "DEBUG";

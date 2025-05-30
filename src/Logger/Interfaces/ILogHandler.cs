@@ -1,4 +1,6 @@
-namespace Azure.Migrate.Export.Logger
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Logger
 {
     public interface ILogHandler
     {

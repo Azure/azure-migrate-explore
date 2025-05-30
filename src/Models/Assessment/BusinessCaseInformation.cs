@@ -1,4 +1,6 @@
-namespace Azure.Migrate.Export.Models
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Models
 {
     public class BusinessCaseInformation
     {

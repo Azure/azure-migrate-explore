@@ -1,13 +1,16 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
-
-namespace Azure.Migrate.Export.Common
+using System;
+using System.IO;
+namespace Azure.Migrate.Explore.Common
 {
     public class OpportunityReportConstants
     {
-        public const string OpportunityReportDirectory = @".\Opportunity-Report";
-        public const string OpportunityReportName = @"AzureMigrate_Assessment_Opportunity_Report.xlsx";
-        public const string BackSlash = @"\";
-        public const string OpportunityReportPath = OpportunityReportDirectory + BackSlash + OpportunityReportName;        
+        public const string AVS_IaaS_Rehost_Perf_TabName = "AVS_IaaS_Rehost_Perf";
+        public static readonly string OpportunityReportDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
+        public const string OpportunityReportName = "AzureMigrate_Assessment_Opportunity_Report.xlsx";
+        public static readonly string OpportunityReportPath = Path.Combine(OpportunityReportDirectory, OpportunityReportName);
 
         public const string SQL_MI_Issues_and_Warnings_TabName = "SQL_MI_Issues_and_Warnings";
         public static readonly List<string> SQL_MI_Issues_and_Warnings_Columns = new List<string>

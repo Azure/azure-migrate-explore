@@ -1,15 +1,18 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
+using System.IO;
+using System;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
     public class ClashReportConstants
     {
-        public const string ClashReportDirectory = @".\Clash-Report";
-        public const string ClashReportName = @"AzureMigrate_Assessment_Clash_Report.xlsx";
-        public const string BackSlash = @"\";
-        public const string ClashReportPath = ClashReportDirectory + BackSlash + ClashReportName;
-
+        public static readonly string ClashReportDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
+        public const string ClashReportName = "AzureMigrate_Assessment_Clash_Report.xlsx";
+        public static readonly string ClashReportPath = Path.Combine(ClashReportDirectory, ClashReportName);
         public const string Clash_Report_TabName = "Clash_Report";
+
         public static readonly List<string> Clash_Report_Columns = new List<string>
         {
             "Machine Name",

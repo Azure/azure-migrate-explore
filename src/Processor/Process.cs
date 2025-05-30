@@ -1,11 +1,13 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System;
 
-using Azure.Migrate.Export.Assessment;
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Discovery;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Assessment;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Discovery;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Processor
+namespace Azure.Migrate.Explore.Processor
 {
     public class Process
     {

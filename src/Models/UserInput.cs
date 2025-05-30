@@ -1,9 +1,11 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
 using System.Threading;
 
-using Azure.Migrate.Export.Logger;
+using Azure.Migrate.Explore.Logger;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class UserInput
     {
@@ -89,7 +91,7 @@ namespace Azure.Migrate.Export.Models
             public PreferredOptimization(KeyValuePair<string, string> optimizationPreference, bool assessSqlServicesSeparately)
             {
                 this.OptimizationPreference = optimizationPreference;
-                if (this.OptimizationPreference.Value.Equals("Migrate to all IaaS"))
+                if (this.OptimizationPreference.Value.Equals("Minimize time with Azure VM"))
                     this.AssessSqlServicesSeparately = false;
                 else
                     this.AssessSqlServicesSeparately = assessSqlServicesSeparately;

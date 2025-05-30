@@ -1,9 +1,11 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Microsoft.Identity.Client;
 using System.IO;
 using System.Security.Cryptography;
+using AzureMigrateExplore;
 
-
-namespace Azure.Migrate.Export.Authentication
+namespace Azure.Migrate.Explore.Authentication
 {
     static class TokenCacheHelper
     {

@@ -1,10 +1,12 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Factory
+namespace Azure.Migrate.Explore.Factory
 {
     public class BusinessCaseSettingsFactory
     {
@@ -24,7 +26,7 @@ namespace Azure.Migrate.Export.Factory
             obj.Properties.Settings.AzureSettings.Currency = userInputObj.Currency.Key;
 
             BusinessCaseTypes type = BusinessCaseTypes.OptimizeForPaas;
-            if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MigrateToAllIaaS"))
+            if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MinimizetimewithAzureVM"))
                 type = BusinessCaseTypes.IaaSOnly;
             else if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MigrateToAvs"))
                 type = BusinessCaseTypes.AVSOnly;
@@ -32,7 +34,7 @@ namespace Azure.Migrate.Export.Factory
             obj.Properties.Settings.AzureSettings.BusinessCaseType = type.ToString();
             obj.Properties.Settings.AzureSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Appliance.ToString();
             if (userInputObj.AzureMigrateSourceAppliances.Contains("import"))
-                obj.Properties.Settings.AzureSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Import.ToString();            
+                obj.Properties.Settings.AzureSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Import.ToString();
 
             obj.Properties.Settings.AzureSettings.SavingsOption = "SavingsPlan3Year";
             if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
@@ -43,6 +45,6 @@ namespace Azure.Migrate.Export.Factory
             }
 
             return new BusinessCaseInformation(obj.Name, JsonConvert.SerializeObject(obj));
-        } 
+        }
     }
 }

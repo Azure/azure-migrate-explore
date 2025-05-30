@@ -1,8 +1,10 @@
-﻿using System.Text.RegularExpressions;
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Models;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using System.Text.RegularExpressions;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Processor
+namespace Azure.Migrate.Explore.Processor
 {
     public static class ValidateUserInput
     {
@@ -122,7 +124,7 @@ namespace Azure.Migrate.Export.Processor
         private static bool ValidateConfiguration(UserInput userInputObj)
         {
             return IsAzureMigrateSourceApplianceValid(userInputObj) &&
-                   IsWorkflowValid(userInputObj) && 
+                   IsWorkflowValid(userInputObj) &&
                    IsBusinessProposalValid(userInputObj);
         }
 
@@ -167,7 +169,7 @@ namespace Azure.Migrate.Export.Processor
             // Validate Assessment settings for Assessment module;
             return ValidateAssessmentSettings(userInputObj);
         }
-        
+
         private static bool IsBusinessProposalValid(UserInput userInputObj)
         {
             string businessProposal = "";

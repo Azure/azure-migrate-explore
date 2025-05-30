@@ -1,9 +1,11 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Models
+namespace Azure.Migrate.Explore.Models
 {
     public class AzureVMWareSolutionAssessmentSettingsJSON
     {
@@ -26,7 +28,7 @@ namespace Azure.Migrate.Export.Models
         public List<string> NodeTypes { get; set; }
 
         [JsonProperty("failuresToTolerateAndRaidLevelList")]
-        public List<string> FailuresToTolerateAndRaidLevelList { get; set; } = new List<string> { "Ftt1Raid1", "Ftt2Raid6"};
+        public List<string> FailuresToTolerateAndRaidLevelList { get; set; } = new List<string> { "Ftt1Raid1", "Ftt2Raid6" };
 
         [JsonProperty("vcpuOversubscription")]
         public string VcpuOversubscription { get; set; } = AvsAssessmentConstants.VCpuOversubscription;

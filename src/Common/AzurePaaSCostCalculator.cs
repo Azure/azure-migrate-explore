@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Common
+namespace Azure.Migrate.Explore.Common
 {
     public class AzurePaaSCostCalculator
     {
@@ -205,7 +207,7 @@ namespace Azure.Migrate.Export.Common
         private void CalculateSqlPaaSCost()
         {
             double nonAhubCost = 0.0;
-            
+
             foreach (var sqlInstance in SQL_MI_PaaS_List)
             {
                 if (sqlInstance.Environment.Equals("Dev"))
@@ -258,7 +260,7 @@ namespace Azure.Migrate.Export.Common
 
                     if (!WebappUniqueProdMachines.Contains(webapp.MachineId))
                         WebappUniqueProdMachines.Add(webapp.MachineId);
-                } 
+                }
 
                 WebappPaasSecurityCost += webapp.MonthlySecurityCostEstimate;
             }

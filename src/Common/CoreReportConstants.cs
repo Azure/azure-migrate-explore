@@ -1,14 +1,15 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using System.Collections.Generic;
-
-namespace Azure.Migrate.Export.Common
+using System;
+using System.IO;
+namespace Azure.Migrate.Explore.Common
 {
     public class CoreReportConstants
     {
-        public const string CoreReportDirectory = @".\Core-Report";
-        public const string CoreReportName = @"AzureMigrate_Assessment_Core_Report.xlsx";
-        public const string BackSlash = @"\";
-        public const string CoreReportPath = CoreReportDirectory + BackSlash + CoreReportName;
-
+        public static readonly string CoreReportDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
+        public const string CoreReportName = "AzureMigrate_Assessment_Core_Report.xlsx";
+        public static readonly string CoreReportPath = Path.Combine(CoreReportDirectory, CoreReportName);
         public const string PropertiesTabName = "Properties";
         public static readonly List<string> PropertyList = new List<string>
         {

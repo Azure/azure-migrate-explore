@@ -1,22 +1,25 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Azure.Migrate.Export.Assessment.Parser;
-using Azure.Migrate.Export.Assessment.Processor;
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Excel;
-using Azure.Migrate.Export.Factory;
-using Azure.Migrate.Export.HttpRequestHelper;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Assessment.Parser;
+using Azure.Migrate.Explore.Assessment.Processor;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Excel;
+using Azure.Migrate.Explore.Factory;
+using Azure.Migrate.Explore.HttpRequestHelper;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.Assessment
+namespace Azure.Migrate.Explore.Assessment
 {
     public class Assess
     {
         private UserInput UserInputObj;
         private List<DiscoveryData> DiscoveredData;
+        private List<vCenterHostDiscovery> vCenterHostDiscoveries;
 
         public Assess()
         {
@@ -28,9 +31,10 @@ namespace Azure.Migrate.Export.Assessment
         {
             UserInputObj = userInputObj;
             DiscoveredData = new List<DiscoveryData>();
+            vCenterHostDiscoveries = new List<vCenterHostDiscovery>();
         }
 
-        public Assess (UserInput userInputObj, List<DiscoveryData> discoveredData)
+        public Assess(UserInput userInputObj, List<DiscoveryData> discoveredData)
         {
             UserInputObj = userInputObj;
             DiscoveredData = discoveredData;
@@ -41,16 +45,16 @@ namespace Azure.Migrate.Export.Assessment
             if (UserInputObj == null)
                 throw new Exception("User input provided is null.");
 
-            UserInputObj.LoggerObj.LogInformation("Initating assessment");
+            UserInputObj.LoggerObj.LogInformation("Initiating assessment");
 
             DeletePreviousAssessmentReports();
 
             if (DiscoveredData.Count <= 0)
             {
-                new ImportDiscoveryReport(UserInputObj, DiscoveredData).ImportDiscoveryData();
+                new ImportDiscoveryReport(UserInputObj.LoggerObj, DiscoveredData, vCenterHostDiscoveries).ImportDiscoveryData();
             }
 
-            new DiscoveryDataValidation().BeginValidation(UserInputObj, DiscoveredData);
+            new DiscoveryDataValidation().BeginValidation(UserInputObj.LoggerObj, DiscoveredData);
             UserInputObj.LoggerObj.LogInformation($"Total discovered machines: {DiscoveredData.Count}");
 
             string assessmentSiteMachineListUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
@@ -60,7 +64,7 @@ namespace Azure.Migrate.Export.Assessment
                                                   Routes.AssessmentProjectsPath + Routes.ForwardSlash + UserInputObj.AssessmentProjectName + Routes.ForwardSlash +
                                                   Routes.MachinesPath +
                                                   Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
-            
+
             if (UserInputObj.AzureMigrateSourceAppliances.Contains("import"))
                 assessmentSiteMachineListUrl += Routes.AssessmentProjectImportFilterPath;
 
@@ -119,7 +123,7 @@ namespace Azure.Migrate.Export.Assessment
                     assessmentSiteMachines.Add(obj);
                 }
             }
-            
+
             UserInputObj.LoggerObj.LogInformation(3, $"Retrieved data for {assessmentSiteMachines.Count} assessment site machine"); // IsExpressWorkflow ? 25 : 5 % complete
 
             Dictionary<string, string> AssessmentIdToDiscoveryIdLookup = new Dictionary<string, string>();
@@ -162,7 +166,7 @@ namespace Azure.Migrate.Export.Assessment
 
                     if (!discoverySiteMachine.MachineId.Equals(assessmentSiteMachine.DiscoveryMachineArmId))
                         continue;
-                    
+
                     bool addMachineToGeneralVM = true;
 
                     if (!AssessmentIdToDiscoveryIdLookup.ContainsKey(assessmentSiteMachine.AssessmentId))
@@ -173,10 +177,10 @@ namespace Azure.Migrate.Export.Assessment
                         if (!AzureVM.ContainsKey(discoverySiteMachine.EnvironmentType))
                             AzureVM.Add(discoverySiteMachine.EnvironmentType, new List<AssessmentSiteMachine>());
                         AzureVM[discoverySiteMachine.EnvironmentType].Add(assessmentSiteMachine);
-                    }                    
-                    
+                    }
+
                     if (UserInputObj.BusinessProposal == BusinessProposal.Comprehensive.ToString() &&
-                        assessmentSiteMachine.SqlInstancesCount > 0 && 
+                        assessmentSiteMachine.SqlInstancesCount > 0 &&
                         discoverySiteMachine.SqlDiscoveryServerCount > 0)
                     {
                         addMachineToGeneralVM = false;
@@ -187,12 +191,12 @@ namespace Azure.Migrate.Export.Assessment
                     }
 
                     if (UserInputObj.BusinessProposal == BusinessProposal.Comprehensive.ToString() &&
-                        assessmentSiteMachine.WebApplicationsCount > 0 && 
+                        assessmentSiteMachine.WebApplicationsCount > 0 &&
                         discoverySiteMachine.WebAppCount > 0)
                     {
                         addMachineToGeneralVM = false;
-                        
-                        if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Modernize to PaaS (PaaS preferred)"))
+
+                        if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Modernize"))
                         {
                             if (!AzureWebApp.ContainsKey(discoverySiteMachine.EnvironmentType))
                                 AzureWebApp.Add(discoverySiteMachine.EnvironmentType, new List<AssessmentSiteMachine>());
@@ -206,7 +210,7 @@ namespace Azure.Migrate.Export.Assessment
                     }
 
                     if (UserInputObj.BusinessProposal == BusinessProposal.Comprehensive.ToString() &&
-                        discoverySiteMachine.IsSqlServicePresent && 
+                        discoverySiteMachine.IsSqlServicePresent &&
                         UserInputObj.PreferredOptimizationObj.AssessSqlServicesSeparately)
                     {
                         addMachineToGeneralVM = false;
@@ -331,7 +335,7 @@ namespace Azure.Migrate.Export.Assessment
                     UserInputObj.LoggerObj.LogWarning($"Group {kvp.Key} creation failed: {ex.Message}");
                     isGroupCreationComplete = false;
                 }
-                
+
                 if (!isGroupCreationComplete)
                 {
                     UserInputObj.LoggerObj.LogWarning($"Group {kvp.Key} could not be created, skipping corresponding assessments");
@@ -369,7 +373,7 @@ namespace Azure.Migrate.Export.Assessment
                 UserInputObj.LoggerObj.LogWarning($"Invalid groups: {invalidGroups}");
 
             UserInputObj.LoggerObj.LogInformation(3, $"Completed groups: {completedGroups}"); // IsExpressWorkflow ? 30 : 10 % complete
-            
+
             List<AssessmentInformation> AllAssessments = new List<AssessmentInformation>();
 
             foreach (KeyValuePair<string, GroupPollResponse> group in GroupStatusMap)
@@ -439,7 +443,7 @@ namespace Azure.Migrate.Export.Assessment
                 throw;
             }
 
-           UserInputObj.LoggerObj.LogInformation($"Retrieved status information for {AssessmentStatusMap.Count} assessments");
+            UserInputObj.LoggerObj.LogInformation($"Retrieved status information for {AssessmentStatusMap.Count} assessments");
 
             int completedAssessmentsCount = 0;
             int invalidAssessmentsCount = 0;
@@ -465,7 +469,7 @@ namespace Azure.Migrate.Export.Assessment
                 UserInputObj.LoggerObj.LogWarning($"Out-dated assessments: {outdatedAssessmentsCount}");
             if (invalidAssessmentsCount > 0)
                 UserInputObj.LoggerObj.LogError($"Invalid assessments: {invalidAssessmentsCount}");
-            
+
             UserInputObj.LoggerObj.LogInformation(65 - UserInputObj.LoggerObj.GetCurrentProgress(), $"Completed assessment creation job"); // 65 % complete
 
             Dictionary<AssessmentInformation, AssessmentPollResponse> AzureVMAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
@@ -494,7 +498,7 @@ namespace Azure.Migrate.Export.Assessment
                     if (!AVSAssessmentStatusMap.ContainsKey(kvp.Key))
                         AVSAssessmentStatusMap.Add(kvp.Key, kvp.Value);
                 }
-                
+
                 else if (kvp.Key.AssessmentType == AssessmentType.WebAppAssessment)
                 {
                     if (!AzureAppServiceWebAppAssessmentStatusMap.ContainsKey(kvp.Key))
@@ -762,7 +766,7 @@ namespace Azure.Migrate.Export.Assessment
             {
                 UserInputObj.LoggerObj.LogError($"Azure VM assessment parsing error {exAzureVMAssessmentParse.Message}");
             }
-            
+
             UserInputObj.LoggerObj.LogInformation(70 - UserInputObj.LoggerObj.GetCurrentProgress(), "Azure VM assessment parsing job completed"); // 70 % Complete
         }
 
@@ -779,6 +783,7 @@ namespace Azure.Migrate.Export.Assessment
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous core report");
             var directory = CoreReportConstants.CoreReportDirectory;
+            var file = Path.Combine(directory, "AzureMigrate_Assessment_Core_Report.xlsx");
 
             if (!Directory.Exists(directory))
             {
@@ -786,38 +791,83 @@ namespace Azure.Migrate.Export.Assessment
                 return;
             }
 
+            if (!File.Exists(file))
+            {
+                UserInputObj.LoggerObj.LogInformation("No core report file found");
+                return;
+            }
+
             UserInputObj.LoggerObj.LogInformation("Core report found, please ensure the file is closed otherwise deleting it won't be possible and process will terminate");
-            Directory.Delete(directory, true);
+            try
+            {
+                File.Delete(file);
+                UserInputObj.LoggerObj.LogInformation("Core report file deleted successfully");
+            }
+            catch (IOException ex)
+            {
+                UserInputObj.LoggerObj.LogError($"Failed to delete core report file: {ex.Message}");
+                throw;
+            }
         }
 
         private void DeletePreviousOpportunityReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous opportunity report");
             var directory = OpportunityReportConstants.OpportunityReportDirectory;
-
+            var file = Path.Combine(directory, "AzureMigrate_Assessment_Opportunity_Report.xlsx");
             if (!Directory.Exists(directory))
             {
                 UserInputObj.LoggerObj.LogInformation("No opportunity report found");
                 return;
             }
 
+            if (!File.Exists(file))
+            {
+                UserInputObj.LoggerObj.LogInformation("No opportunity report file found");
+                return;
+            }
+
             UserInputObj.LoggerObj.LogInformation("Opportunity report found, please ensure the file is closed otherwise deleting it won't be possible and process will terminate");
-            Directory.Delete(directory, true);
+            try
+            {
+                File.Delete(file);
+                UserInputObj.LoggerObj.LogInformation("Opportunity report file deleted successfully");
+            }
+            catch (IOException ex)
+            {
+                UserInputObj.LoggerObj.LogError($"Failed to delete opportunity report file: {ex.Message}");
+                throw;
+            }
         }
 
         private void DeletePreviousClashReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous clash report");
             var directory = ClashReportConstants.ClashReportDirectory;
-
+            var file = Path.Combine(directory, "AzureMigrate_Assessment_Clash_Report.xlsx");
             if (!Directory.Exists(directory))
             {
                 UserInputObj.LoggerObj.LogInformation("No clash report found");
                 return;
             }
 
+            if (!File.Exists(file))
+            {
+                UserInputObj.LoggerObj.LogInformation("No clash report file found");
+                return;
+            }
+
             UserInputObj.LoggerObj.LogInformation("Clash report found, please ensure the file is closed otherwise deleting it won't be possible and process will terminate");
-            Directory.Delete(directory, true);
+            try
+            {
+                File.Delete(file);
+                UserInputObj.LoggerObj.LogInformation("Clash report file deleted successfully");
+            }
+            catch (IOException ex)
+            {
+                UserInputObj.LoggerObj.LogError($"Failed to delete clash report file: {ex.Message}");
+                throw;
+            }
         }
         #endregion
 
@@ -880,7 +930,7 @@ namespace Azure.Migrate.Export.Assessment
                 return true;
 
             return false;
-        }        
+        }
         #endregion
     }
 }

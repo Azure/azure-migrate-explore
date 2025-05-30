@@ -1,10 +1,12 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using ClosedXML.Excel;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Models;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Excel
+namespace Azure.Migrate.Explore.Excel
 {
     public class ExportCoreReport
     {
@@ -101,7 +103,7 @@ namespace Azure.Migrate.Export.Excel
             Generate_AVS_Summary_Worksheet();
             Generate_AVS_IaaS_Server_Rehost_Perf_Worksheet();
             Generate_Decommissioned_Machines_Worksheet();
-            
+
             CoreWb.SaveAs(CoreReportConstants.CoreReportPath);
         }
 
@@ -238,7 +240,7 @@ namespace Azure.Migrate.Export.Excel
 
             for (int i = 0; i < CoreReportConstants.Cash_Flows_Years.Count; i++)
                 dataWs.Cell(1, i + 3).Value = CoreReportConstants.Cash_Flows_Years[i];
-            
+
             for (int i = 0; i < CoreReportConstants.Cash_Flows_CloudComputingServiceTypes.Count; i++)
             {
                 dataWs.Cell(3 * i + 2, 1).Value = CoreReportConstants.Cash_Flows_CloudComputingServiceTypes[i];
@@ -460,7 +462,7 @@ namespace Azure.Migrate.Export.Excel
             if (SQL_All_Instances_List != null && SQL_All_Instances_List.Count > 0)
                 dataWs.Cell(2, 1).InsertData(SQL_All_Instances_List);
         }
-        
+
         private void Generate_All_VM_IaaS_Server_Rehost_Perf_Worksheet()
         {
             var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.All_VM_IaaS_Server_Rehost_Perf_TabName, 15);

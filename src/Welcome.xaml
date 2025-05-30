@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="AzureMigrateExplore.Welcome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AzureMigrateExplore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Background="White">
+
+    <Page.Resources>
+        <!-- Define colors using SolidColorBrush -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#0078D7"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#32CD32"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
+        <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+
+        <!-- Define styles -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundColor}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <ThemeShadow/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{StaticResource BackgroundColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Glassy Effect -->
+        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="3"
+                Background="{StaticResource CardBackgroundColor}" CornerRadius="20" Padding="20"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Animated Image of Copilot -->
+                <Image Grid.Row="1" Grid.Column="0" 
+                       Source="ms-appx:///Assets/azure_migrate_icon_logo.png" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       Width="200" Height="200" Margin="0,0,20,0"/>
+
+                <!-- Title Text -->
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="Azure Migrate Explore" 
+                           FontSize="24" FontWeight="Bold" Foreground="{StaticResource TextColor}" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           Margin="0,20,0,10" />
+                <TextBlock x:Name="VersionLabel"  Grid.Row="2" Grid.Column="1" 
+                           FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextColor}" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           Margin="0,20,0,10"/>
+
+                <!-- Login Button -->
+                <Button Grid.Row="1" Grid.Column="1" Content="Login" 
+                        HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Width="100" Height="40" Margin="0,130,90,0" Click="LoginButton_Click"
+                        Style="{StaticResource PrimaryButtonStyle}" Name="LoginButton"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
+

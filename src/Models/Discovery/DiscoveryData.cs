@@ -1,4 +1,6 @@
-namespace Azure.Migrate.Export.Models
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Models
 {
     public class DiscoveryData
     {
@@ -17,7 +19,7 @@ namespace Azure.Migrate.Export.Models
         public int TotalNetworkAdapters { get; set; }
         public string BootType { get; set; }
         public string PowerStatus { get; set; }
-        public string SupportStatus {  get; set; }
+        public string SupportStatus { get; set; }
         public string FirstDiscoveryTime { get; set; }
         public string LastUpdatedTime { get; set; }
         public string MachineId { get; set; }

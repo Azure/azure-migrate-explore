@@ -1,3 +1,5 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,11 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Azure.Migrate.Export.Authentication;
-using Azure.Migrate.Export.Common;
-using Azure.Migrate.Export.Models;
+using Azure.Migrate.Explore.Authentication;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Models;
 
-namespace Azure.Migrate.Export.HttpRequestHelper
+namespace Azure.Migrate.Explore.HttpRequestHelper
 {
     public class HttpClientHelper
     {
@@ -89,7 +91,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
 
             if (!isException)
             {
-                if((response == null || !response.IsSuccessStatusCode) && HttpUtilities.IsRetryNeeded(response, null) && NumberOfTries < HttpUtilities.MaxProjectDetailsRetries)
+                if ((response == null || !response.IsSuccessStatusCode) && HttpUtilities.IsRetryNeeded(response, null) && NumberOfTries < HttpUtilities.MaxProjectDetailsRetries)
                 {
                     Thread.Sleep(10000);
                     response = await GetProjectDetailsHttpResponse(Url);
@@ -113,7 +115,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                 string responseContent = await response.Content.ReadAsStringAsync();
                 throw new Exception($"HTTP GET response for url {Url} failure: {response.StatusCode}: {responseContent}");
             }
-            
+
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -177,7 +179,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
 
             if (!isException)
             {
-                if((response == null || !response.IsSuccessStatusCode) && HttpUtilities.IsRetryNeeded(response, null) && NumberOfTries < HttpUtilities.MaxInformationDataRetries)
+                if ((response == null || !response.IsSuccessStatusCode) && HttpUtilities.IsRetryNeeded(response, null) && NumberOfTries < HttpUtilities.MaxInformationDataRetries)
                 {
                     userInputObj.LoggerObj.LogWarning($"HTTP GET request to url {Url} failed: {response.StatusCode}: {response.Content} Will try again after 1 minute");
                     Thread.Sleep(60000);
@@ -246,13 +248,13 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                 if (pollResponse != GroupPollResponse.Completed)
                 {
                     userInputObj.LoggerObj.LogError($"Failed to update the group {groupInformation.Key} with machine batch {index - 1}, process will be terminated.");
-                    return false;   
+                    return false;
                 }
             }
 
             GroupStatusMap[groupInformation.Key] = pollResponse;
             userInputObj.LoggerObj.LogInformation($"Updated group {groupInformation.Key} with machines");
-            
+
             return true;
         }
 
@@ -301,7 +303,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
 
                 if (userInputObj.AzureMigrateSourceAppliances.Contains("import"))
                     createGroupJsonObj.Properties.GroupType = "Import";
-                
+
                 string createGroupJsonBody = JsonConvert.SerializeObject(createGroupJsonObj);
                 byte[] buffer = Encoding.UTF8.GetBytes(createGroupJsonBody);
                 ByteArrayContent byteContent = new ByteArrayContent(buffer);
@@ -335,7 +337,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
             return response;
         }
 
-        private async Task<HttpResponseMessage> SendMachineUpdationInGroupRequest (UserInput userInputObj, KeyValuePair<string, List<string>> groupInformation)
+        private async Task<HttpResponseMessage> SendMachineUpdationInGroupRequest(UserInput userInputObj, KeyValuePair<string, List<string>> groupInformation)
         {
             if (userInputObj.CancellationContext.IsCancellationRequested)
                 UtilityFunctions.InitiateCancellation(userInputObj);
@@ -411,7 +413,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
             return response;
         }
         #endregion
-        
+
         #region Group polling
         public async Task<GroupPollResponse> PollGroup(UserInput userInputObj, string groupName)
         {
@@ -606,7 +608,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                 UtilityFunctions.InitiateCancellation(userInputObj);
 
             userInputObj.LoggerObj.LogInformation($"Polling assessment {assessmentInfo.AssessmentName} for status");
-            
+
             AuthenticationResult authResult = null;
             HttpResponseMessage response;
 
@@ -642,7 +644,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + authResult.AccessToken);
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 httpClient.DefaultRequestHeaders.Add("x-ms-client-request-id", clientRequestId + "-" + workflow + "-azmigexp");
-                
+
                 response = await httpClient.GetAsync(baseAddress);
 
                 if (response == null || !response.IsSuccessStatusCode)
@@ -650,7 +652,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                     userInputObj.LoggerObj.LogWarning($"Assessment {assessmentInfo.AssessmentName} polling response was not success. Status: {response?.StatusCode} Content: {response?.Content}");
                     if (!HttpUtilities.IsRetryNeeded(response, null))
                         return AssessmentPollResponse.Error;
-                    
+
                     return AssessmentPollResponse.NotCompleted;
                 }
 
@@ -912,7 +914,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                     {
                         userInputObj.LoggerObj.LogWarning($"Polling for group {groupName} resulted in a non-retryable error");
                         isNonRetriableResponse = true;
-                    }                    
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -938,7 +940,7 @@ namespace Azure.Migrate.Export.HttpRequestHelper
                     userInputObj.LoggerObj.LogWarning($"Group {groupName} polling failed: {ex.Message}");
                     isNonRetriableResponse = !HttpUtilities.IsRetryableException(ex);
                 }
-                
+
                 if (isNonRetriableResponse)
                     numberOfPollTries += 1;
 

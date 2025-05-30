@@ -1,13 +1,15 @@
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 using ClosedXML.Excel;
 using System.Collections.Generic;
 
-using Azure.Migrate.Export.Models;
-using Azure.Migrate.Export.Common;
+using Azure.Migrate.Explore.Models;
+using Azure.Migrate.Explore.Common;
 
-namespace Azure.Migrate.Export.Excel
+namespace Azure.Migrate.Explore.Excel
 {
     public class ExportOpportunityReport
-    {       
+    {
         private readonly List<SQL_MI_Issues_and_Warnings> SQL_MI_Issues_and_Warnings_List;
         private readonly List<SQL_MI_Opportunity> SQL_MI_Opportunity_List;
         private readonly List<WebApp_Opportunity> WebApp_Opportunity_List;
@@ -17,14 +19,14 @@ namespace Azure.Migrate.Export.Excel
         XLWorkbook OpportunityWb;
 
         public ExportOpportunityReport
-            (                
+            (
                 List<SQL_MI_Issues_and_Warnings> sql_MI_Issues_and_Warnings_List,
                 List<SQL_MI_Opportunity> sql_MI_Opportunity_List,
                 List<WebApp_Opportunity> webApp_Opportunity_List,
                 List<VM_Opportunity_Perf> vm_Opportunity_Perf_List,
                 List<VM_Opportunity_AsOnPrem> vm_Opportunity_AsOnPrem_List
             )
-        {            
+        {
             SQL_MI_Issues_and_Warnings_List = sql_MI_Issues_and_Warnings_List;
             SQL_MI_Opportunity_List = sql_MI_Opportunity_List;
             WebApp_Opportunity_List = webApp_Opportunity_List;
@@ -40,7 +42,7 @@ namespace Azure.Migrate.Export.Excel
             Generate_SQL_MI_Issues_and_Warnings_Worksheet();
             Generate_WebApp_Opportunity_Worksheet();
             Generate_VM_Opportunity_Perf_Worksheet();
-            Generate_VM_Opportunity_AsOnPrem_Worksheet();            
+            Generate_VM_Opportunity_AsOnPrem_Worksheet();
 
             OpportunityWb.SaveAs(OpportunityReportConstants.OpportunityReportPath);
         }
@@ -93,6 +95,6 @@ namespace Azure.Migrate.Export.Excel
 
             if (VM_Opportunity_Perf_List != null && VM_Opportunity_AsOnPrem_List.Count > 0)
                 dataWs.Cell(2, 1).InsertData(VM_Opportunity_AsOnPrem_List);
-        }        
+        }
     }
 }

@@ -1,4 +1,8 @@
-using System.Drawing;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI; // Add this using directive
 
 namespace System.Windows.Forms
 {
@@ -7,13 +11,13 @@ namespace System.Windows.Forms
         public static void EnableTabButton(this Button button)
         {
             button.Enabled = true;
-            button.BackColor = Color.FromArgb(255, 255, 255);
+            //button.Background = new SolidColorBrush(ColorHelper.FromArgb(255, 255, 255, 255)); // Use Background instead of BackgroundColor
         }
 
         public static void DisableTabButton(this Button button)
         {
             button.Enabled = false;
-            button.BackColor = Color.FromArgb(170, 170, 170);
+            //button.Background = new SolidColorBrush(ColorHelper.FromArgb(255, 170, 170, 170)); // Use Background instead of BackgroundColor
         }
     }
 }

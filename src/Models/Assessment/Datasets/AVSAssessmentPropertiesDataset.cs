@@ -1,4 +1,6 @@
-namespace Azure.Migrate.Export.Models
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+namespace Azure.Migrate.Explore.Models
 {
     public class AVSAssessmentPropertiesDataset
     {
@@ -19,7 +21,7 @@ namespace Azure.Migrate.Export.Models
         public string NodeTypes { get; set; }
         public string RecommendedNodes { get; set; }
         public string RecommendedFttRaidLevels { get; set; }
-        public string RecommendedExternalStorage {  get; set; }
+        public string RecommendedExternalStorage { get; set; }
         public double TotalMonthlyCostEstimate { get; set; }
         public double PredictedCpuUtilizationPercentage { get; set; }
         public double PredictedMemoryUtilizationPercentage { get; set; }
