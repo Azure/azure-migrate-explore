@@ -308,6 +308,13 @@ namespace AzureMigrateExplore
 
         private async void GenerateSummaryButton_Click(object sender, RoutedEventArgs e)
         {
+            EnableOverlayGrid();
+            // Clear the chat content
+            ChatPageObj.ClearChatContent();
+
+            ChatPageTabButton.IsEnabled = true;
+            HandleTabChange(ChatPageObj, ChatPageTabButton);
+
             var pubSubResponse = await AzureAuthenticationHandler.GetPubSubUrlAndSessionId();
             GlobalConnection.PubSubUrl = pubSubResponse.PubSubEndpoint;
             GlobalConnection.SessionId = pubSubResponse.Id;
@@ -349,13 +356,6 @@ namespace AzureMigrateExplore
             logger.LogInformation("SessionId: " + GlobalConnection.SessionId);
             logger.LogInformation(JsonConvert.SerializeObject(copilotInputObj));
             logger.LogInformation("AIAgreementCheckbox: " + aiAgreementCheckboxState);
-
-            EnableOverlayGrid();
-            // Clear the chat content
-            ChatPageObj.ClearChatContent();
-
-            ChatPageTabButton.IsEnabled = true;
-            HandleTabChange(ChatPageObj, ChatPageTabButton);
 
             List<string> migrationData = SummaryGenerationHelper.GetSummaryInsights(copilotInputObj.LoggerObj);
 
