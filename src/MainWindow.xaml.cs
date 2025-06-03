@@ -672,7 +672,7 @@ namespace AzureMigrateExplore
             var result = await dialog.ShowAsync();
             if(result == ContentDialogResult.Primary)
             {
-                Application.Current.Exit();
+                return result == ContentDialogResult.Primary;
             }
             return result == ContentDialogResult.Secondary;
         }
@@ -1522,6 +1522,11 @@ namespace AzureMigrateExplore
         {
             var uri = new Uri("https://aka.ms/AMECopilotDocs");
             var success = Windows.System.Launcher.LaunchUriAsync(uri);
+        }
+
+        private void BottomDockCloseButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            CloseForm();
         }
 
         public void SetHasImportInventory(bool hasImportInventory)

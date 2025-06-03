@@ -114,7 +114,7 @@
                         <SymbolIcon Symbol="Document"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Exit" Tag="Close" x:Name="BottomDockCloseButton">
+                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Logout" Tag="Close" x:Name="BottomDockCloseButton" Tapped="BottomDockCloseButton_Tapped">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="ClosePane"/>
                     </NavigationViewItem.Icon>
