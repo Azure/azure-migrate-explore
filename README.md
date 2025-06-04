@@ -16,19 +16,19 @@ Azure Migrate Explore |  [AzureMigrateExplore][LatestReleaseLink] | [Download][D
 The users can download the zip file for the latest version of the Azure Migrate Explore utility from [Download][DownloadLink]
 
 ### Customize Download
-1. To download older versions or entire releases, please click this link [AzMigExport Releases][AllReleasesLink].
+1. To download older versions or entire releases, please click this link [AzureMigrateExplore Releases][AllReleasesLink].
 2. Click on the release which is to be download.
-3. Click on the AzMigExport.zip Release asset to inititate the download.
+3. Click on the AzureMigrateExplore.zip release asset to inititate the download.
 
 ## Usage
 Refer to the detailed "Azure Migrate Explore" knowledge material from the links below:
-1. AME detailed documentation - https://aka.ms/azuremigrateexportdocumentation
+1. AME detailed documentation - https://aka.ms/amedocs
 2. AME sample presentation: https://aka.ms/amepresentation
 3. AME sample reports: https://aka.ms/amesamplereports
 4. AME demo and training video for Partners: https://aka.ms/amedemovideo/partners
 5. AME demo and training video for Sellers: https://aka.ms/amedemovideo/sellers
-5. Download the Azure Migrate Explore utility: https://aka.ms/azuremigrateexport 
-6. Link to Github repo : https://aka.ms/azuremigrateexportutility
+5. Download the Azure Migrate Explore utility: https://aka.ms/azuremigrateexplore
+6. Link to Github repo : https://aka.ms/azuremigrateexplorerepo
 
 ## Reporting Issues and Feedback
 
