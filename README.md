@@ -22,7 +22,7 @@ The users can download the zip file for the latest version of the Azure Migrate 
 
 ## Usage
 Refer to the detailed "Azure Migrate Explore" knowledge material from the links below:
-1. AME detailed documentation - https://aka.ms/amedocs
+1. AME detailed documentation - https://aka.ms/amecopilotdocs
 2. AME sample presentation: https://aka.ms/amepresentation
 3. AME sample reports: https://aka.ms/amesamplereports
 4. AME demo and training video for Partners: https://aka.ms/amedemovideo/partners
