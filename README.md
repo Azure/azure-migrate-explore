@@ -8,7 +8,7 @@ The following table consists of the link to latest release of the Azure Migrate 
 
 Description          | Release Link | Download Link
 ---------------------|--------------|--------------
-Azure Migrate Explore |  [AzMigExp][LatestReleaseLink] | [Download][DownloadLink]
+Azure Migrate Explore |  [AzureMigrateExplore][LatestReleaseLink] | [Download][DownloadLink]
 
 ## Download
 
@@ -84,7 +84,7 @@ _This project has adopted the [Microsoft Open Source Code of Conduct][CodeOfCond
 
 <!-- Local -->
 [LatestReleaseLink]: https://github.com/Azure/azure-migrate-explore/releases/latest
-[DownloadLink]: https://aka.ms/azuremigrateexport
+[DownloadLink]: https://aka.ms/azuremigrateexplore
 [AllReleasesLink]: https://github.com/Azure/azure-migrate-explore/releases
 
 [NoticeMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/NOTICE.md
