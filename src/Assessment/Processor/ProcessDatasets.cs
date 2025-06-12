@@ -169,7 +169,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             foreach (var kvp in AzureVMPerformanceBasedMachinesData)
             {
                 Clash_Report obj = new Clash_Report();
-                
+
                 obj.MachineName = kvp.Value.DisplayName;
                 obj.Environment = kvp.Value.Environment;
                 obj.OperatingSystem = UtilityFunctions.GetStringValue(kvp.Value.OperatingSystem);
@@ -181,7 +181,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.VMHost = UtilityFunctions.GetStringValue(kvp.Value.DatacenterManagementServerName);
                 obj.MachineId = kvp.Value.DatacenterMachineArmId;
-                
+
                 int count = 0;
                 foreach (var value in VM_IaaS_Server_Rehost_Perf_List)
                     if (kvp.Key.Equals(value.MachineId))
@@ -280,10 +280,10 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
         private void Process_All_VM_IaaS_Server_Rehost_Perf_Model(List<All_VM_IaaS_Server_Rehost_Perf> All_VM_IaaS_Server_Rehost_Perf_List)
         {
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_All_VM_IaaS_Server_Rehost_Perf_Model(All_VM_IaaS_Server_Rehost_Perf_List);
-            
+
             if (!isSuccessful)
                 UserInputObj.LoggerObj.LogWarning("Encountered an issue while processing All_VM_IaaS_Server_Rehost_Perf excel model");
         }
@@ -465,7 +465,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AVSAssessedMachinesData.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_AVS_IaaS_Rehost_Perf_Model(AVS_IaaS_Rehost_Perf_List);
 
@@ -487,10 +487,10 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             }
 
             UserInputObj.LoggerObj.LogInformation("Creating excel model for AVS_IaaS_Rehost_Perf");
-            
+
             if (AVS_IaaS_Rehost_Perf_List == null)
                 AVS_IaaS_Rehost_Perf_List = new List<AVS_IaaS_Rehost_Perf>();
-            
+
             foreach (var avsAssessedMachine in AVSAssessedMachinesData)
             {
                 AVS_IaaS_Rehost_Perf obj = new AVS_IaaS_Rehost_Perf();
@@ -537,7 +537,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Minimize time with Azure VM"))
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_SQL_MI_Issues_and_Warnings_Model(SQL_MI_Issues_and_Warnings_List);
 
@@ -562,7 +562,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (SQL_MI_Issues_and_Warnings_List == null)
                 SQL_MI_Issues_and_Warnings_List = new List<SQL_MI_Issues_and_Warnings>();
-            
+
             foreach (var azureSqlInstance in AzureSQLInstancesData)
             {
                 foreach (var migrationIssue in azureSqlInstance.Value.AzureSQLMIMigrationIssues)
@@ -582,7 +582,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                         obj.ImpactedObjectName = impactedObject.ObjectName;
                         obj.UserDatabases = azureSqlInstance.Value.DatabaseSummaryNumberOfUserDatabases;
                         obj.MachineId = AssessmentIdToDiscoveryIdLookup.ContainsKey(azureSqlInstance.Value.MachineArmId) ? AssessmentIdToDiscoveryIdLookup[azureSqlInstance.Value.MachineArmId] : "";
-                
+
                         SQL_MI_Issues_and_Warnings_List.Add(obj);
                     }
                 }
@@ -678,7 +678,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureSQLInstancesData.Count <= 0)
                 return;
-            
+
             if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Minimize time with Azure VM"))
             {
                 if (AzureSQL_IaaS_Instance == null)
@@ -687,7 +687,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 foreach (var kvp in AzureSQLInstancesData)
                     if (!AzureSQL_IaaS_Instance.Contains(kvp.Key))
                         AzureSQL_IaaS_Instance.Add(kvp.Key);
-                
+
                 return;
             }
 
@@ -717,7 +717,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 SQL_MI_PaaS_List = new List<SQL_MI_PaaS>();
             if (AzureSQL_IaaS_Instance == null)
                 AzureSQL_IaaS_Instance = new HashSet<string>();
-            
+
             foreach (var azureSqlInstance in AzureSQLInstancesData)
             {
                 if (azureSqlInstance.Value.AzureSQLMISuitability != Suitabilities.Suitable)
@@ -778,7 +778,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureSQL_IaaS_Instance.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_SQL_IaaS_Instance_Rehost_Perf_Model(SQL_IaaS_Instance_Rehost_Perf_List, AzureSQL_IaaS_Instance, AzureSQL_IaaS_Server);
 
@@ -822,7 +822,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                     if (!AzureSQL_IaaS_Server.Contains(discoveredMachineId))
                         AzureSQL_IaaS_Server.Add(discoveredMachineId);
-                    
+
                     continue;
                 }
 
@@ -845,7 +845,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                                                                  UtilityFunctions.GetRecommendedDiskSKUs(value.AzureSQLVMDataDisks);
                 obj.UserDatabases = value.DatabaseSummaryNumberOfUserDatabases;
                 obj.RecommendedDeploymentType = AzureSQLTargetType.AzureSqlVirtualMachine.ToString(); // value.RecommendedAzureSqlTargetType.ToString();
-                
+
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Standard) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.StandardSSD) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.StandardSSD);
                 obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.PremiumV2) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.PremiumV2);
@@ -890,7 +890,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureSQL_IaaS_Server.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_SQL_IaaS_Server_Rehost_Perf_Model(SQL_IaaS_Server_Rehost_Perf_List, AzureSQL_IaaS_Server, AzureVM_Opportunity_Perf);
 
@@ -934,7 +934,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                         AzureVM_Opportunity_Perf.Add(discoveredMachineId);
                     continue;
                 }
-                
+
                 SQL_IaaS_Server_Rehost_Perf obj = new SQL_IaaS_Server_Rehost_Perf();
 
                 obj.MachineName = value.DisplayName;
@@ -986,7 +986,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 SQL_IaaS_Server_Rehost_Perf_List.Add(obj);
             }
-            
+
             UserInputObj.LoggerObj.LogInformation($"Updated SQL_IaaS_Server_Rehost_Perf excel model with data of {SQL_IaaS_Server_Rehost_Perf_List.Count} machines");
             return true;
         }
@@ -1024,7 +1024,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 SQL_IaaS_Server_Rehost_AsOnPrem_List = new List<SQL_IaaS_Server_Rehost_AsOnPrem>();
             if (AzureVM_Opportunity_AsOnPrem == null)
                 AzureVM_Opportunity_AsOnPrem = new HashSet<string>();
-            
+
             foreach (string discoveredMachineId in AzureSQL_IaaS_Server)
             {
                 if (!AzureVMAsOnPremMachinesData.ContainsKey(discoveredMachineId))
@@ -1095,7 +1095,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Minimize time with Azure VM"))
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_SQL_MI_Opportunity_Model(SQL_MI_Opportunity_List, AzureSQL_IaaS_Instance);
 
@@ -1120,7 +1120,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (SQL_MI_Opportunity_List == null)
                 SQL_MI_Opportunity_List = new List<SQL_MI_Opportunity>();
-            
+
             foreach (var instanceArmId in AzureSQL_IaaS_Instance)
             {
                 if (!AzureSQLInstancesData.ContainsKey(instanceArmId))
@@ -1172,7 +1172,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 SQL_MI_Opportunity_List.Add(obj);
             }
-            
+
             UserInputObj.LoggerObj.LogInformation($"Updated SQL_MI_Opportunity excel model with data of {SQL_MI_Opportunity_List.Count} instances");
             return true;
         }
@@ -1185,7 +1185,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (UserInputObj.PreferredOptimizationObj.OptimizationPreference.Value.Equals("Minimize time with Azure VM"))
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_WebApp_PaaS_Model(WebApp_PaaS_List, AzureWebApp_Opportunity);
 
@@ -1214,7 +1214,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 AzureWebApp_IaaS = new HashSet<string>();
             if (AzureWebApp_Opportunity == null)
                 AzureWebApp_Opportunity = new HashSet<string>();
-            
+
 
             foreach (var webApp in AzureWebAppData)
             {
@@ -1224,7 +1224,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                         AzureWebApp_Opportunity.Add(webApp.Key);
                     if (!AzureWebApp_IaaS.Contains(webApp.Value.DiscoveredMachineId))
                         AzureWebApp_IaaS.Add(webApp.Value.DiscoveredMachineId);
-                    
+
                     continue;
                 }
 
@@ -1351,7 +1351,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureWebApp_IaaS.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_WebApp_IaaS_Server_Rehost_Perf_Model(WebApp_IaaS_Server_Rehost_Perf_List, AzureVM_Opportunity_Perf);
 
@@ -1393,7 +1393,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 {
                     if (!AzureVM_Opportunity_Perf.Contains(discoveredMachineId))
                         AzureVM_Opportunity_Perf.Add(discoveredMachineId);
-                    
+
                     continue;
                 }
 
@@ -1459,7 +1459,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureWebApp_IaaS.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_WebApp_IaaS_Server_Rehost_AsOnPrem_Model(WebApp_IaaS_Server_Rehost_AsOnPrem_List, AzureVM_Opportunity_AsOnPrem);
 
@@ -1486,7 +1486,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 WebApp_IaaS_Server_Rehost_AsOnPrem_List = new List<WebApp_IaaS_Server_Rehost_AsOnPrem>();
             if (AzureVM_Opportunity_AsOnPrem == null)
                 AzureVM_Opportunity_AsOnPrem = new HashSet<string>();
-            
+
             foreach (var discoveredMachineId in AzureWebApp_IaaS)
             {
                 if (!AzureVMAsOnPremMachinesData.ContainsKey(discoveredMachineId))
@@ -1501,7 +1501,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 {
                     if (!AzureVM_Opportunity_AsOnPrem.Contains(discoveredMachineId))
                         AzureVM_Opportunity_AsOnPrem.Add(discoveredMachineId);
-                    
+
                     continue;
                 }
 
@@ -1584,7 +1584,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (WebApp_Opportunity_List == null)
                 WebApp_Opportunity_List = new List<WebApp_Opportunity>();
-            
+
             foreach (var webAppId in WebApp_Opportunity)
             {
                 if (!AzureWebAppData.ContainsKey(webAppId))
@@ -1621,10 +1621,10 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (!UserInputObj.PreferredOptimizationObj.AssessSqlServicesSeparately)
                 return;
-            
+
             if (AzureSQL_IaaS_Server == null)
                 AzureSQL_IaaS_Server = new HashSet<string>();
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_VM_SS_IaaS_Server_Rehost_Perf_Model(VM_SS_IaaS_Server_Rehost_Perf_List, AzureVM_Opportunity_Perf, AzureSQL_IaaS_Server);
 
@@ -1651,7 +1651,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 VM_SS_IaaS_Server_Rehost_Perf_List = new List<VM_SS_IaaS_Server_Rehost_Perf>();
             if (AzureVM_Opportunity_Perf == null)
                 AzureVM_Opportunity_Perf = new HashSet<string>();
-            
+
             foreach (var discoveredMachineId in SqlServicesVM)
             {
                 if (AzureSQL_IaaS_Server.Contains(discoveredMachineId))
@@ -1737,7 +1737,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (AzureSQL_IaaS_Server == null)
                 AzureSQL_IaaS_Server = new HashSet<string>();
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_VM_SS_IaaS_Server_Rehost_AsOnPrem_Model(VM_SS_IaaS_Server_Rehost_AsOnPrem_List, AzureVM_Opportunity_AsOnPrem, AzureSQL_IaaS_Server);
 
@@ -1764,7 +1764,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 VM_SS_IaaS_Server_Rehost_AsOnPrem_List = new List<VM_SS_IaaS_Server_Rehost_AsOnPrem>();
             if (AzureVM_Opportunity_AsOnPrem == null)
                 AzureVM_Opportunity_AsOnPrem = new HashSet<string>();
-            
+
             foreach (var discoveredMachineId in SqlServicesVM)
             {
                 if (AzureSQL_IaaS_Server.Contains(discoveredMachineId))
@@ -1835,7 +1835,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (GeneralVM.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_VM_IaaS_Server_Rehost_Perf_Model(VM_IaaS_Server_Rehost_Perf_List, AzureVM_Opportunity_Perf);
 
@@ -1862,7 +1862,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 VM_IaaS_Server_Rehost_Perf_List = new List<VM_IaaS_Server_Rehost_Perf>();
             if (AzureVM_Opportunity_Perf == null)
                 AzureVM_Opportunity_Perf = new HashSet<string>();
-            
+
             foreach (var discoveredMachineId in GeneralVM)
             {
                 if (!AzureVMPerformanceBasedMachinesData.ContainsKey(discoveredMachineId))
@@ -1872,7 +1872,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 }
 
                 var value = AzureVMPerformanceBasedMachinesData[discoveredMachineId];
-                
+
                 if (value.Suitability != Suitabilities.Suitable && value.Suitability != Suitabilities.ConditionallySuitable)
                 {
                     if (!AzureVM_Opportunity_Perf.Contains(discoveredMachineId))
@@ -1942,7 +1942,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (GeneralVM.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_VM_IaaS_Server_Rehost_AsOnPrem_Model(VM_IaaS_Server_Rehost_AsOnPrem_List, AzureVM_Opportunity_AsOnPrem);
 
@@ -1969,7 +1969,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 VM_IaaS_Server_Rehost_AsOnPrem_List = new List<VM_IaaS_Server_Rehost_AsOnPrem>();
             if (AzureVM_Opportunity_AsOnPrem == null)
                 AzureVM_Opportunity_AsOnPrem = new HashSet<string>();
-            
+
             foreach (var discoveredMachineId in GeneralVM)
             {
                 if (!AzureVMAsOnPremMachinesData.ContainsKey(discoveredMachineId))
@@ -2039,10 +2039,10 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 return;
             if (AzureVM_Opportunity_Perf.Count <= 0)
                 return;
-            
+
             bool isSuccessful = false;
             isSuccessful = Create_VM_Opportunity_Perf_Model(VM_Opportunity_Perf_List, AzureVM_Opportunity_Perf);
-            
+
             if (!isSuccessful)
                 UserInputObj.LoggerObj.LogWarning("Encountered issue while generating excel model for VM_Opportunity");
         }
@@ -2064,7 +2064,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (VM_Opportunity_Perf_List == null)
                 VM_Opportunity_Perf_List = new List<VM_Opportunity_Perf>();
-            
+
             foreach (var discoveredMachineId in AzureVM_Opportunity_Perf)
             {
                 if (!AzureVMPerformanceBasedMachinesData.ContainsKey(discoveredMachineId))
@@ -2162,7 +2162,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
             if (VM_Opportunity_AsOnPrem_List == null)
                 VM_Opportunity_AsOnPrem_List = new List<VM_Opportunity_AsOnPrem>();
-            
+
             foreach (var discoveredMachineId in AzureVM_Opportunity_AsOnPrem)
             {
                 if (!AzureVMAsOnPremMachinesData.ContainsKey(discoveredMachineId))
@@ -2418,9 +2418,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             PaaSWebAppDev.MigrationStrategy = "Modernize/Re-Platform(PaaS)";
             PaaSWebAppDev.Workload = "ASP.NET WebApps on IIS - Dev/Test";
             PaaSWebAppDev.SourceCount = AzurePaaSCalculator.GetWebAppDevRowCount();
-            if (WebPaaSEnvironmentToPlanCountMap.ContainsKey("Dev")) 
+            if (WebPaaSEnvironmentToPlanCountMap.ContainsKey("Dev"))
                 PaaSWebAppDev.TargetCount = WebPaaSEnvironmentToPlanCountMap["Dev"];
-            else 
+            else
                 PaaSWebAppDev.TargetCount = 0;
             PaaSWebAppDev.StorageCost = AzurePaaSCalculator.GetWebAppPaaSDevStorageCost() * 12.0;
             PaaSWebAppDev.ComputeCost = AzurePaaSCalculator.GetWebAppPaaSDevComputeCost() * 12.0;
@@ -2431,9 +2431,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             PaaSWebAppProd.MigrationStrategy = "Modernize/Re-Platform(PaaS)";
             PaaSWebAppProd.Workload = "ASP.NET WebApps on IIS - Prod";
             PaaSWebAppProd.SourceCount = AzurePaaSCalculator.GetWebAppProdRowCount();
-            if (WebPaaSEnvironmentToPlanCountMap.ContainsKey("Prod")) 
+            if (WebPaaSEnvironmentToPlanCountMap.ContainsKey("Prod"))
                 PaaSWebAppProd.TargetCount = WebPaaSEnvironmentToPlanCountMap["Prod"];
-            else 
+            else
                 PaaSWebAppProd.TargetCount = 0;
             PaaSWebAppProd.StorageCost = AzurePaaSCalculator.GetWebAppPaaSProdStorageCost() * 12.0;
             PaaSWebAppProd.ComputeCost = AzurePaaSCalculator.GetWebAppPaaSProdComputeCost() * 12.0;
@@ -2569,7 +2569,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year1 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year1 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year1;
                 Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year2 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year2 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year2;
                 Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year3 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year3 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year3;
-            }            
+            }
 
             UserInputObj.LoggerObj.LogInformation("Updated excel model for Cash_Flows");
         }
