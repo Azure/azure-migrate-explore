@@ -8,7 +8,7 @@ The following table consists of the link to latest release of the Azure Migrate 
 
 Description          | Release Link | Download Link
 ---------------------|--------------|--------------
-Azure Migrate Explore |  [AzMigExp][LatestReleaseLink] | [Download][DownloadLink]
+Azure Migrate Explore |  [AzureMigrateExplore][LatestReleaseLink] | [Download][DownloadLink]
 
 ## Download
 
@@ -16,19 +16,19 @@ Azure Migrate Explore |  [AzMigExp][LatestReleaseLink] | [Download][DownloadLink
 The users can download the zip file for the latest version of the Azure Migrate Explore utility from [Download][DownloadLink]
 
 ### Customize Download
-1. To download older versions or entire releases, please click this link [AzMigExport Releases][AllReleasesLink].
+1. To download older versions or entire releases, please click this link [AzureMigrateExplore Releases][AllReleasesLink].
 2. Click on the release which is to be download.
-3. Click on the AzMigExport.zip Release asset to inititate the download.
+3. Click on the AzureMigrateExplore.zip release asset to inititate the download.
 
 ## Usage
 Refer to the detailed "Azure Migrate Explore" knowledge material from the links below:
-1. AME detailed documentation - https://aka.ms/azuremigrateexportdocumentation
+1. AME detailed documentation - https://aka.ms/amecopilotdocs
 2. AME sample presentation: https://aka.ms/amepresentation
 3. AME sample reports: https://aka.ms/amesamplereports
 4. AME demo and training video for Partners: https://aka.ms/amedemovideo/partners
 5. AME demo and training video for Sellers: https://aka.ms/amedemovideo/sellers
-5. Download the Azure Migrate Explore utility: https://aka.ms/azuremigrateexport 
-6. Link to Github repo : https://aka.ms/azuremigrateexportutility
+5. Download the Azure Migrate Explore utility: https://aka.ms/azuremigrateexplore
+6. Link to Github repo : https://aka.ms/azuremigrateexplorerepo
 
 ## Reporting Issues and Feedback
 
@@ -84,7 +84,7 @@ _This project has adopted the [Microsoft Open Source Code of Conduct][CodeOfCond
 
 <!-- Local -->
 [LatestReleaseLink]: https://github.com/Azure/azure-migrate-explore/releases/latest
-[DownloadLink]: https://aka.ms/azuremigrateexport
+[DownloadLink]: https://aka.ms/azuremigrateexplore
 [AllReleasesLink]: https://github.com/Azure/azure-migrate-explore/releases
 
 [NoticeMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/NOTICE.md

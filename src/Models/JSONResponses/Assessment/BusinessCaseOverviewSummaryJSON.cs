@@ -25,6 +25,12 @@ namespace Azure.Migrate.Explore.Models
         public double EsuSavingsFor4years { get; set; }
 
         [JsonProperty("yearOnYearEstimates")]
-        public BusinessCaseYOYCostDetailsJSON YearOnYearEstimates { get; set; }
+        public BusinessCaseYOYJSON YearOnYearEstimates { get; set; }
+
+        [JsonProperty("totalAzureSustainabilityDetails")]
+        public CarbonEmissionsDetails TotalAzureSustainabilityDetails { get; set; }
+
+        [JsonProperty("totalOnPremisesSustainabilityDetails")]
+        public CarbonEmissionsDetails TotalOnPremisesSustainabilityDetails { get; set; }
     }
 }
