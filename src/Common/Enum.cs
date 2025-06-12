@@ -113,6 +113,7 @@ namespace Azure.Migrate.Explore.Common
         Standard,
         StandardSSD,
         Premium,
+        PremiumV2,
         StandardOrPremium,
         Ultra
     }
