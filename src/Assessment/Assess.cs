@@ -782,7 +782,7 @@ namespace Azure.Migrate.Explore.Assessment
         private void DeletePreviousCoreReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous core report");
-            var directory = CoreReportConstants.CoreReportDirectory;
+            var directory = UtilityFunctions.GetReportsDirectory();
             var file = Path.Combine(directory, "AzureMigrate_Assessment_Core_Report.xlsx");
 
             if (!Directory.Exists(directory))
@@ -813,7 +813,7 @@ namespace Azure.Migrate.Explore.Assessment
         private void DeletePreviousOpportunityReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous opportunity report");
-            var directory = OpportunityReportConstants.OpportunityReportDirectory;
+            var directory = UtilityFunctions.GetReportsDirectory();
             var file = Path.Combine(directory, "AzureMigrate_Assessment_Opportunity_Report.xlsx");
             if (!Directory.Exists(directory))
             {
@@ -843,7 +843,7 @@ namespace Azure.Migrate.Explore.Assessment
         private void DeletePreviousClashReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous clash report");
-            var directory = ClashReportConstants.ClashReportDirectory;
+            var directory = UtilityFunctions.GetReportsDirectory();
             var file = Path.Combine(directory, "AzureMigrate_Assessment_Clash_Report.xlsx");
             if (!Directory.Exists(directory))
             {

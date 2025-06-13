@@ -23,7 +23,7 @@ namespace Azure.Migrate.Explore.Excel
         {
             GenerateClashReportWorksheet();
 
-            ClashWb.SaveAs(ClashReportConstants.ClashReportPath);
+            ClashWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + ClashReportConstants.ClashReportName);
         }
 
         private void GenerateClashReportWorksheet()

@@ -44,7 +44,7 @@ namespace Azure.Migrate.Explore.Excel
             Generate_VM_Opportunity_Perf_Worksheet();
             Generate_VM_Opportunity_AsOnPrem_Worksheet();
 
-            OpportunityWb.SaveAs(OpportunityReportConstants.OpportunityReportPath);
+            OpportunityWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + OpportunityReportConstants.OpportunityReportName);
         }
 
         private void Generate_SQL_MI_Opportunity_Worksheet()

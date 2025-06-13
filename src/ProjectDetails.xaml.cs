@@ -47,7 +47,6 @@ namespace AzureMigrateExplore
             this.InitializeComponent();
             mainObj = obj;
             InitializeCommonAuthentication();
-            areReportsPresent();
             //BeginAuthentication();
         }
 
@@ -106,19 +105,6 @@ namespace AzureMigrateExplore
             await InitializeSubscriptionPicker();
         }
         #endregion
-
-        public void areReportsPresent()
-        {
-            string reportsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
-            string[] requiredFiles = { "AzureMigrate_Assessment_Core_Report.xlsx", "AzureMigrate_Assessment_Clash_Report.xlsx", "AzureMigrate_Discovery_Report.xlsx", "AzureMigrate_Assessment_Opportunity_Report.xlsx" };
-
-            bool allFilesPresent = requiredFiles.All(fileName => File.Exists(Path.Combine(reportsDirectory, fileName)));
-
-            if (allFilesPresent)
-            {
-                FilesPresent.Text = $"**You can proceed to generate the summary using already available reports. If you wish to regenerate assessment and business case reports, please enter the project details and proceed.**";
-            }
-        }
 
         private async Task<bool> DisplayAlert(string title, string content, string primaryButtonText, string secondaryButtonText = null)
         {

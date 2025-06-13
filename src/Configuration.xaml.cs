@@ -445,9 +445,9 @@ namespace AzureMigrateExplore
         #region Utilities
         private bool IsDiscoveryReportPresent()
         {
-            if (!Directory.Exists(DiscoveryReportConstants.DiscoveryReportDirectory))
+            if (!Directory.Exists(UtilityFunctions.GetReportsDirectory()))
                 return false;
-            if (!File.Exists(DiscoveryReportConstants.DiscoveryReportPath))
+            if (!File.Exists(UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName))
                 return false;
 
             return true;

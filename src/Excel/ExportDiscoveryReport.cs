@@ -29,7 +29,7 @@ namespace Azure.Migrate.Explore.Excel
             GenerateDiscoveryReportWorksheet();
             GeneratevCenterHostReportWorksheet();
 
-            DiscoveryWb.SaveAs(DiscoveryReportConstants.DiscoveryReportPath);
+            DiscoveryWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName);
         }
 
         private void GeneratePropertyWorksheet()

@@ -112,7 +112,7 @@ namespace Azure.Migrate.Explore.Excel
             Generate_YOY_Emissions_Worksheet();
             Generate_Emissions_Details_Worksheet();
 
-            CoreWb.SaveAs(CoreReportConstants.CoreReportPath);
+            CoreWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + CoreReportConstants.CoreReportName);
         }
 
         private void Generate_Properties_Worksheet()

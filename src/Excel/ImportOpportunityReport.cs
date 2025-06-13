@@ -35,10 +35,13 @@ namespace Azure.Migrate.Explore.Excel
 
         public void ImportOpportunityReportData()
         {
-            UtilityFunctions.ValidateReportPresence(OpportunityReportConstants.OpportunityReportDirectory, OpportunityReportConstants.OpportunityReportPath);
-            logger.LogInformation($"Validated the presence of file {OpportunityReportConstants.OpportunityReportPath}");
+            UtilityFunctions.ValidateReportPresence(UtilityFunctions.GetReportsDirectory(), UtilityFunctions.GetReportsDirectory() +
+                "\\" + OpportunityReportConstants.OpportunityReportName);
+            logger.LogInformation($"Validated the presence of file {UtilityFunctions.GetReportsDirectory() + "\\" + 
+                OpportunityReportConstants.OpportunityReportName}");
 
-            using (var fileStream = new FileStream(OpportunityReportConstants.OpportunityReportPath, FileMode.Open, FileAccess.Read)) // only read the data
+            using (var fileStream = new FileStream(UtilityFunctions.GetReportsDirectory() + "\\" + 
+                OpportunityReportConstants.OpportunityReportName, FileMode.Open, FileAccess.Read)) // only read the data
             {
                 using (var opportunityReportWb = new XLWorkbook(fileStream))
                 {

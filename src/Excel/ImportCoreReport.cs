@@ -81,10 +81,13 @@ namespace Azure.Migrate.Explore.Excel
 
         public void ImportCoreReportData()
         {
-            UtilityFunctions.ValidateReportPresence(CoreReportConstants.CoreReportDirectory, CoreReportConstants.CoreReportPath);
-            logger.LogInformation($"Validated the presence of file {CoreReportConstants.CoreReportPath}");
+            UtilityFunctions.ValidateReportPresence(UtilityFunctions.GetReportsDirectory(), UtilityFunctions.GetReportsDirectory()
+                + "\\" + CoreReportConstants.CoreReportName);
+            logger.LogInformation($"Validated the presence of file {UtilityFunctions.GetReportsDirectory() + "\\" 
+                + CoreReportConstants.CoreReportName}");
 
-            using (var fileStream = new FileStream(CoreReportConstants.CoreReportPath, FileMode.Open, FileAccess.Read)) // only read the data
+            using (var fileStream = new FileStream(UtilityFunctions.GetReportsDirectory() + "\\"
+                + CoreReportConstants.CoreReportName, FileMode.Open, FileAccess.Read)) // only read the data
             {
                 using (var coreReportWb = new XLWorkbook(fileStream))
                 {

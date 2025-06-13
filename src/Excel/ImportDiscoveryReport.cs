@@ -36,7 +36,8 @@ namespace Azure.Migrate.Explore.Excel
 
             ValidateDiscoveryReportPresence();
 
-            using (var fileStream = new FileStream(DiscoveryReportConstants.DiscoveryReportPath, FileMode.Open, FileAccess.Read)) // only read the data
+            using (var fileStream = new FileStream(UtilityFunctions.GetReportsDirectory() + "\\" 
+                + DiscoveryReportConstants.DiscoveryReportName, FileMode.Open, FileAccess.Read)) // only read the data
             {
                 using (var discoveryWb = new XLWorkbook(fileStream))
                 {
@@ -55,10 +56,10 @@ namespace Azure.Migrate.Explore.Excel
 
         private void ValidateDiscoveryReportPresence()
         {
-            if (!Directory.Exists(DiscoveryReportConstants.DiscoveryReportDirectory))
-                throw new Exception($"Discovery report directory {DiscoveryReportConstants.DiscoveryReportDirectory} not found.");
-            if (!File.Exists(DiscoveryReportConstants.DiscoveryReportPath))
-                throw new Exception($"Discovery report file {DiscoveryReportConstants.DiscoveryReportPath} not found");
+            if (!Directory.Exists(UtilityFunctions.GetReportsDirectory()))
+                throw new Exception($"Discovery report directory {UtilityFunctions.GetReportsDirectory()} not found.");
+            if (!File.Exists(UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName))
+                throw new Exception($"Discovery report file {UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName} not found");
 
             logger.LogInformation("Validated the presence of Discovery Report");
         }

@@ -108,7 +108,7 @@ namespace Azure.Migrate.Explore.Discovery
         private void DeletePreviousDiscoveryReport()
         {
             UserInputObj.LoggerObj.LogInformation("Deleting previous discovery reports, if any");
-            var directory = DiscoveryReportConstants.DiscoveryReportDirectory;
+            var directory = UtilityFunctions.GetReportsDirectory();
 
             if (!Directory.Exists(directory))
             {

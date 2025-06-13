@@ -7,9 +7,7 @@ namespace Azure.Migrate.Explore.Common
 {
     public class DiscoveryReportConstants
     {
-        public static readonly string DiscoveryReportDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
         public const string DiscoveryReportName = "AzureMigrate_Discovery_Report.xlsx";
-        public static readonly string DiscoveryReportPath = Path.Combine(DiscoveryReportDirectory, DiscoveryReportName);
         public const string PropertiesTabName = "Properties";
         public const string Discovery_Report_TabName = "Discovery_Report";
         public const string vCenterHost_Report_TabName = "vCenter_Host_Report";

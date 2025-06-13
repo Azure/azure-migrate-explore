@@ -36,6 +36,7 @@ using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
 using DocumentFormat.OpenXml.Math;
 using System.Reactive.Concurrency;
+using System.Linq;
 
 namespace AzureMigrateExplore
 {
@@ -54,6 +55,7 @@ namespace AzureMigrateExplore
         private NavigationViewItem? CurrentButtonTab;
         private WebPubSubClient _webPubSubClient;
         private bool HasImportInventory = false;
+        private string selectedDirectory = string.Empty;
         private bool HasApplianceInventory = false;
 
         private DispatcherTimer _keepAliveTimer;
@@ -101,20 +103,151 @@ namespace AzureMigrateExplore
             SigningInDialog.ShowAsync();
             InitializeProjectDetails();
             await ProjectDetailsObj.BeginAuthentication();
-
-            if(CopilotQuestionnaireFormObj.areReportsPresent())
+            SigningInDialog.Hide();
+            
+            // Ask user if they want a new instance or use existing
+            ContentDialog instanceTypeDialog = new ContentDialog
             {
-                HandleTabChange(CopilotQuestionnaireFormObj, CopilotQuestionnaireTabButton);
-                DisableAssessmentSettingsTabButton();
-                DisableConfigurationTabButton();
+                Title = "Azure Migrate Explore",
+                Content = "Would you like to create a new instance or use an existing one?",
+                PrimaryButtonText = "Use Existing",
+                SecondaryButtonText = "Create New",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = this.Content.XamlRoot
+            };
+            
+            var instanceChoice = await instanceTypeDialog.ShowAsync();
+            
+            // If the user cancels, return to welcome screen
+            if (instanceChoice == ContentDialogResult.None)
+            {
+                return;
+            }
+            
+            // If user wants to create a new instance
+            if (instanceChoice == ContentDialogResult.Secondary)
+            {
+                HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
+                WelcomeTabButton.Visibility = Visibility.Collapsed;
+                NavView.Visibility = Visibility.Visible;
+                return;
+            }
+            
+            // If user wants to use existing instance, show directory selection
+            var directoriesList = getCustomerDirectories();
+            
+            // Display directories in a dropdown for user selection
+            if (directoriesList.Count > 0)
+            {
+                ContentDialog directoryDialog = new ContentDialog
+                {
+                    Title = "Select Customer Directory",
+                    Content = new StackPanel(),
+                    PrimaryButtonText = "Select",
+                    CloseButtonText = "Cancel",
+                    DefaultButton = ContentDialogButton.Primary,
+                    XamlRoot = this.Content.XamlRoot
+                };
+                
+                ComboBox directoriesComboBox = new ComboBox
+                {
+                    PlaceholderText = "Choose a directory",
+                    Width = 300,
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                
+                // Add directory names to the dropdown
+                foreach (var dir in directoriesList)
+                {
+                    directoriesComboBox.Items.Add(Path.GetFileName(dir));
+                }
+                
+                // Add the dropdown to the dialog's content
+                var panel = directoryDialog.Content as StackPanel;
+                panel.Children.Add(new TextBlock 
+                { 
+                    Text = "Please select a customer directory to continue:", 
+                    Margin = new Thickness(0, 0, 0, 10) 
+                });
+                panel.Children.Add(directoriesComboBox);
+                
+                // Show the dialog and get the result
+                var result = await directoryDialog.ShowAsync();
+
+                // Process the selection
+                if (result == ContentDialogResult.Primary && directoriesComboBox.SelectedItem != null)
+                {
+                    // Use the selected directory
+                    string selectedDirName = directoriesComboBox.SelectedItem.ToString();
+                    string selectedDirPath = directoriesList.First(d => Path.GetFileName(d) == selectedDirName);
+
+                    // Set the selected directory as your working directory
+                    this.selectedDirectory = selectedDirPath;
+                    UtilityFunctions.SetSelectedDirectory(selectedDirPath);
+
+                    bool hasDiscoveryReport = File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Discovery_Report.xlsx"));
+                    bool hasAllFourReports = hasDiscoveryReport &&
+                                            File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Core_Report.xlsx")) &&
+                                            File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Clash_Report.xlsx")) &&
+                                            File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Opportunity_Report.xlsx"));
+                    
+                    // Navigate based on available reports
+                    if (hasAllFourReports)
+                    {
+                        // If all four reports exist, go to Copilot Questionnaire
+                        HandleTabChange(CopilotQuestionnaireFormObj, CopilotQuestionnaireTabButton);
+                        DisableAssessmentSettingsTabButton();
+                        DisableConfigurationTabButton();
+                    }
+                    else
+                    {
+                        // If only discovery report exists, go to Configuration
+                        HandleTabChange(ConfigurationObj, ConfigurationTabButton);
+                        EnableAssessmentSettingsTabButton();
+                    }
+                }
+                else
+                {
+                    // User canceled, go to default view
+                    HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
+                }
             }
             else
             {
+                // No directories found
+                await DisplayAlert("No Directories", "No customer directories were found. Creating a new setup.", "OK");
                 HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
             }
+            
             WelcomeTabButton.Visibility = Visibility.Collapsed;
-            SigningInDialog.Hide();
             NavView.Visibility = Visibility.Visible;
+        }       
+        public List<string> getCustomerDirectories()
+        {
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var allSubdirectories = Directory.GetDirectories(baseDirectory).ToList();
+            var validDirectories = new List<string>();
+
+            foreach (var dir in allSubdirectories)
+            {
+                // Check if directory has the discovery report
+                bool hasDiscoveryReport = File.Exists(Path.Combine(dir, "AzureMigrate_Discovery_Report.xlsx"));
+
+                // Check if directory has all four reports
+                bool hasAllFourReports = hasDiscoveryReport &&
+                                        File.Exists(Path.Combine(dir, "AzureMigrate_Assessment_Core_Report.xlsx")) &&
+                                        File.Exists(Path.Combine(dir, "AzureMigrate_Assessment_Clash_Report.xlsx")) &&
+                                        File.Exists(Path.Combine(dir, "AzureMigrate_Assessment_Opportunity_Report.xlsx"));
+
+                // Add directory to valid directories if it has just the discovery report or all four reports
+                if (hasDiscoveryReport || hasAllFourReports)
+                {
+                    validDirectories.Add(dir);
+                }
+            }
+
+            return validDirectories;
         }
 
         private void WelcomeLogin()

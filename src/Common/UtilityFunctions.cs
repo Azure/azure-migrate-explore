@@ -18,6 +18,13 @@ namespace Azure.Migrate.Explore.Common
 {
     public static class UtilityFunctions
     {
+        private static string selectedDirectory="";
+
+        public static void SetSelectedDirectory(string directory)
+        {
+            selectedDirectory = directory;
+        }
+
         public static T FindFirstExceptionOfType<T>(Exception e)
             where T : Exception
         {
@@ -357,22 +364,30 @@ namespace Azure.Migrate.Explore.Common
             }
         }
 
+        public static string GetReportsDirectory()
+        {
+            return selectedDirectory;
+        }
+
         public static bool CheckCopilotQuestionnaireTabVisibility()
         {
-            string reportsPath = Path.Combine(AppContext.BaseDirectory, "Reports");
+            string reportsPath = Path.Combine(AppContext.BaseDirectory, selectedDirectory);
             bool isDiscoveryReportPresent = IsReportPresentForTabVisibility(
                 reportsPath,
-                DiscoveryReportConstants.DiscoveryReportPath
+                selectedDirectory + "\\" +
+                DiscoveryReportConstants.DiscoveryReportName
             );
 
             bool isCoreReportPresent = IsReportPresentForTabVisibility(
                 reportsPath,
-                CoreReportConstants.CoreReportPath
+                selectedDirectory + "\\" +
+                CoreReportConstants.CoreReportName
             );
 
             bool isOpportunityReportPresent = IsReportPresentForTabVisibility(
                 reportsPath,
-                OpportunityReportConstants.OpportunityReportPath
+                selectedDirectory + "\\" +
+                OpportunityReportConstants.OpportunityReportName
             );
 
             return (isDiscoveryReportPresent && isCoreReportPresent && isOpportunityReportPresent);

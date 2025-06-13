@@ -8,9 +8,7 @@ namespace Azure.Migrate.Explore.Common
     public class OpportunityReportConstants
     {
         public const string AVS_IaaS_Rehost_Perf_TabName = "AVS_IaaS_Rehost_Perf";
-        public static readonly string OpportunityReportDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
         public const string OpportunityReportName = "AzureMigrate_Assessment_Opportunity_Report.xlsx";
-        public static readonly string OpportunityReportPath = Path.Combine(OpportunityReportDirectory, OpportunityReportName);
 
         public const string SQL_MI_Issues_and_Warnings_TabName = "SQL_MI_Issues_and_Warnings";
         public static readonly List<string> SQL_MI_Issues_and_Warnings_Columns = new List<string>

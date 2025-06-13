@@ -69,22 +69,6 @@ namespace AzureMigrateExplore
         }
         #endregion
 
-        public bool areReportsPresent()
-        {
-            string reportsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
-            string[] requiredFiles = { "AzureMigrate_Assessment_Core_Report.xlsx", "AzureMigrate_Assessment_Clash_Report.xlsx", "AzureMigrate_Discovery_Report.xlsx", "AzureMigrate_Assessment_Opportunity_Report.xlsx" };
-
-            bool allFilesPresent = requiredFiles.All(fileName => File.Exists(Path.Combine(reportsDirectory, fileName)));
-
-            if (allFilesPresent)
-            {
-                FilesPresent.Text = $"**You can proceed to generate the summary using already available reports. If you wish to regenerate assessment and business case reports, please navigate to the Project Details and proceed.**";
-                return true;
-            }
-
-            return false;
-        }
-
         private void AIAgreementCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             if (AIAgreementCheckBox.IsChecked == true && ValidateCustomerIndustry() && ValidateCustomerName() && ValidateMotivation())
