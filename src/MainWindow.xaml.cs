@@ -633,7 +633,31 @@ namespace AzureMigrateExplore
             {
                 await AzureAuthenticationHandler.Logout();
                 await DisplayAlert("Azure Migrate Explore", "You have been signed out successfully.", "OK");
-                Application.Current.Exit();
+
+                this.InitializeComponent();
+                try
+                {
+                    WelcomeLogin();
+                    WelcomeObj = new Welcome();
+                    WelcomeObj.LoginButtonClicked += Welcome_LoginButtonClicked;
+                    InitializeConfiguration();
+                    InitializeAssessmentSettings();
+                    InitializeCopilotQuestionnaire();
+                    InitializeChatPage();
+
+                    DisableOverlayGrid();
+                    HandleTabChange(WelcomeObj, WelcomeTabButton);
+
+                    ChatPageTabButton.IsEnabled = false;
+
+                    var VersionLabel = GetVersion();
+                    NavView.PaneTitle = "Azure Migrate Explore\n" + VersionLabel;
+                }
+                catch (Exception ex)
+                {
+                    DisplayAlert("Initialization Error", $"An error occurred during initialization: {ex.Message}", "OK");
+                    Application.Current.Exit();
+                }
             }
             else
             {
