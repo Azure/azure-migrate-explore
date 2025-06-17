@@ -41,7 +41,7 @@ namespace Azure.Migrate.Explore.Common
         public const string MasterSiteApiVersion = @"2020-11-11-preview";
         public const string DiscoverySitesApiVersion = @"2020-08-01-preview";
         public const string ImportSitesApiVersion = @"2023-06-06";
-        public const string AssessmentMachineListApiVersion = @"2023-03-03";
+        public const string AssessmentMachineListApiVersion = @"2024-01-15";
         public const string AvsAssessmentApiVersion = @"2023-05-01-preview";
         public const string BusinessCaseApiVersion = @"2024-03-03-preview";
         public const string QueryParameterApiVersion = @"api-version";

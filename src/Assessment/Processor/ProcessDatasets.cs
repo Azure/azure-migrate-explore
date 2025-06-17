@@ -50,7 +50,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Dictionary<string, AzureWebAppDataset> azureWebAppData,
                 Dictionary<string, AzureSQLInstanceDataset> azureSQLInstancesData,
                 Dictionary<string, AzureSQLMachineDataset> azureSQLMachinesData,
-                BusinessCaseDataset businessCaseData,
+                BusinessCaseDataset businessCaseData, 
                 Dictionary<string, string> decommissionedMachinesData,
 
                 UserInput userInputObj
@@ -342,12 +342,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(VMPerfDataKvp.Value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = VMPerfDataKvp.Value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -848,12 +848,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Standard) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.StandardSSD) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.PremiumV2) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Ultra) + UtilityFunctions.GetDiskTypeCount(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Standard) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Standard);
-                obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.StandardSSD) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForStandardSsdDisks =  UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.StandardSSD) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.StandardSSD);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.PremiumV2) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMLogDisks, RecommendedDiskTypes.Ultra) + UtilityFunctions.GetDiskTypeStorageCost(value.AzureSQLVMDataDisks, RecommendedDiskTypes.Ultra);
 
                 obj.SQLEdition = value.SQLEdition;
@@ -970,12 +970,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -1069,12 +1069,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.GroupName = value.GroupName;
@@ -1378,7 +1378,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 WebApp_IaaS_Server_Rehost_Perf_List = new List<WebApp_IaaS_Server_Rehost_Perf>();
             if (AzureVM_Opportunity_Perf == null)
                 AzureVM_Opportunity_Perf = new HashSet<string>();
-
+            
             foreach (var discoveredMachineId in AzureWebApp_IaaS)
             {
                 if (!AzureVMPerformanceBasedMachinesData.ContainsKey(discoveredMachineId))
@@ -1432,12 +1432,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -1533,12 +1533,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.GroupName = value.GroupName;
@@ -1705,12 +1705,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -1811,12 +1811,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.GroupName = value.GroupName;
@@ -1915,12 +1915,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -2015,12 +2015,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.GroupName = value.GroupName;
@@ -2110,12 +2110,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
@@ -2201,12 +2201,12 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.StandardHddDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Standard);
                 obj.StandardSsdDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium);
+                obj.PremiumDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.UltraDisks = UtilityFunctions.GetDiskTypeCount(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.MonthlyStorageCostForStandardHddDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Standard);
                 obj.MonthlyStorageCostForStandardSsdDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.StandardSSD);
-                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium);
+                obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
                 obj.GroupName = value.GroupName;
@@ -2222,7 +2222,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         private void Process_Business_Case_Model(
             Business_Case Business_Case_Data,
             List<SQL_MI_PaaS> SQL_MI_PaaS_List,
-            List<SQL_IaaS_Instance_Rehost_Perf> SQL_IaaS_Instance_Rehost_Perf_List,
+            List<SQL_IaaS_Instance_Rehost_Perf> SQL_IaaS_Instance_Rehost_Perf_List, 
             List<SQL_IaaS_Server_Rehost_Perf> SQL_IaaS_Server_Rehost_Perf_List,
             List<WebApp_PaaS> WebApp_PaaS_List,
             List<WebApp_IaaS_Server_Rehost_Perf> WebApp_IaaS_Server_Rehost_Perf_List,
@@ -2240,7 +2240,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.OnPremisesIaaSCost.ITStaffCost = BusinessCaseData.OnPremIaaSCostDetails.ITStaffCost;
             Business_Case_Data.OnPremisesIaaSCost.FacilitiesCost = BusinessCaseData.OnPremIaaSCostDetails.FacilitiesCost;
 
-            Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost =
+            Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost = 
                 BusinessCaseData.OnPremPaaSCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost;
             Business_Case_Data.OnPremisesPaaSCost.EsuLicenseCost = BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost;
             Business_Case_Data.OnPremisesPaaSCost.StorageCost = BusinessCaseData.OnPremPaaSCostDetails.StorageCost;
@@ -2249,7 +2249,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.OnPremisesPaaSCost.ITStaffCost = BusinessCaseData.OnPremPaaSCostDetails.ITStaffCost;
             Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost = BusinessCaseData.OnPremPaaSCostDetails.FacilitiesCost;
 
-            Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost =
+            Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost = 
                 BusinessCaseData.OnPremAvsCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost;
             Business_Case_Data.OnPremisesAvsCost.EsuLicenseCost = BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost;
             Business_Case_Data.OnPremisesAvsCost.StorageCost = BusinessCaseData.OnPremAvsCostDetails.StorageCost;
@@ -2323,7 +2323,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzurePaaSCost.ComputeLicenseCost = AzurePaaSCalculator.GetTotalComputeCost() * 12.0;
             Business_Case_Data.AzurePaaSCost.EsuLicenseCost = 0;
             Business_Case_Data.AzurePaaSCost.StorageCost = AzurePaaSCalculator.GetTotalStorageCost() * 12.0;
-            Business_Case_Data.AzurePaaSCost.NetworkCost =
+            Business_Case_Data.AzurePaaSCost.NetworkCost = 
                 0.05 * (Business_Case_Data.AzurePaaSCost.ComputeLicenseCost + Business_Case_Data.AzurePaaSCost.StorageCost);
             Business_Case_Data.AzurePaaSCost.SecurityCost = AzurePaaSCalculator.GetTotalSecurityCost() * 12.0;
             Business_Case_Data.AzurePaaSCost.ITStaffCost = BusinessCaseData.AzurePaaSCostDetails.ITStaffCost;
@@ -2338,8 +2338,8 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzureAvsCost.ComputeLicenseCost = AzureAvsCalculator.GetTotalAvsComputeCost() * 12.0;
             Business_Case_Data.AzureAvsCost.EsuLicenseCost = BusinessCaseData.AzureAvsCostDetails.EsuLicenseCost;
             Business_Case_Data.AzureAvsCost.StorageCost = BusinessCaseData.AzureAvsCostDetails.StorageCost;
-            Business_Case_Data.AzureAvsCost.NetworkCost =
-                BusinessCaseData.AzureAvsCostDetails.NetworkCost +
+            Business_Case_Data.AzureAvsCost.NetworkCost = 
+                BusinessCaseData.AzureAvsCostDetails.NetworkCost + 
                 0.05 * (Business_Case_Data.AzureAvsCost.ComputeLicenseCost - BusinessCaseData.AzureAvsCostDetails.ComputeLicenseCost);
             Business_Case_Data.AzureAvsCost.ITStaffCost = BusinessCaseData.AzureAvsCostDetails.ITStaffCost;
             Business_Case_Data.AzureAvsCost.SecurityCost = BusinessCaseData.AzureAvsCostDetails.SecurityCost;

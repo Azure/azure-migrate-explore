@@ -27,6 +27,7 @@ using Azure.Migrate.Explore.Assessment;
 using static Azure.Migrate.Explore.Discovery.Discover;
 using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
+using Microsoft.IdentityModel.Tokens;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -439,7 +440,12 @@ namespace AzureMigrateExplore
                     string folder= UtilityFunctions.GetReportsDirectory();
                     string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
 
-                    processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                    if(UserInputObj.BusinessProposal.Equals(BusinessProposal.AVS.ToString())){
+                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open AVS_Migration PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                    } 
+                    else {
+                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                    }
                 }
                 else if (!UserInputObj.WorkflowObj.IsExpressWorkflow && !string.IsNullOrEmpty(UserInputObj.WorkflowObj.Module))
                 {
@@ -448,12 +454,18 @@ namespace AzureMigrateExplore
 
                     if (UserInputObj.WorkflowObj.Module.Equals("Discovery")) // Custom Discovery completed
                         processInfoMessage = $"\"Discovered_VMs\" report has been generated at {UtilityFunctions.GetReportsDirectory()}.\nYou can now do the required customizations in the report by specifying the environment, moving servers out of scope by deleting rows in the report, and then run assessment on the customized discovery scope.";
-                    else if (UserInputObj.WorkflowObj.Module.Equals("Assessment")) 
-                    {
-                        // Custom Assessment completed
+                    else if (UserInputObj.WorkflowObj.Module.Equals("Assessment"))
+                    { // Custom Assessment completed
                         string folder = UtilityFunctions.GetReportsDirectory();
                         string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
-                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        if (UserInputObj.BusinessProposal.Equals(BusinessProposal.AVS.ToString()))
+                        {
+                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open AVS_Migration PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        }
+                        else
+                        {
+                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        }
                     }
                     else
                     { 

@@ -93,6 +93,14 @@ stages:
             Contents: '**\Azure_Migration_and_Modernization.pbit'
 
         - task: CopyFiles@2
+          displayName: 'Copy AVS PBIT to AzMigExport'
+          inputs:
+            SourceFolder: '$(CopySourceFolder)'
+            TargetFolder: '$(CopyTargetFolder)'
+            OverWrite: true
+            Contents: '**\AVS_Migration.pbit'
+
+        - task: CopyFiles@2
           displayName: 'Copy README to AzMigExport'
           inputs:
             SourceFolder: '$(CopySourceFolder)'
