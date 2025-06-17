@@ -18,7 +18,7 @@ namespace Azure.Migrate.Explore.Common
 {
     public static class UtilityFunctions
     {
-        private static string selectedDirectory="";
+        private static string selectedDirectory = "";
 
         public static void SetSelectedDirectory(string directory)
         {

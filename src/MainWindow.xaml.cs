@@ -202,9 +202,8 @@ namespace AzureMigrateExplore
                     }
                     else
                     {
-                        // If only discovery report exists, go to Configuration
-                        HandleTabChange(ConfigurationObj, ConfigurationTabButton);
-                        EnableAssessmentSettingsTabButton();
+                        // If only discovery report exists, go to project details to go through custom assessment flow
+                        HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
                     }
                 }
                 else
@@ -452,7 +451,7 @@ namespace AzureMigrateExplore
             GlobalConnection.PubSubUrl = pubSubResponse.PubSubEndpoint;
             GlobalConnection.SessionId = pubSubResponse.Id;
 
-            string reportsDirectory = Path.Combine(AppContext.BaseDirectory, "Reports");
+            string reportsDirectory = selectedDirectory;
             string[] reportFiles = new string[]
             {
                 Path.Combine(reportsDirectory, "AzureMigrate_Assessment_Core_Report.xlsx"),

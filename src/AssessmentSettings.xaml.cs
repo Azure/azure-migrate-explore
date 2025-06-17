@@ -436,8 +436,10 @@ namespace AzureMigrateExplore
                 {
                     // Send notification to Windows notification center
                     SendToast("Assessment Completed", "Azure Migrate data analysis complete!");
+                    string folder= UtilityFunctions.GetReportsDirectory();
+                    string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
 
-                    processInfoMessage = $"Assessment has been completed. You can find the excel reports in the Reports folder at {Directory.GetCurrentDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                    processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
                 }
                 else if (!UserInputObj.WorkflowObj.IsExpressWorkflow && !string.IsNullOrEmpty(UserInputObj.WorkflowObj.Module))
                 {
@@ -445,11 +447,18 @@ namespace AzureMigrateExplore
                     SendToast("Assessment Completed", "Azure Migrate data analysis complete!");
 
                     if (UserInputObj.WorkflowObj.Module.Equals("Discovery")) // Custom Discovery completed
-                        processInfoMessage = $"\"Discovered_VMs\" report has been generated at {Directory.GetCurrentDirectory()}\\Reports.\nYou can now do the required customizations in the report by specifying the environment, moving servers out of scope by deleting rows in the report, and then run assessment on the customized discovery scope.";
-                    else if (UserInputObj.WorkflowObj.Module.Equals("Assessment")) // Custom Assessment completed
-                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the Reports folder at {Directory.GetCurrentDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        processInfoMessage = $"\"Discovered_VMs\" report has been generated at {UtilityFunctions.GetReportsDirectory()}.\nYou can now do the required customizations in the report by specifying the environment, moving servers out of scope by deleting rows in the report, and then run assessment on the customized discovery scope.";
+                    else if (UserInputObj.WorkflowObj.Module.Equals("Assessment")) 
+                    {
+                        // Custom Assessment completed
+                        string folder = UtilityFunctions.GetReportsDirectory();
+                        string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
+                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                    }
                     else
+                    { 
                         processInfoMessage = "Unable to generate informational message regarding process completion, please review the log file.";
+                    }
                 }
                 else
                 {

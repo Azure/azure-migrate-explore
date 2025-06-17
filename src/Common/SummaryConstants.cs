@@ -7,7 +7,7 @@ namespace Azure.Migrate.Explore.Common
 {
     public class SummaryConstants
     {
-        public static readonly string SummaryDirectory = Path.Combine(AppContext.BaseDirectory, "Summary");
+        public static readonly string SummaryDirectory = UtilityFunctions.GetReportsDirectory();
         public const string BackSlash = @"\";
         public const string SummaryPath = "AzureMigrateExploreInsights";
     }

@@ -77,8 +77,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             AzureAvsCalculator = new AzureAvsCostCalculator();
 
             UserInputObj = userInputObj;
-            var newSelectedDirectory = userInputObj.TenantId + "_" + userInputObj.AzureMigrateProjectName + "_" + $"{DateTime.Now:yyyy_MM_dd_HH_mm_ss}";
-            UtilityFunctions.SetSelectedDirectory(newSelectedDirectory);
         }
 
         public void InititateProcessing()
