@@ -45,12 +45,6 @@ namespace Azure.Migrate.Explore.Models
             PreferredOptimizationObj = new PreferredOptimization(optimizationPreference, assessSqlServicesSeparately);
 
             LoggerObj = new LogHandler();
-            
-            if (UtilityFunctions.GetReportsDirectory() == "")
-            {
-                var newSelectedDirectory = TenantId + "_" + AzureMigrateProjectName.Value + "_" + $"{DateTime.Now:yyyy_MM_dd_HH_mm_ss}";
-                UtilityFunctions.SetSelectedDirectory(newSelectedDirectory);
-            }
         }
 
         // Project details tab

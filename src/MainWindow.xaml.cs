@@ -109,7 +109,7 @@ namespace AzureMigrateExplore
             ContentDialog instanceTypeDialog = new ContentDialog
             {
                 Title = "Azure Migrate Explore",
-                Content = "Would you like to create a new instance or use an existing one?",
+                Content = "Would you like to create new reports or use existing ones?",
                 PrimaryButtonText = "Use Existing",
                 SecondaryButtonText = "Create New",
                 CloseButtonText = "Cancel",
@@ -118,6 +118,8 @@ namespace AzureMigrateExplore
             };
             
             var instanceChoice = await instanceTypeDialog.ShowAsync();
+            // If user wants to use existing instance, show directory selection
+            var directoriesList = getCustomerDirectories();
             
             // If the user cancels, return to welcome screen
             if (instanceChoice == ContentDialogResult.None)
@@ -128,14 +130,98 @@ namespace AzureMigrateExplore
             // If user wants to create a new instance
             if (instanceChoice == ContentDialogResult.Secondary)
             {
+                bool validNameProvided = false;
+                string instanceName = "";
+                
+                while (!validNameProvided)
+                {
+                    // Ask for instance name
+                    TextBox nameInputBox = new TextBox 
+                    { 
+                        PlaceholderText = "Please enter a new name for this instance",
+                        Text = instanceName // Keep previous input if re-prompting
+                    };
+                    
+                    ContentDialog instanceNameDialog = new ContentDialog
+                    {
+                        Title = "Enter Instance Name",
+                        Content = nameInputBox,
+                        PrimaryButtonText = "OK",
+                        SecondaryButtonText = "Cancel",
+                        DefaultButton = ContentDialogButton.Primary,
+                        XamlRoot = this.Content.XamlRoot
+                    };
+
+                    var instanceNameResult = await instanceNameDialog.ShowAsync();
+                    
+                    if (instanceNameResult == ContentDialogResult.Primary)
+                    {
+                        instanceName = nameInputBox.Text.Trim();
+                        
+                        if (string.IsNullOrWhiteSpace(instanceName))
+                        {
+                            ContentDialog errorDialog = new ContentDialog
+                            {
+                                Title = "Error",
+                                Content = "Instance name cannot be empty.",
+                                PrimaryButtonText = "OK",
+                                XamlRoot = this.Content.XamlRoot
+                            };
+                            await errorDialog.ShowAsync();
+                            // Continue loop to prompt again
+                        }
+                        else
+                        {
+                            // Check if this name already exists in directoriesList
+                            bool nameExists = false;
+                            foreach (var dir in directoriesList)
+                            {
+                                string folderName = Path.GetFileName(dir);
+                                if (string.Equals(folderName, instanceName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    nameExists = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (nameExists)
+                            {
+                                ContentDialog duplicateDialog = new ContentDialog
+                                {
+                                    Title = "Name Already Exists",
+                                    Content = "An instance with this name already exists. Please choose a different name.",
+                                    PrimaryButtonText = "OK",
+                                    XamlRoot = this.Content.XamlRoot
+                                };
+                                await duplicateDialog.ShowAsync();
+                                // Continue loop to prompt again
+                            }
+                            else
+                            {
+                                // Valid new name provided
+                                validNameProvided = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // User cancelled the name dialog
+                        return; // Exit without proceeding
+                    }
+                }
+
+                var newInstanceDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Project Reports\\", instanceName);
+
+                // Set the instance directory as the selected directory
+                this.selectedDirectory = newInstanceDirectory;
+                UtilityFunctions.SetSelectedDirectory(newInstanceDirectory);
+                
+                // Continue with your existing flow
                 HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
                 WelcomeTabButton.Visibility = Visibility.Collapsed;
                 NavView.Visibility = Visibility.Visible;
                 return;
             }
-            
-            // If user wants to use existing instance, show directory selection
-            var directoriesList = getCustomerDirectories();
             
             // Display directories in a dropdown for user selection
             if (directoriesList.Count > 0)
@@ -224,7 +310,7 @@ namespace AzureMigrateExplore
         }       
         public List<string> getCustomerDirectories()
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory + "Project Reports\\";
             var allSubdirectories = Directory.GetDirectories(baseDirectory).ToList();
             var validDirectories = new List<string>();
 
