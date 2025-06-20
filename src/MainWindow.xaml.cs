@@ -70,6 +70,11 @@ namespace AzureMigrateExplore
             try
             {
                 WelcomeLogin();
+                var baseDirectory = AppContext.BaseDirectory;
+                if (!Directory.Exists(Path.Combine(baseDirectory, "Project Reports")))
+                {
+                    Directory.CreateDirectory(Path.Combine(baseDirectory, "Project Reports"));
+                }
                 WelcomeObj = new Welcome();
                 WelcomeObj.LoginButtonClicked += Welcome_LoginButtonClicked;
                 InitializeConfiguration();
@@ -277,7 +282,7 @@ namespace AzureMigrateExplore
                                             File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Core_Report.xlsx")) &&
                                             File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Clash_Report.xlsx")) &&
                                             File.Exists(Path.Combine(selectedDirPath, "AzureMigrate_Assessment_Opportunity_Report.xlsx"));
-                    
+
                     // Navigate based on available reports
                     if (hasAllFourReports)
                     {
@@ -291,22 +296,22 @@ namespace AzureMigrateExplore
                         // If only discovery report exists, go to project details to go through custom assessment flow
                         HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
                     }
+                    WelcomeTabButton.Visibility = Visibility.Collapsed;
+                    NavView.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    // User canceled, go to default view
-                    HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
+                    // User canceled, return to welcome screen
+                    HandleTabChange(WelcomeObj, WelcomeTabButton);
+                    return; // Exit the method to prevent navigating to project details
                 }
             }
             else
             {
                 // No directories found
                 await DisplayAlert("No Directories", "No customer directories were found. Creating a new setup.", "OK");
-                HandleTabChange(ProjectDetailsObj, ProjectDetailsTabButton);
+                HandleTabChange(WelcomeObj, WelcomeTabButton);
             }
-            
-            WelcomeTabButton.Visibility = Visibility.Collapsed;
-            NavView.Visibility = Visibility.Visible;
         }       
         public List<string> getCustomerDirectories()
         {
