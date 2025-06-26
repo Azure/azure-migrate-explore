@@ -441,10 +441,10 @@ namespace AzureMigrateExplore
                     string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
 
                     if(UserInputObj.BusinessProposal.Equals(BusinessProposal.AVS.ToString())){
-                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open AVS_Migration PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\n\nAfter reviewing the reports you can open AVS_Migration PowerBI template at {Directory.GetCurrentDirectory()}, and export PowerBI as a PowerPoint or PDF presentation.";
                     } 
                     else {
-                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                        processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\n\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template at {Directory.GetCurrentDirectory()}, and export PowerBI as a PowerPoint or PDF presentation.";
                     }
                 }
                 else if (!UserInputObj.WorkflowObj.IsExpressWorkflow && !string.IsNullOrEmpty(UserInputObj.WorkflowObj.Module))
@@ -460,11 +460,11 @@ namespace AzureMigrateExplore
                         string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
                         if (UserInputObj.BusinessProposal.Equals(BusinessProposal.AVS.ToString()))
                         {
-                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open AVS_Migration PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\n\nAfter reviewing the reports you can open AVS_Migration PowerBI template at {Directory.GetCurrentDirectory()}, and export PowerBI as a PowerPoint or PDF presentation.";
                         }
                         else
                         {
-                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template, and export PowerBI as a PowerPoint or PDF presentation.";
+                            processInfoMessage = $"Assessment has been completed. You can find the excel reports in the {lastFolderName} folder at {UtilityFunctions.GetReportsDirectory()}.\n\nAfter reviewing the reports you can open Azure_Migration_and_Modernization PowerBI template at {Directory.GetCurrentDirectory()}, and export PowerBI as a PowerPoint or PDF presentation.";
                         }
                     }
                     else

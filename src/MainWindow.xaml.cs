@@ -309,7 +309,7 @@ namespace AzureMigrateExplore
             else
             {
                 // No directories found
-                await DisplayAlert("No Directories", "No customer directories were found. Creating a new setup.", "OK");
+                await DisplayAlert("No Projects Found", "No existing project was found. Try creating a new project by choosing 'Create New'.", "OK");
                 HandleTabChange(WelcomeObj, WelcomeTabButton);
             }
         }       
