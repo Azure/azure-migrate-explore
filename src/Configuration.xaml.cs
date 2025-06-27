@@ -92,10 +92,6 @@ namespace AzureMigrateExplore
                 if (selectedModule != null && selectedModule.Equals("Assessment"))
                 {
                     EnableBusinessProposal();
-                    if (ImportRadioButton.IsChecked == true)
-                    {
-                        CheckOnlyQuickAvsProposal();
-                    }
                     mainObj.EnableNextButton();
                 }
                 else
@@ -116,10 +112,6 @@ namespace AzureMigrateExplore
 
                 CustomWorkflowPicker.SelectedItem = null;
                 EnableBusinessProposal();
-                if (ImportRadioButton.IsChecked == true)
-                {
-                    CheckOnlyQuickAvsProposal();
-                }
             }
 
             mainObj.MakeConfigurationTabButtonEnableDecisions();
@@ -162,10 +154,6 @@ namespace AzureMigrateExplore
                 else
                 {
                     EnableBusinessProposal();
-                    if (ImportRadioButton.IsChecked == true)
-                    {
-                        CheckOnlyQuickAvsProposal();
-                    }
                     mainObj.HideSubmitButton();
                     //mainObj.ShowNextButton();
                     //mainObj.EnableNextButton();
@@ -473,7 +461,7 @@ namespace AzureMigrateExplore
         {
             QuickAVSRadioButton.IsChecked = true;
             QuickAVSRadioButton.IsEnabled = true;
-            ComprehensiveRadioButton.IsEnabled = false;
+            ComprehensiveRadioButton.IsEnabled = true;
         }
 
         private void DisableHypervAndPhysicalCheckBoxes()

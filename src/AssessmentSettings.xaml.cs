@@ -21,7 +21,6 @@ using Azure.Migrate.Explore.Models;
 using System.ComponentModel;
 using Azure.Migrate.Explore.Logger;
 using Azure.Migrate.Explore.Discovery;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Azure.Migrate.Explore.Factory;
 using Azure.Migrate.Explore.Assessment;
 using static Azure.Migrate.Explore.Discovery.Discover;
@@ -641,6 +640,15 @@ namespace AzureMigrateExplore
         {
             try
             {
+                if(e.Percentage >= 100)
+                {
+                    DateTime now = DateTime.UtcNow;
+                    string currentTimeStamp = now.ToString("yyyy-MM-dd-HH:mm:ss");
+                    string message = currentTimeStamp + LoggerConstants.LogTypeMessageSeparator + LoggerConstants.InformationLogTypePrefix + LoggerConstants.LogTypeMessageSeparator;
+                    AppendTextBox($"{message} Process Completed.");
+                    return;
+                }
+
                 azureMigrateExploreBackgroundWorker.ReportProgress(e.Percentage, e.Message);
             }
             catch (Exception exReportProgress)
