@@ -164,7 +164,7 @@ namespace Azure.Migrate.Explore.Logger
         private string currentTimeStamp()
         {
             DateTime now = DateTime.UtcNow;
-            return now.ToString("yyyy-MM-dd-HH:mm:ss");
+            return now.ToString("yyyy-MM-dd-HH:mm:ss 'UTC'");
         }
     }
 }
