@@ -59,5 +59,6 @@ namespace Azure.Migrate.Explore.Common
         public const string BoolFalse = "false";
         public const string ForwardSlash = @"/";
         public const string Space = " ";
+        public const string ArgUri = "https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2018-09-01-preview";
     }
 }

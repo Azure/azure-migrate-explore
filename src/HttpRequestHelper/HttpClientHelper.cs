@@ -189,6 +189,69 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
 
             return response;
         }
+
+        public async Task<HttpResponseMessage> GetHttpResponseForARGQuery(UserInput userInputObj, string bodyContent)
+        {
+            if (userInputObj.CancellationContext.IsCancellationRequested)
+                UtilityFunctions.InitiateCancellation(userInputObj);
+
+            NumberOfTries++;
+            AuthenticationResult authResult = null;
+            HttpResponseMessage response;
+            bool isException = false;
+            try
+            {
+                authResult = await AzureAuthenticationHandler.RetrieveAuthenticationToken();
+            }
+            catch (Exception exCacheTokenRetrieval)
+            {
+                throw new Exception($"Cached token retrieval failed: {exCacheTokenRetrieval.Message} Please re-login");
+            }
+
+            try
+            {
+                HttpClient httpClient = new HttpClient()
+                {
+                    Timeout = TimeSpan.FromSeconds(60),
+                };
+
+                Uri baseAddress = new Uri(Routes.ArgUri);
+                string clientRequestId = Guid.NewGuid().ToString();
+
+                httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + authResult.AccessToken);
+                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+                httpClient.DefaultRequestHeaders.Add("x-ms-client-request-id", clientRequestId + "-" + "-azmigexp");
+
+                byte[] buffer = Encoding.UTF8.GetBytes(bodyContent);
+                ByteArrayContent byteContent = new ByteArrayContent(buffer);
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                response = await httpClient.PostAsync(baseAddress, byteContent);
+            }
+            catch (Exception exGeneralGetHttpRequest)
+            {
+                isException = true;
+                if (NumberOfTries < HttpUtilities.MaxInformationDataRetries && HttpUtilities.IsRetryNeeded(null, exGeneralGetHttpRequest))
+                {
+                    userInputObj.LoggerObj.LogWarning($"HTTP POST request to url: {Routes.ArgUri} error: {exGeneralGetHttpRequest.Message} Will try again after 1 minute");
+                    Thread.Sleep(60000);
+                    response = await GetHttpResponseForARGQuery(userInputObj, bodyContent);
+                }
+                else
+                    throw;
+            }
+
+            if (!isException)
+            {
+                if ((response == null || !response.IsSuccessStatusCode) && HttpUtilities.IsRetryNeeded(response, null) && NumberOfTries < HttpUtilities.MaxInformationDataRetries)
+                {
+                    userInputObj.LoggerObj.LogWarning($"HTTP POST request to url {Routes.ArgUri} failed: {response.StatusCode}: {response.Content} Will try again after 1 minute");
+                    Thread.Sleep(60000);
+                    response = await GetHttpResponseForARGQuery(userInputObj, bodyContent);
+                }
+            }
+            return response;
+        }
         #endregion
 
         #region Group creation and updation

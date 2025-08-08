@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Models;
+using AzureMigrateExplore.Models;
 
 namespace Azure.Migrate.Explore.Assessment.Processor
 {
@@ -28,6 +29,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         private readonly Dictionary<string, AzureSQLMachineDataset> AzureSQLMachinesData;
         private readonly BusinessCaseDataset BusinessCaseData;
         private readonly Dictionary<string, string> DecommissionedMachinesData;
+        private readonly List<InventoryInsights> InventoryInsightsData;
+        private readonly List<SoftwareInsights> SoftwareInsightsData;
+        private readonly List<SoftwareVulnerabilities> SoftwareVulnerabilitiesData;
 
         private AzureIaaSCostCalculator AzureIaaSCalculator;
         private AzurePaaSCostCalculator AzurePaaSCalculator;
@@ -52,6 +56,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Dictionary<string, AzureSQLMachineDataset> azureSQLMachinesData,
                 BusinessCaseDataset businessCaseData, 
                 Dictionary<string, string> decommissionedMachinesData,
+                List<InventoryInsights> inventoryInsightsData,
+                List<SoftwareInsights> softwareInsightsData,
+                List<SoftwareVulnerabilities> softwareVulnerabilitiesData,
 
                 UserInput userInputObj
             )
@@ -71,6 +78,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             AzureSQLMachinesData = azureSQLMachinesData;
             BusinessCaseData = businessCaseData;
             DecommissionedMachinesData = decommissionedMachinesData;
+            InventoryInsightsData = inventoryInsightsData;
+            SoftwareInsightsData = softwareInsightsData;
+            SoftwareVulnerabilitiesData = softwareVulnerabilitiesData;
 
             AzureIaaSCalculator = new AzureIaaSCostCalculator();
             AzurePaaSCalculator = new AzurePaaSCostCalculator();
@@ -120,6 +130,11 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             // Clash report models
             List<Clash_Report> Clash_Report_List = new List<Clash_Report>();
 
+            // Security and Software Insights report models
+            List<InventoryInsights> Inventory_Insights_List = new List<InventoryInsights>();
+            List<SoftwareInsights> Software_Insights_List = new List<SoftwareInsights>();
+            List<SoftwareVulnerabilities> Software_Vulnerabilities_List = new List<SoftwareVulnerabilities>();
+
             // Dependent lists
             HashSet<string> AzureSQL_IaaS_Instance = new HashSet<string>(); // Also the list for SQL_MI_Opportunity
             HashSet<string> AzureSQL_IaaS_Server = new HashSet<string>();
@@ -156,6 +171,11 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Process_Decommissioned_Machines_Model(Decommissioned_Machines_List);
             Process_EmissionsDetails_Model(EmissionsDetails_List);
             Process_YOY_Emissions_Model(YOY_Emissions_List);
+
+            // Security and Software Insights report tabs
+            Process_Inventory_Insights_Model(Inventory_Insights_List);
+            Process_Software_Insights_Model(Software_Insights_List);
+            Process_Software_Vulnerabilities_Model(Software_Vulnerabilities_List);
 
             // Opportunity report tabs
             Process_SQL_MI_Issues_and_Warnings_Model(SQL_MI_Issues_and_Warnings_List);
@@ -2665,6 +2685,38 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             };
             Emissions_Details_List.Add(azureEmissionsDetails);
             Emissions_Details_List.Add(onPremisesEmissionsDetails);
+        }
+
+        private void Process_Inventory_Insights_Model(List<InventoryInsights> inventoryInsightsList)
+        {
+            if (InventoryInsightsData == null || InventoryInsightsData.Count == 0)
+                return;
+
+            foreach (var insight in InventoryInsightsData)
+            {
+                inventoryInsightsList.Add(insight);
+            }
+        }
+
+        private void Process_Software_Insights_Model(List<SoftwareInsights> softwareInsightsList)
+        {
+            if (SoftwareInsightsData == null || SoftwareInsightsData.Count == 0)
+                return;
+            foreach (var insight in SoftwareInsightsData)
+            {
+                softwareInsightsList.Add(insight);
+            }
+        }
+
+        private void Process_Software_Vulnerabilities_Model(List<SoftwareVulnerabilities> softwareVulnerabilitiesList)
+        {
+            if (SoftwareVulnerabilitiesData == null || SoftwareVulnerabilitiesData.Count == 0)
+                return;
+
+            foreach (var vulnerability in SoftwareVulnerabilitiesData)
+            {
+                softwareVulnerabilitiesList.Add(vulnerability);
+            }
         }
     }
 }

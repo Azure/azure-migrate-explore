@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Azure.Migrate.Explore.Assessment.Parser;
 using Azure.Migrate.Explore.Assessment.Processor;
@@ -12,6 +13,7 @@ using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Factory;
 using Azure.Migrate.Explore.HttpRequestHelper;
 using Azure.Migrate.Explore.Models;
+using AzureMigrateExplore.Models;
 
 namespace Azure.Migrate.Explore.Assessment
 {
@@ -548,6 +550,75 @@ namespace Azure.Migrate.Explore.Assessment
             {
                 ParseBusinessCase(bizCaseCompletionResultKvp, BusinessCaseData);
             }
+            List<InventoryInsights> InventoryInsightsData = new List<InventoryInsights>();
+            List<SoftwareInsights> SoftwareInsightsData = new List<SoftwareInsights>();
+            List<SoftwareVulnerabilities> SoftwareVulnerabilitiesData = new List<SoftwareVulnerabilities>();
+
+            // Fetch inventory insights data using ARG queries
+            try
+            {
+                UserInputObj.LoggerObj.LogInformation("Starting inventory insights data collection");
+
+                // Extract machine IDs from discovered data only
+                List<string> machineIds = new List<string>();
+
+                // Add machine IDs from discovered data
+                foreach (var discoveryData in DiscoveredData)
+                {
+                    if (!string.IsNullOrEmpty(discoveryData.MachineId))
+                    {
+                        machineIds.Add(discoveryData.MachineId.ToLower());
+                    }
+                }
+
+                // Remove duplicates
+                machineIds = machineIds.Distinct().ToList();
+
+                UserInputObj.LoggerObj.LogInformation($"Found {machineIds.Count} unique machine IDs for inventory insights collection");
+
+                if (machineIds.Count > 0)
+                {
+                    // Prepare subscriptions array
+                    string[] subscriptions = { UserInputObj.Subscription.Key };
+
+                    // Fetch software insights data
+                    UserInputObj.LoggerObj.LogInformation("Fetching software insights data from ARG");
+                    try
+                    {
+                        SoftwareInsightsData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetSoftwareAnalysisData(
+                            UserInputObj, subscriptions, machineIds).Result;
+                        UserInputObj.LoggerObj.LogInformation($"Retrieved {SoftwareInsightsData.Count} software insights records");
+                    }
+                    catch (Exception exSoftware)
+                    {
+                        UserInputObj.LoggerObj.LogWarning($"Failed to fetch software insights data: {exSoftware.Message}");
+                    }
+
+                    // Fetch software vulnerabilities data
+                    UserInputObj.LoggerObj.LogInformation("Fetching software vulnerabilities data from ARG");
+                    try
+                    {
+                        SoftwareVulnerabilitiesData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetSoftwareVulnerabilitiesData(
+                            UserInputObj, subscriptions, machineIds).Result;
+                        UserInputObj.LoggerObj.LogInformation($"Retrieved {SoftwareVulnerabilitiesData.Count} software vulnerabilities records");
+                    }
+                    catch (Exception exVulnerabilities)
+                    {
+                        UserInputObj.LoggerObj.LogWarning($"Failed to fetch software vulnerabilities data: {exVulnerabilities.Message}");
+                    }
+                }
+                else
+                {
+                    UserInputObj.LoggerObj.LogWarning("No machine IDs available for inventory insights collection");
+                }
+
+                UserInputObj.LoggerObj.LogInformation("Completed inventory insights data collection");
+            }
+            catch (Exception exInventoryInsights)
+            {
+                UserInputObj.LoggerObj.LogError($"Error during inventory insights data collection: {exInventoryInsights.Message}");
+                // Continue processing with empty lists rather than failing the entire assessment
+            }
 
             ProcessDatasets processorObj = new ProcessDatasets
                 (
@@ -564,6 +635,9 @@ namespace Azure.Migrate.Explore.Assessment
                     AzureSQLMachinesData,
                     BusinessCaseData,
                     DecommissionedMachinesData,
+                    InventoryInsightsData,
+                    SoftwareInsightsData,
+                    SoftwareVulnerabilitiesData,
                     UserInputObj
                 );
             processorObj.InititateProcessing();
