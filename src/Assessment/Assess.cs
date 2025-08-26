@@ -581,6 +581,53 @@ namespace Azure.Migrate.Explore.Assessment
                     // Prepare subscriptions array
                     string[] subscriptions = { UserInputObj.Subscription.Key };
 
+                    // Extract site IDs from machine IDs for inventory insights
+                    List<string> siteIds = new List<string>();
+                    foreach (var machineId in machineIds)
+                    {
+                        // Machine IDs typically look like: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.OffAzure/{siteType}/machines/{machineId}
+                        // We need to extract the site part for the filter
+                        if (machineId.Contains("/machines/"))
+                        {
+                            // Extract just the site type and build a simple filter
+                            if (machineId.Contains("/vmwaresites/"))
+                                siteIds.Add("vmwaresites");
+                            else if (machineId.Contains("/hypervsites/"))
+                                siteIds.Add("hypervsites");
+                            else if (machineId.Contains("/serversites/"))
+                                siteIds.Add("serversites");
+                            else if (machineId.Contains("/importsites/"))
+                                siteIds.Add("importsites");
+                            else if (machineId.Contains("/mastersites/"))
+                                siteIds.Add("mastersites");
+                        }
+                    }
+                    
+                    // Remove duplicates and create site filter
+                    siteIds = siteIds.Distinct().ToList();
+                    
+                    if (siteIds.Count == 0)
+                    {
+                        UserInputObj.LoggerObj.LogWarning("No valid site types found in machine IDs");
+                        return true;
+                    }
+
+                    // Fetch inventory insights data
+                    UserInputObj.LoggerObj.LogInformation("Fetching inventory insights data from ARG");
+                    UserInputObj.LoggerObj.LogInformation($"Site IDs for filter: {string.Join(", ", siteIds)}");
+                    try
+                    {
+                        InventoryInsightsData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetInventoryInsightsData(
+                            UserInputObj, subscriptions, siteIds);
+                        UserInputObj.LoggerObj.LogInformation($"Retrieved {InventoryInsightsData.Count} inventory insights records");
+                    }
+                    catch (Exception exInventory)
+                    {
+                        UserInputObj.LoggerObj.LogError($"Failed to fetch inventory insights data: {exInventory.Message}");
+                        if (exInventory.InnerException != null)
+                            UserInputObj.LoggerObj.LogError($"Inner exception: {exInventory.InnerException.Message}");
+                    }
+
                     // Fetch software insights data
                     UserInputObj.LoggerObj.LogInformation("Fetching software insights data from ARG");
                     try

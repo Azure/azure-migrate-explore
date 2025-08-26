@@ -11,13 +11,16 @@ namespace Azure.Migrate.Explore.Common
         public static readonly List<string> InventoryInsightsColumns = new List<string>
         {
             "Workload Name",
+            "Operating System",
             "Category",
             "Type",
-            "Has Patch Management Software",
-            "Missing Security Software",
-            "Has Pending Updates",
             "Support Status",
-            "Has Vulnerabilities"
+            "Vulnerability Count",
+            "Critical Vulnerability Count",
+            "Pending Update Count",
+            "End Of Support Software Count",
+            "Has Security Software",
+            "Has Patching Software"
         };
         public static readonly List<string> SoftwareInsightsColumns = new List<string>
         {

@@ -4,13 +4,16 @@ namespace AzureMigrateExplore.Models
 {
     public class InventoryInsights
     {
-        public string WorkloadName { get; set; }
-        public string Category { get; set; }
-        public string Type { get; set; }
-        public bool HasPatchManagementSoftware { get; set; }
-        public bool MissingSecuritySoftware { get; set; }
-        public bool HasPendingUpdates { get; set; }
-        public string SupportStatus { get; set; }
-        public bool HasVulnerabilities { get; set; }
+        public string WorkloadName { get; set; } = string.Empty;
+        public string OperatingSystem { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string SupportStatus { get; set; } = string.Empty;
+        public int VulnerabilityCount { get; set; }
+        public int CriticalVulnerabilityCount { get; set; }
+        public int PendingUpdateCount { get; set; }
+        public int EndOfSupportSoftwareCount { get; set; }
+        public bool HasSecuritySoftware { get; set; }
+        public bool HasPatchingSoftware { get; set; }
     }
 }

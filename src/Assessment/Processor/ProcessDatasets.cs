@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Models;
+using AzureMigrateExplore.Excel;
 using AzureMigrateExplore.Models;
 
 namespace Azure.Migrate.Explore.Assessment.Processor
@@ -296,6 +297,15 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             ExportClashReport exportClashReportObj = new ExportClashReport(Clash_Report_List);
             exportClashReportObj.GenerateClashReportExcel();
             UserInputObj.LoggerObj.LogInformation(100 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated clash report excel sheet");
+
+            UserInputObj.LoggerObj.LogInformation("Generating security and software insights report excel sheet");
+            ExportSecurityAndSoftwareInsightReport exportSecurityAndSoftwareInsightReportObj = new ExportSecurityAndSoftwareInsightReport
+                (
+                    Inventory_Insights_List,
+                    Software_Insights_List,
+                    Software_Vulnerabilities_List
+                );
+            exportSecurityAndSoftwareInsightReportObj.GenerateSecurityAndSoftwareInsightReportExcel();
         }
 
         private void Process_All_VM_IaaS_Server_Rehost_Perf_Model(List<All_VM_IaaS_Server_Rehost_Perf> All_VM_IaaS_Server_Rehost_Perf_List)
@@ -2364,6 +2374,16 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzureAvsCost.ITStaffCost = BusinessCaseData.AzureAvsCostDetails.ITStaffCost;
             Business_Case_Data.AzureAvsCost.SecurityCost = BusinessCaseData.AzureAvsCostDetails.SecurityCost;
             Business_Case_Data.AzureAvsCost.FacilitiesCost = BusinessCaseData.AzureAvsCostDetails.FacilitiesCost;
+
+            // Populate AzureArcEnabledOnPremisesCost from BusinessCaseData
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ComputeLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ComputeLicenseCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.EsuLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.EsuLicenseCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.StorageCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.StorageCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.NetworkCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.NetworkCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.SecurityCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.SecurityCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ITStaffCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ITStaffCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.FacilitiesCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.FacilitiesCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ManagementCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ManagementCost;
 
             if (UserInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && UserInputObj.WorkflowObj.IsExpressWorkflow)
             {

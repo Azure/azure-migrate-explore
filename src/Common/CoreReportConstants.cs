@@ -536,6 +536,7 @@ namespace Azure.Migrate.Explore.Common
             "Azure IaaS Cost",
             "Azure PaaS Cost",
             "AVS Cost",
+            "Azure Arc Enabled On-Prem Cost",
             "Total Azure Cost",
             "Windows Server License Savings",
             "SQL Server License Savings",
@@ -549,7 +550,8 @@ namespace Azure.Migrate.Explore.Common
             "Network",
             "Security",
             "IT Staff",
-            "Facilities"
+            "Facilities",
+            "Management"
         };
 
         public const string Cash_Flows_TabName = "Cash_Flows";

@@ -160,6 +160,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 2).Value = Business_Case_Data.OnPremisesIaaSCost.SecurityCost;
             dataWs.Cell(7, 2).Value = Business_Case_Data.OnPremisesIaaSCost.ITStaffCost;
             dataWs.Cell(8, 2).Value = Business_Case_Data.OnPremisesIaaSCost.FacilitiesCost;
+            dataWs.Cell(9, 2).Value = Business_Case_Data.OnPremisesIaaSCost.ManagementCost;
 
             dataWs.Cell(2, 3).Value = Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost;
             dataWs.Cell(3, 3).Value = Business_Case_Data.OnPremisesPaaSCost.EsuLicenseCost;
@@ -168,6 +169,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 3).Value = Business_Case_Data.OnPremisesPaaSCost.SecurityCost;
             dataWs.Cell(7, 3).Value = Business_Case_Data.OnPremisesPaaSCost.ITStaffCost;
             dataWs.Cell(8, 3).Value = Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost;
+            dataWs.Cell(9, 3).Value = Business_Case_Data.OnPremisesPaaSCost.ManagementCost;
 
             dataWs.Cell(2, 4).Value = Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost;
             dataWs.Cell(3, 4).Value = Business_Case_Data.OnPremisesAvsCost.EsuLicenseCost;
@@ -176,6 +178,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 4).Value = Business_Case_Data.OnPremisesAvsCost.SecurityCost;
             dataWs.Cell(7, 4).Value = Business_Case_Data.OnPremisesAvsCost.ITStaffCost;
             dataWs.Cell(8, 4).Value = Business_Case_Data.OnPremisesAvsCost.FacilitiesCost;
+            dataWs.Cell(9, 4).Value = Business_Case_Data.OnPremisesAvsCost.ManagementCost;
 
             dataWs.Cell(2, 5).Value = Business_Case_Data.TotalOnPremisesCost.ComputeLicenseCost;
             dataWs.Cell(3, 5).Value = Business_Case_Data.TotalOnPremisesCost.EsuLicenseCost;
@@ -184,6 +187,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 5).Value = Business_Case_Data.TotalOnPremisesCost.SecurityCost;
             dataWs.Cell(7, 5).Value = Business_Case_Data.TotalOnPremisesCost.ITStaffCost;
             dataWs.Cell(8, 5).Value = Business_Case_Data.TotalOnPremisesCost.FacilitiesCost;
+            dataWs.Cell(9, 5).Value = Business_Case_Data.TotalOnPremisesCost.ManagementCost;
 
             dataWs.Cell(2, 6).Value = Business_Case_Data.AzureIaaSCost.ComputeLicenseCost;
             dataWs.Cell(3, 6).Value = Business_Case_Data.AzureIaaSCost.EsuLicenseCost;
@@ -192,6 +196,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 6).Value = Business_Case_Data.AzureIaaSCost.SecurityCost;
             dataWs.Cell(7, 6).Value = Business_Case_Data.AzureIaaSCost.ITStaffCost;
             dataWs.Cell(8, 6).Value = Business_Case_Data.AzureIaaSCost.FacilitiesCost;
+            dataWs.Cell(9, 6).Value = Business_Case_Data.AzureIaaSCost.ManagementCost;
 
             dataWs.Cell(2, 7).Value = Business_Case_Data.AzurePaaSCost.ComputeLicenseCost;
             dataWs.Cell(3, 7).Value = Business_Case_Data.AzurePaaSCost.EsuLicenseCost;
@@ -200,6 +205,7 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 7).Value = Business_Case_Data.AzurePaaSCost.SecurityCost;
             dataWs.Cell(7, 7).Value = Business_Case_Data.AzurePaaSCost.ITStaffCost;
             dataWs.Cell(8, 7).Value = Business_Case_Data.AzurePaaSCost.FacilitiesCost;
+            dataWs.Cell(9, 7).Value = Business_Case_Data.AzurePaaSCost.ManagementCost;
 
             dataWs.Cell(2, 8).Value = Business_Case_Data.AzureAvsCost.ComputeLicenseCost;
             dataWs.Cell(3, 8).Value = Business_Case_Data.AzureAvsCost.EsuLicenseCost;
@@ -208,24 +214,27 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(6, 8).Value = Business_Case_Data.AzureAvsCost.SecurityCost;
             dataWs.Cell(7, 8).Value = Business_Case_Data.AzureAvsCost.ITStaffCost;
             dataWs.Cell(8, 8).Value = Business_Case_Data.AzureAvsCost.FacilitiesCost;
+            dataWs.Cell(9, 8).Value = Business_Case_Data.AzureAvsCost.ManagementCost;
 
-            dataWs.Cell(2, 9).Value = Business_Case_Data.TotalAzureCost.ComputeLicenseCost;
-            dataWs.Cell(3, 9).Value = Business_Case_Data.TotalAzureCost.EsuLicenseCost;
-            dataWs.Cell(4, 9).Value = Business_Case_Data.TotalAzureCost.StorageCost;
-            dataWs.Cell(5, 9).Value = Business_Case_Data.TotalAzureCost.NetworkCost;
-            dataWs.Cell(6, 9).Value = Business_Case_Data.TotalAzureCost.SecurityCost;
-            dataWs.Cell(7, 9).Value = Business_Case_Data.TotalAzureCost.ITStaffCost;
-            dataWs.Cell(8, 9).Value = Business_Case_Data.TotalAzureCost.FacilitiesCost;
+            dataWs.Cell(2, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.ComputeLicenseCost;
+            dataWs.Cell(3, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.EsuLicenseCost;
+            dataWs.Cell(4, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.StorageCost;
+            dataWs.Cell(5, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.NetworkCost;
+            dataWs.Cell(6, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.SecurityCost;
+            dataWs.Cell(7, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.ITStaffCost;
+            dataWs.Cell(8, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.FacilitiesCost;
+            dataWs.Cell(9, 9).Value = Business_Case_Data.AzureArcEnabledOnPremisesCost.ManagementCost;
 
-            dataWs.Cell(2, 10).Value = Business_Case_Data.WindowsServerLicense.ComputeLicenseCost;
-            dataWs.Cell(3, 10).Value = 0.00;
-            dataWs.Cell(4, 10).Value = 0.00;
-            dataWs.Cell(5, 10).Value = 0.00;
-            dataWs.Cell(6, 10).Value = 0.00;
-            dataWs.Cell(7, 10).Value = 0.00;
-            dataWs.Cell(8, 10).Value = 0.00;
+            dataWs.Cell(2, 10).Value = Business_Case_Data.TotalAzureCost.ComputeLicenseCost;
+            dataWs.Cell(3, 10).Value = Business_Case_Data.TotalAzureCost.EsuLicenseCost;
+            dataWs.Cell(4, 10).Value = Business_Case_Data.TotalAzureCost.StorageCost;
+            dataWs.Cell(5, 10).Value = Business_Case_Data.TotalAzureCost.NetworkCost;
+            dataWs.Cell(6, 10).Value = Business_Case_Data.TotalAzureCost.SecurityCost;
+            dataWs.Cell(7, 10).Value = Business_Case_Data.TotalAzureCost.ITStaffCost;
+            dataWs.Cell(8, 10).Value = Business_Case_Data.TotalAzureCost.FacilitiesCost;
+            dataWs.Cell(9, 10).Value = Business_Case_Data.TotalAzureCost.ManagementCost;
 
-            dataWs.Cell(2, 11).Value = Business_Case_Data.SqlServerLicense.ComputeLicenseCost;
+            dataWs.Cell(2, 11).Value = Business_Case_Data.WindowsServerLicense.ComputeLicenseCost;
             dataWs.Cell(3, 11).Value = 0.00;
             dataWs.Cell(4, 11).Value = 0.00;
             dataWs.Cell(5, 11).Value = 0.00;
@@ -233,13 +242,21 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(7, 11).Value = 0.00;
             dataWs.Cell(8, 11).Value = 0.00;
 
-            dataWs.Cell(2, 12).Value = Business_Case_Data.EsuSavings.ComputeLicenseCost;
+            dataWs.Cell(2, 12).Value = Business_Case_Data.SqlServerLicense.ComputeLicenseCost;
             dataWs.Cell(3, 12).Value = 0.00;
             dataWs.Cell(4, 12).Value = 0.00;
             dataWs.Cell(5, 12).Value = 0.00;
             dataWs.Cell(6, 12).Value = 0.00;
             dataWs.Cell(7, 12).Value = 0.00;
             dataWs.Cell(8, 12).Value = 0.00;
+
+            dataWs.Cell(2, 13).Value = Business_Case_Data.EsuSavings.ComputeLicenseCost;
+            dataWs.Cell(3, 13).Value = 0.00;
+            dataWs.Cell(4, 13).Value = 0.00;
+            dataWs.Cell(5, 13).Value = 0.00;
+            dataWs.Cell(6, 13).Value = 0.00;
+            dataWs.Cell(7, 13).Value = 0.00;
+            dataWs.Cell(8, 13).Value = 0.00;
         }
 
         private void Generate_Cash_Flows_Worksheet()
@@ -507,7 +524,7 @@ namespace Azure.Migrate.Explore.Excel
 
             UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.Decommissioned_Machines_Columns);
 
-            if (Decommissioned_Machines_List != null & Decommissioned_Machines_List.Count > 0)
+            if (Decommissioned_Machines_List != null && Decommissioned_Machines_List.Count > 0)
                 dataWs.Cell(2, 1).InsertData(Decommissioned_Machines_List);
         }
 

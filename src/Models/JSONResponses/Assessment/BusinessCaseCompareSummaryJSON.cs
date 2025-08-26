@@ -23,5 +23,8 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("onPremisesAvsCostDetails")]
         public BusinessCaseCostDetailsJSON OnPremisesAvsCostDetails { get; set; } = null;
+
+        [JsonProperty("azureArcEnabledOnPremisesCostDetails")]
+        public BusinessCaseCostDetailsJSON AzureArcEnabledOnPremisesCostDetails { get; set; } = null;
     }
 }
