@@ -399,7 +399,7 @@ namespace Azure.Migrate.Explore.Assessment
                         AllAssessments.AddRange(new AzureVMAssessmentSettingsFactory().GetAzureVMAssessmentSettings(UserInputObj, group.Key));
 
                     else if (group.Key.Contains("Azure-VMWareSolution"))
-                        AllAssessments.AddRange(new AzureVMWareSolutionAssessmentSettingsFactory().GetAzureVMWareSolutionAssessmentSettings(UserInputObj, group.Key));
+                        AllAssessments.AddRange(new AzureVMWareSolutionAssessmentSettingsFactory().GetAzureVMWareSolutionAssessmentSettings(UserInputObj, scopedMachineIds));
 
                     else if (group.Key.Contains("SQL"))
                         AllAssessments.AddRange(new AzureSQLAssessmentSettingsFactory().GetAzureSQLAssessmentSettings(UserInputObj, group.Key));

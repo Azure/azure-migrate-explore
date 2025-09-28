@@ -48,7 +48,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.ReservedInstance = "None";
             obj1.Properties.Currency = userInputObj.Currency.Key;
             obj1.Properties.AzureOfferCode = "MSAZR0003P";
-            result.Add(new AssessmentInformation(groupName, "WebApp-Prod-AzMigExport-1", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("WebApp-Prod-AzMigExport-1", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1), groupName));
 
             // Pay as you go + RI 3 year
             AzureWebAppAssessmentSettingsJSON obj2 = new AzureWebAppAssessmentSettingsJSON();
@@ -56,7 +56,7 @@ namespace Azure.Migrate.Explore.Factory
             obj2.Properties.ReservedInstance = "RI3Year";
             obj2.Properties.Currency = userInputObj.Currency.Key;
             obj2.Properties.AzureOfferCode = "MSAZR0003P";
-            result.Add(new AssessmentInformation(groupName, "WebApp-Prod-AzMigExport-2", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj2)));
+            result.Add(new AssessmentInformation("WebApp-Prod-AzMigExport-2", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj2), groupName));
 
             // Pay as you go + ASP 3 year
             AzureWebAppAssessmentSettingsJSON obj3 = new AzureWebAppAssessmentSettingsJSON();
@@ -64,7 +64,7 @@ namespace Azure.Migrate.Explore.Factory
             obj3.Properties.ReservedInstance = "None";
             obj3.Properties.Currency = userInputObj.Currency.Key;
             obj3.Properties.AzureOfferCode = "SavingsPlan3Year";
-            result.Add(new AssessmentInformation(groupName, "WebApp-Prod-AzMigExport-3", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj3)));
+            result.Add(new AssessmentInformation("WebApp-Prod-AzMigExport-3", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj3), groupName));
 
             return result;
         }
@@ -79,7 +79,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.ReservedInstance = "None";
             obj1.Properties.Currency = userInputObj.Currency.Key;
             obj1.Properties.AzureOfferCode = "MSAZR0023P";
-            result.Add(new AssessmentInformation(groupName, "WebApp-Dev-AzMigExport-1", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("WebApp-Dev-AzMigExport-1", AssessmentType.WebAppAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1), groupName));
 
             return result;
         }

@@ -13,7 +13,7 @@ namespace Azure.Migrate.Explore.Models
         public string AssessmentSettings { get; set; }
         public int AssessmentCreationPriority { get; set; }
 
-        public AssessmentInformation(string groupName, string assessmentName, AssessmentType assessmentType, AssessmentTag assessmentTag, string assessmentSettings)
+        public AssessmentInformation(string assessmentName, AssessmentType assessmentType, AssessmentTag assessmentTag, string assessmentSettings, string groupName = null)
         {
             GroupName = groupName;
             AssessmentName = assessmentName;

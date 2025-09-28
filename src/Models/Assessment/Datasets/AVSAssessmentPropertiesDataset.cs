@@ -12,7 +12,7 @@ namespace Azure.Migrate.Explore.Models
         public string SizingCriterion { get; set; }
         public string AssessmentType { get; set; } = "Azure VMWare Solution";
         public string CreatedOn { get; set; }
-        public int TotalMachinesAssessd { get; set; }
+        public int TotalMachinesAssessed { get; set; }
         public int MachinesReady { get; set; }
         public int MachinesReadyWithConditions { get; set; }
         public int MachinesReadinessUnknown { get; set; }

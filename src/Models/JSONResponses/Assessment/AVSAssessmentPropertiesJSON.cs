@@ -24,54 +24,18 @@ namespace Azure.Migrate.Explore.Models
 
     public class AVSAssessmentProperty
     {
-        [JsonProperty("avsEstimatedNodes")]
-        public List<AvsEstimatedNodes> EstimatedNodes { get; set; }
-
-        [JsonProperty("totalMonthlyCost")]
-        public double? TotalMonthlyCost { get; set; }
-
-        [JsonProperty("suitability")]
-        public Suitabilities Suitability { get; set; }
-
-        [JsonProperty("suitabilityExplanation")]
-        public string SuitabilityExplanation { get; set; }
-
-        [JsonProperty("numberOfNodes")]
-        public int? NumberOfNodes { get; set; }
-
-        [JsonProperty("cpuUtilization")]
-        public double? CpuUtilization { get; set; }
-
-        [JsonProperty("ramUtilization")]
-        public double? RamUtilization { get; set; }
-
-        [JsonProperty("storageUtilization")]
-        public double? StorageUtilization { get; set; }
-
-        [JsonProperty("totalCpuCores")]
-        public double? TotalCpuCores { get; set; }
-
-        [JsonProperty("totalRamInGB")]
-        public double? TotalRamInGB { get; set; }
-
-        [JsonProperty("totalStorageInGB")]
-        public double? TotalStorageInGB { get; set; }
-
         [JsonProperty("vcpuOversubscription")]
         public double? VCpuOversubscription { get; set; }
 
         [JsonProperty("dedupeCompression")]
         public double? DedupeCompression { get; set; }
 
-        [JsonProperty("numberOfMachines")]
-        public int? NumberOfMachines { get; set; }
+        [JsonProperty("details")]
+        public AVSAssessmentDetails Details { get; set; }
+    }
 
-        [JsonProperty("suitabilitySummary")]
-        public AVSSuitabilitySummary SuitabilitySummary { get; set; }
-
-        [JsonProperty("avsEstimatedExternalStorages")]
-        public List<AvsEstimatedExternalStorages> AvsEstimatedExternalStorages { get; set; }
-
+    public class AVSAssessmentDetails
+    {
         [JsonProperty("createdTimestamp")]
         public string CreatedTimestamp { get; set; }
 
@@ -79,7 +43,7 @@ namespace Azure.Migrate.Explore.Models
         public double? ConfidenceRatingInPercentage { get; set; }
     }
 
-    public class AVSSuitabilitySummary
+    public class AVSSuitabilitySummary // to check
     {
         [JsonProperty("suitable")]
         public int? Suitable { get; set; }
@@ -92,26 +56,5 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("readinessUnknown")]
         public int? ReadinessUnknown { get; set; }
-    }
-
-    public class AvsEstimatedNodes
-    {
-        [JsonProperty("nodeType")]
-        public string NodeType { get; set; }
-
-        [JsonProperty("nodeNumber")]
-        public int NodeNumber { get; set; }
-
-        [JsonProperty("fttRaidLevel")]
-        public string FttRaidLevel { get; set; }
-    }
-
-    public class AvsEstimatedExternalStorages
-    {
-        [JsonProperty("storageType")]
-        public string StorageType { get; set; }
-
-        [JsonProperty("totalStorageInGB")]
-        public double TotalStorageInGB { get; set; }
     }
 }
