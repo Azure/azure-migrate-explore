@@ -29,14 +29,5 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("facilitiesCost")]
         public double? FacilitiesCost { get; set; }
-
-        [JsonProperty("managementCostDetails")]
-        public ManagementCostDetails? ManagementCostDetails { get; set; }
-    }
-
-    public class ManagementCostDetails
-    {
-        [JsonProperty("managementCost")]
-        public double? ManagementCost { get; set; }
     }
 }

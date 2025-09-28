@@ -13,7 +13,6 @@ using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Factory;
 using Azure.Migrate.Explore.HttpRequestHelper;
 using Azure.Migrate.Explore.Models;
-using AzureMigrateExplore.Models;
 
 namespace Azure.Migrate.Explore.Assessment
 {
@@ -559,122 +558,6 @@ namespace Azure.Migrate.Explore.Assessment
             {
                 ParseBusinessCase(bizCaseCompletionResultKvp, BusinessCaseData);
             }
-            List<InventoryInsights> InventoryInsightsData = new List<InventoryInsights>();
-            List<SoftwareInsights> SoftwareInsightsData = new List<SoftwareInsights>();
-            List<SoftwareVulnerabilities> SoftwareVulnerabilitiesData = new List<SoftwareVulnerabilities>();
-
-            // Fetch inventory insights data using ARG queries
-            try
-            {
-                UserInputObj.LoggerObj.LogInformation("Starting inventory insights data collection");
-
-                // Extract machine IDs from discovered data only
-                List<string> machineIds = new List<string>();
-
-                // Add machine IDs from discovered data
-                foreach (var discoveryData in DiscoveredData)
-                {
-                    if (!string.IsNullOrEmpty(discoveryData.MachineId))
-                    {
-                        machineIds.Add(discoveryData.MachineId.ToLower());
-                    }
-                }
-
-                // Remove duplicates
-                machineIds = machineIds.Distinct().ToList();
-
-                UserInputObj.LoggerObj.LogInformation($"Found {machineIds.Count} unique machine IDs for inventory insights collection");
-
-                if (machineIds.Count > 0)
-                {
-                    // Prepare subscriptions array
-                    string[] subscriptions = { UserInputObj.Subscription.Key };
-
-                    // Extract site IDs from machine IDs for inventory insights
-                    List<string> siteIds = new List<string>();
-                    foreach (var machineId in machineIds)
-                    {
-                        // Machine IDs typically look like: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.OffAzure/{siteType}/machines/{machineId}
-                        // We need to extract the site part for the filter
-                        if (machineId.Contains("/machines/"))
-                        {
-                            // Extract just the site type and build a simple filter
-                            if (machineId.Contains("/vmwaresites/"))
-                                siteIds.Add("vmwaresites");
-                            else if (machineId.Contains("/hypervsites/"))
-                                siteIds.Add("hypervsites");
-                            else if (machineId.Contains("/serversites/"))
-                                siteIds.Add("serversites");
-                            else if (machineId.Contains("/importsites/"))
-                                siteIds.Add("importsites");
-                            else if (machineId.Contains("/mastersites/"))
-                                siteIds.Add("mastersites");
-                        }
-                    }
-                    
-                    // Remove duplicates and create site filter
-                    siteIds = siteIds.Distinct().ToList();
-                    
-                    if (siteIds.Count == 0)
-                    {
-                        UserInputObj.LoggerObj.LogWarning("No valid site types found in machine IDs");
-                        return true;
-                    }
-
-                    // Fetch inventory insights data
-                    UserInputObj.LoggerObj.LogInformation("Fetching inventory insights data from ARG");
-                    UserInputObj.LoggerObj.LogInformation($"Site IDs for filter: {string.Join(", ", siteIds)}");
-                    try
-                    {
-                        InventoryInsightsData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetInventoryInsightsData(
-                            UserInputObj, subscriptions, siteIds);
-                        UserInputObj.LoggerObj.LogInformation($"Retrieved {InventoryInsightsData.Count} inventory insights records");
-                    }
-                    catch (Exception exInventory)
-                    {
-                        UserInputObj.LoggerObj.LogError($"Failed to fetch inventory insights data: {exInventory.Message}");
-                        if (exInventory.InnerException != null)
-                            UserInputObj.LoggerObj.LogError($"Inner exception: {exInventory.InnerException.Message}");
-                    }
-
-                    // Fetch software insights data
-                    UserInputObj.LoggerObj.LogInformation("Fetching software insights data from ARG");
-                    try
-                    {
-                        SoftwareInsightsData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetSoftwareAnalysisData(
-                            UserInputObj, subscriptions, machineIds).Result;
-                        UserInputObj.LoggerObj.LogInformation($"Retrieved {SoftwareInsightsData.Count} software insights records");
-                    }
-                    catch (Exception exSoftware)
-                    {
-                        UserInputObj.LoggerObj.LogWarning($"Failed to fetch software insights data: {exSoftware.Message}");
-                    }
-
-                    // Fetch software vulnerabilities data
-                    UserInputObj.LoggerObj.LogInformation("Fetching software vulnerabilities data from ARG");
-                    try
-                    {
-                        SoftwareVulnerabilitiesData = AzureMigrateExplore.Assessment.ARGQueryBuilder.GetSoftwareVulnerabilitiesData(
-                            UserInputObj, subscriptions, machineIds).Result;
-                        UserInputObj.LoggerObj.LogInformation($"Retrieved {SoftwareVulnerabilitiesData.Count} software vulnerabilities records");
-                    }
-                    catch (Exception exVulnerabilities)
-                    {
-                        UserInputObj.LoggerObj.LogWarning($"Failed to fetch software vulnerabilities data: {exVulnerabilities.Message}");
-                    }
-                }
-                else
-                {
-                    UserInputObj.LoggerObj.LogWarning("No machine IDs available for inventory insights collection");
-                }
-
-                UserInputObj.LoggerObj.LogInformation("Completed inventory insights data collection");
-            }
-            catch (Exception exInventoryInsights)
-            {
-                UserInputObj.LoggerObj.LogError($"Error during inventory insights data collection: {exInventoryInsights.Message}");
-                // Continue processing with empty lists rather than failing the entire assessment
-            }
 
             ProcessDatasets processorObj = new ProcessDatasets
                 (
@@ -691,9 +574,6 @@ namespace Azure.Migrate.Explore.Assessment
                     AzureSQLMachinesData,
                     BusinessCaseData,
                     DecommissionedMachinesData,
-                    InventoryInsightsData,
-                    SoftwareInsightsData,
-                    SoftwareVulnerabilitiesData,
                     UserInputObj
                 );
             processorObj.InititateProcessing();

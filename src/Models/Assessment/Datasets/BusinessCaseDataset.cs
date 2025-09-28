@@ -12,7 +12,6 @@ namespace Azure.Migrate.Explore.Models
             AzureIaaSCostDetails = new BusinessCaseDatasetCostDetails();
             AzurePaaSCostDetails = new BusinessCaseDatasetCostDetails();
             AzureAvsCostDetails = new BusinessCaseDatasetCostDetails();
-            AzureArcEnabledOnPremisesCostDetails = new BusinessCaseDatasetCostDetails();
             WindowsServerLicense = new BusinessCaseDatasetCostDetails();
             SqlServerLicense = new BusinessCaseDatasetCostDetails();
             EsuSavings = new BusinessCaseDatasetCostDetails();
@@ -27,7 +26,6 @@ namespace Azure.Migrate.Explore.Models
         public BusinessCaseDatasetCostDetails AzureIaaSCostDetails { get; set; } = null;
         public BusinessCaseDatasetCostDetails AzurePaaSCostDetails { get; set; } = null;
         public BusinessCaseDatasetCostDetails AzureAvsCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails AzureArcEnabledOnPremisesCostDetails { get; set; } = null;
         public BusinessCaseDatasetCostDetails WindowsServerLicense { get; set; }
         public BusinessCaseDatasetCostDetails SqlServerLicense { get; set; }
         public BusinessCaseDatasetCostDetails EsuSavings { get; set; }
