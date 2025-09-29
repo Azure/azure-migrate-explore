@@ -54,6 +54,9 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("isStretchClusterEnabled")]
         public bool IsStretchClusterEnabled { get; set; } = false;
 
+        [JsonProperty("isVcfByolEnabled")]
+        public bool IsVcfByolEnabled { get; set; } = true;
+
         [JsonProperty("performanceData")]
         public PerfData PerformanceData { get; set; } = new PerfData();
 
@@ -90,7 +93,7 @@ namespace Azure.Migrate.Explore.Models
 
     public class SavingsSettings
     {
-        [JsonProperty("savingsOption")]
+        [JsonProperty("savingsOptions")]
         public string SavingsOption { get; set; } = "ri3year";
 
         [JsonProperty("azureOfferCode")]
