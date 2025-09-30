@@ -265,7 +265,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AVSAssessmentsData[assessmentInfo].AssessmentName = avsPropertiesObj.Name;
             AVSAssessmentsData[assessmentInfo].SizingCriterion = new EnumDescriptionHelper().GetEnumDescription(assessmentInfo.AssessmentTag);
             AVSAssessmentsData[assessmentInfo].CreatedOn = avsPropertiesObj.Properties.Details?.CreatedTimestamp;
-            var sourceWithTypeMachine = avsSummariesObj?.Values[0]?.Properties?.Sources?.Find(x => x.SourceType == "Machines");
+            var sourceWithTypeMachine = avsSummariesObj?.Values[0]?.Properties?.Sources?.Find(x => x.SourceType == "Machine");
             AVSAssessmentsData[assessmentInfo].TotalMachinesAssessed = sourceWithTypeMachine?.Count ?? 0;
             var readinessSummary = avsSummariesObj?.Values[0]?.Properties?.TargetSourceMapping[0]?.MigrationDetails?.ReadinessSummary;
             var suitableSummary = readinessSummary?.Find(x => x.Name == "Suitable")?.Value ?? 0;
