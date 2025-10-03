@@ -109,6 +109,7 @@ namespace AzureMigrateExplore
             new KeyValuePair<string, string>("southcentralus", "South Central US"),
             new KeyValuePair<string, string>("southeastasia", "Southeast Asia"),
             new KeyValuePair<string, string>("swedencentral", "Sweden Central"),
+            new KeyValuePair<string, string>("uaenorth", "UAE North"),
             new KeyValuePair<string, string>("uksouth", "UK South"),
             new KeyValuePair<string, string>("ukwest", "UK West"),
             new KeyValuePair<string, string>("westeurope", "West Europe"),

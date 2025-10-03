@@ -427,7 +427,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.SizingCriterion = avsAssessmentData.Value.SizingCriterion;
                 obj.AssessmentType = avsAssessmentData.Value.AssessmentType;
                 obj.CreatedOn = avsAssessmentData.Value.CreatedOn;
-                obj.TotalMachinesAssessed = avsAssessmentData.Value.TotalMachinesAssessd;
+                obj.TotalMachinesAssessed = avsAssessmentData.Value.TotalMachinesAssessed;
                 obj.MachinesReady = avsAssessmentData.Value.MachinesReady;
                 obj.MachinesReadyWithConditions = avsAssessmentData.Value.MachinesReadyWithConditions;
                 obj.MachinesNotReady = avsAssessmentData.Value.MachinesNotReady;
@@ -496,7 +496,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 AVS_IaaS_Rehost_Perf obj = new AVS_IaaS_Rehost_Perf();
 
                 obj.MachineName = avsAssessedMachine.Value.DisplayName;
-                obj.AzureVMWareSolutionReadiness = new EnumDescriptionHelper().GetEnumDescription(avsAssessedMachine.Value.Suitability);
+                obj.AzureVMWareSolutionReadiness = avsAssessedMachine.Value.Suitability;
                 obj.AzureVMWareSolutionReadiness_Warnings = avsAssessedMachine.Value.SuitabilityExplanation;
                 obj.OperatingSystem = avsAssessedMachine.Value.OperatingSystemName;
                 obj.OperatingSystemVersion = avsAssessedMachine.Value.OperatingSystemVersion;

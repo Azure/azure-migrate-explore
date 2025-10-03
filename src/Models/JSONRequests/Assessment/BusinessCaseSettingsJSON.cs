@@ -18,6 +18,9 @@ namespace Azure.Migrate.Explore.Models
     {
         [JsonProperty("settings")]
         public BusinessCaseSettings Settings { get; set; } = new BusinessCaseSettings();
+
+        [JsonProperty("businessCaseScope")]
+        public BusinessCaseScope BusinessCaseScope { get; set; } = new BusinessCaseScope();
     }
 
     public class BusinessCaseSettings
@@ -56,5 +59,14 @@ namespace Azure.Migrate.Explore.Models
                 { "Year2", 50 },
                 { "Year3", 100 },
             };
+    }
+
+    public class BusinessCaseScope
+    {
+        [JsonProperty("scopeType")]
+        public string ScopeType { get; set; } = "Datacenter";
+
+        [JsonProperty("azureResourceGraphQuery")]
+        public string AzureResourceGraphQuery { get; set; } = "";
     }
 }

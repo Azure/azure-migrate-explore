@@ -51,7 +51,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.AzureOfferCode = "MSAZR0003P";
             obj1.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj1.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-1", AssessmentType.MachineAssessment, AssessmentTag.AsOnPremises, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-1", AssessmentType.MachineAssessment, AssessmentTag.AsOnPremises, JsonConvert.SerializeObject(obj1), groupName));
 
             // Performance based - Pay as you go
             AzureVMAssessmentSettingsJSON obj2 = new AzureVMAssessmentSettingsJSON();
@@ -62,7 +62,7 @@ namespace Azure.Migrate.Explore.Factory
             obj2.Properties.AzureOfferCode = "MSAZR0003P";
             obj2.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj2.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-2", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj2)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-2", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj2), groupName));
 
             // Performance based - Pay as you go + RI 3 year
             AzureVMAssessmentSettingsJSON obj3 = new AzureVMAssessmentSettingsJSON();
@@ -73,7 +73,7 @@ namespace Azure.Migrate.Explore.Factory
             obj3.Properties.AzureOfferCode = "MSAZR0003P";
             obj3.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj3.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-3", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj3)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-3", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj3), groupName));
 
             // Performance based - Pay as you go + AHUB
             AzureVMAssessmentSettingsJSON obj4 = new AzureVMAssessmentSettingsJSON();
@@ -84,7 +84,7 @@ namespace Azure.Migrate.Explore.Factory
             obj4.Properties.AzureOfferCode = "MSAZR0003P";
             obj4.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj4.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-4", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj4)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-4", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj4), groupName));
 
             // Performance based - Pay as you go + AHUB + RI 3 year
             AzureVMAssessmentSettingsJSON obj5 = new AzureVMAssessmentSettingsJSON();
@@ -95,7 +95,7 @@ namespace Azure.Migrate.Explore.Factory
             obj5.Properties.AzureOfferCode = "MSAZR0003P";
             obj5.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj5.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-5", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB_RI3year, JsonConvert.SerializeObject(obj5)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-5", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB_RI3year, JsonConvert.SerializeObject(obj5), groupName));
 
             // Performance based - Pay as you go + ASP 3 year
             AzureVMAssessmentSettingsJSON obj6 = new AzureVMAssessmentSettingsJSON();
@@ -106,7 +106,7 @@ namespace Azure.Migrate.Explore.Factory
             obj6.Properties.AzureOfferCode = "SavingsPlan3Year";
             obj6.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj6.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Prod-AzMigExport-6", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj6)));
+            result.Add(new AssessmentInformation("AzureVM-Prod-AzMigExport-6", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj6), groupName));
 
             return result;
         }
@@ -124,7 +124,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.AzureOfferCode = "MSAZR0023P";
             obj1.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj1.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Dev-AzMigExport-1", AssessmentType.MachineAssessment, AssessmentTag.AsOnPremises, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("AzureVM-Dev-AzMigExport-1", AssessmentType.MachineAssessment, AssessmentTag.AsOnPremises, JsonConvert.SerializeObject(obj1), groupName));
 
             // Performance based - Pay as you go
             AzureVMAssessmentSettingsJSON obj2 = new AzureVMAssessmentSettingsJSON();
@@ -135,7 +135,7 @@ namespace Azure.Migrate.Explore.Factory
             obj2.Properties.AzureOfferCode = "MSAZR0023P";
             obj2.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj2.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Dev-AzMigExport-2", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj2)));
+            result.Add(new AssessmentInformation("AzureVM-Dev-AzMigExport-2", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj2), groupName));
 
             // Performance based - Pay as you go + AHUB
             AzureVMAssessmentSettingsJSON obj3 = new AzureVMAssessmentSettingsJSON();
@@ -146,7 +146,7 @@ namespace Azure.Migrate.Explore.Factory
             obj3.Properties.AzureOfferCode = "MSAZR0023P";
             obj3.Properties.AzureLocation = userInputObj.TargetRegion.Key;
             obj3.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
-            result.Add(new AssessmentInformation(groupName, "AzureVM-Dev-AzMigExport-3", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj3)));
+            result.Add(new AssessmentInformation("AzureVM-Dev-AzMigExport-3", AssessmentType.MachineAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj3), groupName));
 
             return result;
         }

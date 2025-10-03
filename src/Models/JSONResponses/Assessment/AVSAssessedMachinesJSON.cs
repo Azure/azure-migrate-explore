@@ -33,23 +33,41 @@ namespace Azure.Migrate.Explore.Models
 
     public class AVSAssessedMachineProperty
     {
+        [JsonProperty("extendedDetails")]
+        public AVSAssessedMachineExtendedDetails ExtendedDetails { get; set; }
+
+        [JsonProperty("workloadType")]
+        public string WorkloadType { get; set; }
+
+        [JsonProperty("linkages")]
+        public List<Linkage> Linkages { get; set; }
+
+        [JsonProperty("recommendations")]
+        public List<Recommendation> Recommendations { get; set; }
+    }
+
+    public class Linkage
+    {
+        [JsonProperty("linkageType")]
+        public string LinkageType { get; set; }
+
+        [JsonProperty("kind")]
+        public string Kind { get; set; }
+
+        [JsonProperty("armId")]
+        public string ArmId { get; set; }
+    }
+
+    public class AVSAssessedMachineExtendedDetails
+    {
         [JsonProperty("disks")]
-        public Dictionary<string, AVSAssessedMachineDisk> Disks { get; set; }
+        public List<AVSAssessedMachineDisk> Disks { get; set; }
 
         [JsonProperty("networkAdapters")]
-        public Dictionary<string, AVSAssessedMachineNetworkAdapter> NetworkAdapters { get; set; }
+        public List<AVSAssessedMachineNetworkAdapter> NetworkAdapters { get; set; }
 
         [JsonProperty("storageInUseGB")]
         public double StorageInUseGB { get; set; }
-
-        [JsonProperty("suitabilityExplanation")]
-        public string SuitabilityExplanation { get; set; } 
-
-        [JsonProperty("suitabilityDetail")]
-        public string SuitabilityDetail { get; set; }
-
-        [JsonProperty("type")]
-        public string Type { get; set; }
 
         [JsonProperty("bootType")]
         public string BootType { get; set; }
@@ -66,30 +84,18 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("operatingSystemArchitecture")]
         public string OperatingSystemArchitecture { get; set; }
 
-        [JsonProperty("createdTimestamp")]
-        public string CreatedTimeStamp { get; set; }
-
-        [JsonProperty("updatedTimestamp")]
-        public string UpdatedTimeStamp { get; set; }
-
         [JsonProperty("displayName")]
         public string DisplayName { get; set; }
 
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("datacenterMachineArmId")]
-        public string DatacenterMachineArmId { get; set; }
-
-        [JsonProperty("datacenterManagementServerArmId")]
-        public string DatacenterManagementServerArmId { get; set; }
-
         [JsonProperty("datacenterManagementServerName")]
         public string DatacenterManagementServerName { get; set; }
 
         [JsonProperty("megabytesOfMemory")]
         public double MegabytesOfMemory { get; set; }
-        
+
         [JsonProperty("numberOfCores")]
         public int NumberOfCores { get; set; }
 
@@ -98,9 +104,18 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("percentageMemoryUtilization")]
         public double PercentageMemoryUtilization { get; set; }
+    }
 
-        [JsonProperty("suitability")]
-        public Suitabilities Suitability { get; set; }
+    public class Recommendation
+    {
+        [JsonProperty("migrationSuitability")]
+        public MigrationSuitability MigrationSuitability { get; set; }
+    }
+
+    public class MigrationSuitability
+    {
+        [JsonProperty("readiness")]
+        public string Readiness { get; set; }
     }
 
     public class AVSAssessedMachineDisk

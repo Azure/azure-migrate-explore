@@ -52,7 +52,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj1.Properties.OSLicense = "No";
             obj1.Properties.SQLServerLicense = "No";
-            result.Add(new AssessmentInformation(groupName, "SQL-Prod-AzMigExport-1", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("SQL-Prod-AzMigExport-1", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1), groupName));
 
             // Performance based - Pay as you go + RI 3 year
             AzureSQLAssessmentSettingsJSON obj2 = new AzureSQLAssessmentSettingsJSON();
@@ -64,7 +64,7 @@ namespace Azure.Migrate.Explore.Factory
             obj2.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj2.Properties.OSLicense = "No";
             obj2.Properties.SQLServerLicense = "No";
-            result.Add(new AssessmentInformation(groupName, "SQL-Prod-AzMigExport-2", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj2)));
+            result.Add(new AssessmentInformation("SQL-Prod-AzMigExport-2", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_RI3year, JsonConvert.SerializeObject(obj2), groupName));
 
             // Performance based - Pay as you go + AHUB
             AzureSQLAssessmentSettingsJSON obj3 = new AzureSQLAssessmentSettingsJSON();
@@ -76,7 +76,7 @@ namespace Azure.Migrate.Explore.Factory
             obj3.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj3.Properties.OSLicense = "Yes";
             obj3.Properties.SQLServerLicense = "Yes";
-            result.Add(new AssessmentInformation(groupName, "SQL-Prod-AzMigExport-3", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj3)));
+            result.Add(new AssessmentInformation("SQL-Prod-AzMigExport-3", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj3), groupName));
 
             // Performance based - Pay as you go + RI 3 year + AHUB
             AzureSQLAssessmentSettingsJSON obj4 = new AzureSQLAssessmentSettingsJSON();
@@ -88,7 +88,7 @@ namespace Azure.Migrate.Explore.Factory
             obj4.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj4.Properties.OSLicense = "Yes";
             obj4.Properties.SQLServerLicense = "Yes";
-            result.Add(new AssessmentInformation(groupName, "SQL-Prod-AzMigExport-4", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB_RI3year, JsonConvert.SerializeObject(obj4)));
+            result.Add(new AssessmentInformation("SQL-Prod-AzMigExport-4", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB_RI3year, JsonConvert.SerializeObject(obj4), groupName));
 
             // Performance based - Pay as you go + ASP 3 year
             AzureSQLAssessmentSettingsJSON obj5 = new AzureSQLAssessmentSettingsJSON();
@@ -101,7 +101,7 @@ namespace Azure.Migrate.Explore.Factory
             obj5.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj5.Properties.OSLicense = "No";
             obj5.Properties.SQLServerLicense = "No";
-            result.Add(new AssessmentInformation(groupName, "SQL-Prod-AzMigExport-5", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj5)));
+            result.Add(new AssessmentInformation("SQL-Prod-AzMigExport-5", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_ASP3year, JsonConvert.SerializeObject(obj5), groupName));
 
             return result;
         }
@@ -120,7 +120,7 @@ namespace Azure.Migrate.Explore.Factory
             obj1.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj1.Properties.OSLicense = "No";
             obj1.Properties.SQLServerLicense = "No";
-            result.Add(new AssessmentInformation(groupName, "SQL-Dev-AzMigExport-1", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1)));
+            result.Add(new AssessmentInformation("SQL-Dev-AzMigExport-1", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased, JsonConvert.SerializeObject(obj1), groupName));
 
             // Performance based - Pay as you go + AHUB
             AzureSQLAssessmentSettingsJSON obj2 = new AzureSQLAssessmentSettingsJSON();
@@ -132,7 +132,7 @@ namespace Azure.Migrate.Explore.Factory
             obj2.Properties.TimeRange = userInputObj.AssessmentDuration.Key;
             obj2.Properties.OSLicense = "Yes";
             obj2.Properties.SQLServerLicense = "Yes";
-            result.Add(new AssessmentInformation(groupName, "SQL-Dev-AzMigExport-2", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj2)));
+            result.Add(new AssessmentInformation("SQL-Dev-AzMigExport-2", AssessmentType.SQLAssessment, AssessmentTag.PerformanceBased_AHUB, JsonConvert.SerializeObject(obj2), groupName));
 
             return result;
         }

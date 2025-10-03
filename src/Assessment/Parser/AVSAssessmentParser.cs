@@ -54,12 +54,21 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                             Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                              new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName +
                              Routes.QueryStringQuestionMark +
                              Routes.QueryParameterApiVersion + Routes.QueryStringEquals + apiVersion;
 
+                string summariesUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
+                             Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
+                             Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
+                             new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName +
+                             Routes.ForwardSlash + Routes.SummariesPath + Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion +
+                             Routes.QueryStringEquals + apiVersion;
+
                 string assessmentPropertiesResponse = "";
+                string assessmentSummariesResponse = "";
                 try
                 {
                     assessmentPropertiesResponse = new HttpClientHelper().GetHttpRequestJsonStringResponse(url, userInputObj).Result;
@@ -91,15 +100,46 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                     continue;
                 }
 
+                try
+                {
+                    assessmentSummariesResponse = new HttpClientHelper().GetHttpRequestJsonStringResponse(summariesUrl, userInputObj).Result;
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (AggregateException aeAVSSummaries)
+                {
+                    string errorMessage = "";
+                    foreach (var e in aeAVSSummaries.Flatten().InnerExceptions)
+                    {
+                        if (e is OperationCanceledException)
+                            throw e;
+                        else
+                        {
+                            errorMessage = errorMessage + e.Message + " ";
+                        }
+                    }
+                    userInputObj.LoggerObj.LogError($"Failed to retrieve AVS assessment summaries for assessment: {errorMessage}");
+                    url = "";
+                    continue;
+                }
+                catch (Exception exAVSSummaries)
+                {
+                    userInputObj.LoggerObj.LogError($"Failed to retrieve AVS assessment summaries for assessment: {exAVSSummaries.Message}");
+                    url = "";
+                    continue;
+                }
+
                 AVSAssessmentPropertiesJSON avsPropertiesObj = JsonConvert.DeserializeObject<AVSAssessmentPropertiesJSON>(assessmentPropertiesResponse);
-                UpdateAVSPropertiesDataset(avsPropertiesObj, AVSAssessmentsData, kvp.Key, userInputObj);
+                AVSAssessmentSummariesJSON avsSummariesObj = JsonConvert.DeserializeObject<AVSAssessmentSummariesJSON>(assessmentSummariesResponse);
+                UpdateAVSPropertiesDataset(avsPropertiesObj, avsSummariesObj, AVSAssessmentsData, kvp.Key, userInputObj);
 
                 url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
                       Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
                       Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                       Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                       Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                      Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                       new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName + Routes.ForwardSlash +
                       Routes.AVSAssessedMachinesPath +
                       Routes.QueryStringQuestionMark +
@@ -147,38 +187,42 @@ namespace Azure.Migrate.Explore.Assessment.Parser
 
                     foreach (var value in obj.Values)
                     {
-                        string key = value.Properties.DatacenterMachineArmId?.ToLower();
-                        UpdateAVSAssessedMachinesDataset(AVSAssessedMachinesData, value, key, kvp.Key);
+                        string key = value.Properties?.Linkages?.Find(x => x.LinkageType == "Source" && x.Kind == "Machine")?
+                            .ArmId?.ToLower();
+                        if (string.IsNullOrEmpty(key))
+                            continue;
+                        UpdateAVSAssessedMachinesDataset(AVSAssessedMachinesData, value, key, kvp.Key, avsSummariesObj?.Values[0]?.Properties?.SuitabilityExplanation);
                     }
                 }
             }
         }
 
-        private void UpdateAVSAssessedMachinesDataset(Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData, AVSAssessedMachineValue value, string key, AssessmentInformation assessmentInfo)
+        private void UpdateAVSAssessedMachinesDataset(Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData, AVSAssessedMachineValue value, string key, AssessmentInformation assessmentInfo, string suitabilityExplanation)
         {
             if (AVSAssessedMachinesData.ContainsKey(key))
                 return;
 
             AVSAssessedMachinesData.Add(key, new AVSAssessedMachinesDataset());
 
-            AVSAssessedMachinesData[key].DisplayName = value.Properties.DisplayName;
-            AVSAssessedMachinesData[key].DatacenterMachineArmId = value.Properties.DatacenterMachineArmId?.ToLower();
-            AVSAssessedMachinesData[key].Suitability = value.Properties.Suitability;
-            AVSAssessedMachinesData[key].SuitabilityExplanation = value.Properties.SuitabilityExplanation;
-            AVSAssessedMachinesData[key].OperatingSystemName = value.Properties.OperatingSystemName;
-            AVSAssessedMachinesData[key].OperatingSystemVersion = value.Properties.OperatingSystemVersion;
-            AVSAssessedMachinesData[key].OperatingSystemArchitecture = value.Properties.OperatingSystemArchitecture;
-            AVSAssessedMachinesData[key].BootType = value.Properties.BootType;
-            AVSAssessedMachinesData[key].NumberOfCores = value.Properties.NumberOfCores;
-            AVSAssessedMachinesData[key].MegabytesOfMemory = value.Properties.MegabytesOfMemory;
-            AVSAssessedMachinesData[key].Disks = GetAssessedDiskList(value.Properties.Disks);
-            AVSAssessedMachinesData[key].StorageInUseGB = value.Properties.StorageInUseGB;
-            AVSAssessedMachinesData[key].NetworkAdapters = value.Properties.NetworkAdapters == null ? 0 : value.Properties.NetworkAdapters.Count;
-            AVSAssessedMachinesData[key].NetworkAdapterList = GetAssessedNetworkAdapterList(value.Properties.NetworkAdapters);
+            AVSAssessedMachinesData[key].DisplayName = value?.Properties?.ExtendedDetails?.DisplayName;
+            AVSAssessedMachinesData[key].DatacenterMachineArmId = value?.Properties?.Linkages?
+                .Find(x => x.LinkageType == "Source" && x.Kind == "Machine")?.ArmId ?? "";
+            AVSAssessedMachinesData[key].Suitability = value.Properties?.Recommendations[0]?.MigrationSuitability?.Readiness ?? "Unknown";
+            AVSAssessedMachinesData[key].SuitabilityExplanation = suitabilityExplanation ?? "NotApplicable";
+            AVSAssessedMachinesData[key].OperatingSystemName = value.Properties?.ExtendedDetails?.OperatingSystemName;
+            AVSAssessedMachinesData[key].OperatingSystemVersion = value.Properties?.ExtendedDetails?.OperatingSystemVersion;
+            AVSAssessedMachinesData[key].OperatingSystemArchitecture = value.Properties?.ExtendedDetails?.OperatingSystemArchitecture;
+            AVSAssessedMachinesData[key].BootType = value.Properties?.ExtendedDetails?.BootType;
+            AVSAssessedMachinesData[key].NumberOfCores = value.Properties?.ExtendedDetails?.NumberOfCores ?? 0;
+            AVSAssessedMachinesData[key].MegabytesOfMemory = value.Properties?.ExtendedDetails?.MegabytesOfMemory ?? 0;
+            AVSAssessedMachinesData[key].Disks = GetAssessedDiskList(value.Properties?.ExtendedDetails?.Disks);
+            AVSAssessedMachinesData[key].StorageInUseGB = value.Properties?.ExtendedDetails?.StorageInUseGB ?? 0;
+            AVSAssessedMachinesData[key].NetworkAdapters = value.Properties?.ExtendedDetails?.NetworkAdapters == null ? 0 : value.Properties?.ExtendedDetails?.NetworkAdapters.Count ?? 0;
+            AVSAssessedMachinesData[key].NetworkAdapterList = GetAssessedNetworkAdapterList(value.Properties?.ExtendedDetails?.NetworkAdapters);
             AVSAssessedMachinesData[key].GroupName = assessmentInfo.GroupName;
         }
 
-        private void UpdateAVSPropertiesDataset(AVSAssessmentPropertiesJSON avsPropertiesObj, Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, AssessmentInformation assessmentInfo, UserInput userInputObj)
+        private void UpdateAVSPropertiesDataset(AVSAssessmentPropertiesJSON avsPropertiesObj, AVSAssessmentSummariesJSON avsSummariesObj, Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, AssessmentInformation assessmentInfo, UserInput userInputObj)
         {
             if (AVSAssessmentsData.ContainsKey(assessmentInfo))
                 return;
@@ -189,7 +233,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             string recommendedFttRaidLevels = "";
             string nodeTypes = "";
             string recommendedExternalStorages = "";
-            foreach (var item in avsPropertiesObj.Properties.EstimatedNodes)
+            foreach (var item in avsSummariesObj?.Values[0]?.Properties?.AvsEstimatedNodes)
             {
                 recommendedNodes += item.NodeNumber + " nodes of " + item.NodeType + ", ";
                 string uppercaseFttRaidLevel = item.FttRaidLevel.ToUpper();
@@ -203,7 +247,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             recommendedNodes = recommendedNodes.Substring(0, recommendedNodes.Length - 2);
             recommendedFttRaidLevels = recommendedFttRaidLevels.Substring(0, recommendedFttRaidLevels.Length - 2);
 
-            foreach (var item in avsPropertiesObj.Properties.AvsEstimatedExternalStorages)
+            foreach (var item in avsSummariesObj?.Values[0]?.Properties?.AvsEstimatedExternalStorages)
             {
                 string storageType = item.StorageType.Substring(0, 3).ToUpper() + "-" + item.StorageType.Substring(3);
                 recommendedExternalStorages += item.TotalStorageInGB / 1024 + " TB of " + storageType + ", ";
@@ -220,50 +264,67 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AVSAssessmentsData[assessmentInfo].GroupName = assessmentInfo.GroupName;
             AVSAssessmentsData[assessmentInfo].AssessmentName = avsPropertiesObj.Name;
             AVSAssessmentsData[assessmentInfo].SizingCriterion = new EnumDescriptionHelper().GetEnumDescription(assessmentInfo.AssessmentTag);
-            AVSAssessmentsData[assessmentInfo].CreatedOn = avsPropertiesObj.Properties.CreatedTimestamp;
-            AVSAssessmentsData[assessmentInfo].TotalMachinesAssessd = avsPropertiesObj.Properties.NumberOfMachines ?? 0;
-            AVSAssessmentsData[assessmentInfo].MachinesReady = avsPropertiesObj.Properties.SuitabilitySummary?.Suitable ?? 0;
-            AVSAssessmentsData[assessmentInfo].MachinesReadyWithConditions = avsPropertiesObj.Properties.SuitabilitySummary?.ConditionallySuitable ?? 0;
-            AVSAssessmentsData[assessmentInfo].MachinesReadinessUnknown = avsPropertiesObj.Properties.SuitabilitySummary?.ReadinessUnknown ?? 0;
-            AVSAssessmentsData[assessmentInfo].MachinesNotReady = avsPropertiesObj.Properties.SuitabilitySummary?.NotSuitable ?? 0;
-            AVSAssessmentsData[assessmentInfo].TotalRecommendedNumberOfNodes = avsPropertiesObj.Properties.NumberOfNodes ?? 0;
+            AVSAssessmentsData[assessmentInfo].CreatedOn = avsPropertiesObj.Properties.Details?.CreatedTimestamp;
+            var sourceWithTypeMachine = avsSummariesObj?.Values[0]?.Properties?.Sources?.Find(x => x.SourceType == "Machine");
+            AVSAssessmentsData[assessmentInfo].TotalMachinesAssessed = sourceWithTypeMachine?.Count ?? 0;
+            var readinessSummary = avsSummariesObj?.Values[0]?.Properties?.TargetSourceMapping[0]?.MigrationDetails?.ReadinessSummary;
+            var suitableSummary = readinessSummary?.Find(x => x.Name == "Suitable")?.Value ?? 0;
+            var conditionallySuitableSummary = readinessSummary?.Find(x => x.Name == "ConditionallySuitable")?.Value ?? 0;
+            var readinessUnknownSummary = readinessSummary?.Find(x => x.Name == "ReadinessUnknown")?.Value ?? 0;
+            var notSuitableSummary = readinessSummary?.Find(x => x.Name == "NotSuitable")?.Value ?? 0;
+            AVSAssessmentsData[assessmentInfo].MachinesReady = suitableSummary;
+            AVSAssessmentsData[assessmentInfo].MachinesReadyWithConditions = conditionallySuitableSummary;
+            AVSAssessmentsData[assessmentInfo].MachinesReadinessUnknown = readinessUnknownSummary;
+            AVSAssessmentsData[assessmentInfo].MachinesNotReady = notSuitableSummary;
+            AVSAssessmentsData[assessmentInfo].TotalRecommendedNumberOfNodes = avsSummariesObj?.Values[0]?.Properties?.NumberOfNodes ?? 0;
             AVSAssessmentsData[assessmentInfo].NodeTypes = nodeTypes;
             AVSAssessmentsData[assessmentInfo].RecommendedNodes = recommendedNodes;
             AVSAssessmentsData[assessmentInfo].RecommendedFttRaidLevels = recommendedFttRaidLevels;
             AVSAssessmentsData[assessmentInfo].RecommendedExternalStorage = recommendedExternalStorages;
-            AVSAssessmentsData[assessmentInfo].TotalMonthlyCostEstimate = avsPropertiesObj.Properties.TotalMonthlyCost ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].PredictedCpuUtilizationPercentage = avsPropertiesObj.Properties.CpuUtilization ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].PredictedMemoryUtilizationPercentage = avsPropertiesObj.Properties.RamUtilization ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].PredictedStorageUtilizationPercentage = avsPropertiesObj.Properties.StorageUtilization ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresAvailable = avsPropertiesObj.Properties.TotalCpuCores ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].MemoryInTBAvailable = avsPropertiesObj.Properties.TotalRamInGB / 1024.0 ?? 0.00;
-            AVSAssessmentsData[assessmentInfo].StorageInTBAvailable = avsPropertiesObj.Properties.TotalStorageInGB / 1024.0 ?? 0.00;
+            var costComponentsWithTotalMonthlyCost = new List<CostComponent>(avsSummariesObj?.Values[0]?.Properties?.CostComponents?.FindAll(x => x.CostDetail.Exists(y => y.Name == "TotalMonthlyCost")) ?? new List<CostComponent>());
+            // in each of the cost components, get the cost detail with name "TotalMonthlyCost" and get its value and add them up
+            double? totalMonthlyCost = 0.00;
+            foreach (var costComponent in costComponentsWithTotalMonthlyCost)
+            {
+                var totalMonthlyCostDetail = costComponent.CostDetail?.Find(x => x.Name == "TotalMonthlyCost")?.Value;
+                if (totalMonthlyCostDetail != null)
+                {
+                    totalMonthlyCost += totalMonthlyCostDetail ?? 0.00;
+                }
+            }
+            AVSAssessmentsData[assessmentInfo].TotalMonthlyCostEstimate = totalMonthlyCost ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].PredictedCpuUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.CpuUtilization ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].PredictedMemoryUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.RamUtilization ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].PredictedStorageUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.StorageUtilization ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresAvailable = avsSummariesObj?.Values[0]?.Properties?.TotalCpuCores ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].MemoryInTBAvailable = avsSummariesObj?.Values[0]?.Properties?.TotalRamInGB / 1024.0 ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].StorageInTBAvailable = avsSummariesObj?.Values[0]?.Properties?.TotalStorageInGB / 1024.0 ?? 0.00;
             AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresUsed = Math.Ceiling(AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresAvailable * AVSAssessmentsData[assessmentInfo].PredictedCpuUtilizationPercentage / 100.0);
             AVSAssessmentsData[assessmentInfo].MemoryInTBUsed = AVSAssessmentsData[assessmentInfo].MemoryInTBAvailable * AVSAssessmentsData[assessmentInfo].PredictedMemoryUtilizationPercentage / 100.0;
             AVSAssessmentsData[assessmentInfo].StorageInTBUsed = AVSAssessmentsData[assessmentInfo].StorageInTBAvailable * AVSAssessmentsData[assessmentInfo].PredictedStorageUtilizationPercentage / 100.0;
             AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresFree = AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresAvailable - AVSAssessmentsData[assessmentInfo].NumberOfCpuCoresUsed;
             AVSAssessmentsData[assessmentInfo].MemoryInTBFree = AVSAssessmentsData[assessmentInfo].MemoryInTBAvailable - AVSAssessmentsData[assessmentInfo].MemoryInTBUsed;
             AVSAssessmentsData[assessmentInfo].StorageInTBFree = AVSAssessmentsData[assessmentInfo].StorageInTBAvailable - AVSAssessmentsData[assessmentInfo].StorageInTBUsed;
-            AVSAssessmentsData[assessmentInfo].ConfidenceRating = UtilityFunctions.GetConfidenceRatingInStars(avsPropertiesObj.Properties.ConfidenceRatingInPercentage ?? 0);
+            AVSAssessmentsData[assessmentInfo].ConfidenceRating = UtilityFunctions.GetConfidenceRatingInStars(avsPropertiesObj.Properties?.Details?.ConfidenceRatingInPercentage ?? 0);
 
-            AvsAssessmentConstants.VCpuOversubscription = ((int)(avsPropertiesObj.Properties.VCpuOversubscription)).ToString() + ":1";
+            AvsAssessmentConstants.VCpuOversubscription = (avsPropertiesObj.Properties.VCpuOversubscription ?? 4).ToString() + ":1";
             AvsAssessmentConstants.DedupeCompression = avsPropertiesObj.Properties.DedupeCompression ?? 1.5;
         }
 
         #region Utilities
-        private List<AssessedDisk> GetAssessedDiskList(Dictionary<string, AVSAssessedMachineDisk> disks)
+        private List<AssessedDisk> GetAssessedDiskList(List<AVSAssessedMachineDisk> disks)
         {
             List<AssessedDisk> diskList = new List<AssessedDisk>();
 
             foreach (var kvp in disks)
             {
                 AssessedDisk obj = new AssessedDisk();
-                obj.DisplayName = kvp.Value.DisplayName;
-                obj.GigabytesProvisioned = kvp.Value.GigabytesProvisioned;
-                obj.MegabytesPerSecondOfRead = kvp.Value.MegabytesPerSecondOfRead;
-                obj.MegabytesPerSecondOfWrite = kvp.Value.MegabytesPerSecondOfWrite;
-                obj.NumberOfReadOperationsPerSecond = kvp.Value.NumberOfReadOperationsPerSecond;
-                obj.NumberOfWriteOperationsPerSecond = kvp.Value.NumberOfWriteOperationsPerSecond;
+                obj.DisplayName = kvp.DisplayName;
+                obj.GigabytesProvisioned = kvp.GigabytesProvisioned;
+                obj.MegabytesPerSecondOfRead = kvp.MegabytesPerSecondOfRead;
+                obj.MegabytesPerSecondOfWrite = kvp.MegabytesPerSecondOfWrite;
+                obj.NumberOfReadOperationsPerSecond = kvp.NumberOfReadOperationsPerSecond;
+                obj.NumberOfWriteOperationsPerSecond = kvp.NumberOfWriteOperationsPerSecond;
 
                 diskList.Add(obj);
             }
@@ -271,18 +332,18 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             return diskList;
         }
 
-        private List<AssessedNetworkAdapter> GetAssessedNetworkAdapterList(Dictionary<string, AVSAssessedMachineNetworkAdapter> networkAdapters)
+        private List<AssessedNetworkAdapter> GetAssessedNetworkAdapterList(List<AVSAssessedMachineNetworkAdapter> networkAdapters)
         {
             List<AssessedNetworkAdapter> networkAdapterList = new List<AssessedNetworkAdapter>();
 
             foreach (var kvp in networkAdapters)
             {
                 AssessedNetworkAdapter obj = new AssessedNetworkAdapter();
-                obj.DisplayName = kvp.Value.DisplayName;
-                obj.MacAddress = kvp.Value.MacAddress;
-                obj.IpAddresses = kvp.Value.IpAddresses;
-                obj.MegabytesPerSecondReceived = kvp.Value.MegabytesPerSecondReceived;
-                obj.MegaytesPerSecondTransmitted = kvp.Value.MegabytesPerSecondTransmitted;
+                obj.DisplayName = kvp.DisplayName;
+                obj.MacAddress = kvp.MacAddress;
+                obj.IpAddresses = kvp.IpAddresses;
+                obj.MegabytesPerSecondReceived = kvp.MegabytesPerSecondReceived;
+                obj.MegaytesPerSecondTransmitted = kvp.MegabytesPerSecondTransmitted;
 
                 networkAdapterList.Add(obj);
             }

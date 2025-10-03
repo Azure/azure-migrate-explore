@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using Azure.Migrate.Explore.Assessment.Parser;
 using Azure.Migrate.Explore.Assessment.Processor;
@@ -239,7 +240,16 @@ namespace Azure.Migrate.Explore.Assessment
             string RandomSessionId = new Random().Next(0, 100000).ToString("D5");
             UserInputObj.LoggerObj.LogInformation($"ID for this session: {RandomSessionId}");
 
-            BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId);
+            // Collect all discovery machine ARM IDs for scoped business case
+            List<string> scopedMachineIds = assessmentSiteMachines
+                .Where(machine => !string.IsNullOrEmpty(machine.DiscoveryMachineArmId))
+                .Select(machine => machine.DiscoveryMachineArmId!)
+                .Distinct()
+                .ToList();
+
+            UserInputObj.LoggerObj.LogInformation($"Creating scoped business case with {scopedMachineIds.Count} machines");
+
+            BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId, scopedMachineIds);
             KeyValuePair<BusinessCaseInformation, AssessmentPollResponse> bizCaseCompletionResultKvp = new KeyValuePair<BusinessCaseInformation, AssessmentPollResponse>(bizCaseObj, AssessmentPollResponse.NotCreated);
             try
             {
@@ -388,7 +398,7 @@ namespace Azure.Migrate.Explore.Assessment
                         AllAssessments.AddRange(new AzureVMAssessmentSettingsFactory().GetAzureVMAssessmentSettings(UserInputObj, group.Key));
 
                     else if (group.Key.Contains("Azure-VMWareSolution"))
-                        AllAssessments.AddRange(new AzureVMWareSolutionAssessmentSettingsFactory().GetAzureVMWareSolutionAssessmentSettings(UserInputObj, group.Key));
+                        AllAssessments.AddRange(new AzureVMWareSolutionAssessmentSettingsFactory().GetAzureVMWareSolutionAssessmentSettings(UserInputObj, scopedMachineIds));
 
                     else if (group.Key.Contains("SQL"))
                         AllAssessments.AddRange(new AzureSQLAssessmentSettingsFactory().GetAzureSQLAssessmentSettings(UserInputObj, group.Key));

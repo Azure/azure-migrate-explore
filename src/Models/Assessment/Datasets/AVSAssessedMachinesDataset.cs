@@ -10,7 +10,7 @@ namespace Azure.Migrate.Explore.Models
     {
         public string DisplayName { get; set; }
         public string DatacenterMachineArmId { get; set; }
-        public Suitabilities Suitability { get; set; }
+        public string Suitability { get; set; }
         public string SuitabilityExplanation { get; set; }
         public string OperatingSystemName { get; set; }
         public string OperatingSystemVersion { get; set; }

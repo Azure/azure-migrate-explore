@@ -10,19 +10,31 @@ namespace Azure.Migrate.Explore.Models
     public class AzureVMWareSolutionAssessmentSettingsJSON
     {
         [JsonProperty("properties")]
-        public AzureVMWareSolutionAssessmentSettingsProperty Properties { get; set; } = new AzureVMWareSolutionAssessmentSettingsProperty();
+        public AzureVMWareSolutionAssessmentProperty Properties { get; set; } = new AzureVMWareSolutionAssessmentProperty();
+    }
+
+    public class AzureVMWareSolutionAssessmentProperty
+    {
+        [JsonProperty("settings")]
+        public AzureVMWareSolutionAssessmentSettingsProperty Settings { get; set; } = new AzureVMWareSolutionAssessmentSettingsProperty();
+
+        [JsonProperty("scope")]
+        public ScopeDetails Scope { get; set; } = new ScopeDetails();
+    }
+
+    public class ScopeDetails
+    {
+        [JsonProperty("scopeType")]
+        public string ScopeType { get; set; } = "Datacenter";
+
+        [JsonProperty("azureResourceGraphQuery")]
+        public string AzureResourceGraphQuery { get; set; } = "";
     }
 
     public class AzureVMWareSolutionAssessmentSettingsProperty
     {
         [JsonProperty("sizingCriterion")]
         public string SizingCriterion { get; set; } = "PerformanceBased";
-
-        [JsonProperty("azureHybridUseBenefit")]
-        public string AzureHybridUseBenefit { get; set; } = "No";
-
-        [JsonProperty("reservedInstance")]
-        public string ReservedInstance { get; set; }
 
         [JsonProperty("nodeTypes")]
         public List<string> NodeTypes { get; set; }
@@ -31,19 +43,22 @@ namespace Azure.Migrate.Explore.Models
         public List<string> FailuresToTolerateAndRaidLevelList { get; set; } = new List<string> { "Ftt1Raid1", "Ftt2Raid6" };
 
         [JsonProperty("vcpuOversubscription")]
-        public string VcpuOversubscription { get; set; } = AvsAssessmentConstants.VCpuOversubscription;
+        public int VcpuOversubscription { get; set; } = 4;
 
         [JsonProperty("memOvercommit")]
-        public string MemOverCommit { get; set; } = "1";
+        public int MemOverCommit { get; set; } = 1;
 
         [JsonProperty("dedupeCompression")]
-        public string DedupeCompression { get; set; } = AvsAssessmentConstants.DedupeCompression.ToString();
+        public double DedupeCompression { get; set; } = AvsAssessmentConstants.DedupeCompression;
 
         [JsonProperty("isStretchClusterEnabled")]
-        public string IsStretchClusterEnabled { get; set; } = "No";
+        public bool IsStretchClusterEnabled { get; set; } = false;
 
-        [JsonProperty("percentile")]
-        public string Percentile { get; set; } = "Percentile95";
+        [JsonProperty("isVcfByolEnabled")]
+        public bool IsVcfByolEnabled { get; set; } = true;
+
+        [JsonProperty("performanceData")]
+        public PerfData PerformanceData { get; set; } = new PerfData();
 
         [JsonProperty("scalingFactor")]
         public int ScalingFactor { get; set; } = 1;
@@ -51,8 +66,8 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("currency")]
         public string Currency { get; set; }
 
-        [JsonProperty("azureOfferCode")]
-        public string AzureOfferCode { get; set; } = "MSAZR0003P";
+        [JsonProperty("savingsSettings")]
+        public SavingsSettings SavingsSettings { get; set; } = new SavingsSettings();
 
         [JsonProperty("discountPercentage")]
         public int DiscountPercentage { get; set; } = 0;
@@ -62,5 +77,35 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("externalStorageTypes")]
         public List<string> ExternalStorageTypes { get; set; }
+
+        [JsonProperty("billingSettings")]
+        public BillingSettings BillingSettings { get; set; } = new BillingSettings();
+    }
+
+    public class BillingSettings
+    {
+        [JsonProperty("licensingProgram")]
+        public string LicensingProgram { get; set; } = "retail";
+
+        [JsonProperty("subscriptionId")]
+        public string SubscriptionId { get; set; } 
+    }
+
+    public class SavingsSettings
+    {
+        [JsonProperty("savingsOptions")]
+        public string SavingsOption { get; set; } = "ri3year";
+
+        [JsonProperty("azureOfferCode")]
+        public string AzureOfferCode { get; set; } = "MSAZR0003P";
+    }
+
+    public class PerfData
+    {
+        [JsonProperty("percentile")]
+        public string Percentile { get; set; } = "Percentile95";
+
+        [JsonProperty("timeRange")]
+        public string TimeRange { get; set; } = "Week";
     }
 }
