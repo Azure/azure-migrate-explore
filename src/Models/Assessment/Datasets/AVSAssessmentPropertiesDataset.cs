@@ -23,6 +23,9 @@ namespace Azure.Migrate.Explore.Models
         public string RecommendedFttRaidLevels { get; set; }
         public string RecommendedExternalStorage { get; set; }
         public double TotalMonthlyCostEstimate { get; set; }
+        public double TotalNodeCost { get; set; }
+        public double TotalExternalNetworkCost { get; set; }
+        public double TotalExternalStorageCost { get; set; }
         public double PredictedCpuUtilizationPercentage { get; set; }
         public double PredictedMemoryUtilizationPercentage { get; set; }
         public double PredictedStorageUtilizationPercentage { get; set; }

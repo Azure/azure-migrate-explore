@@ -438,6 +438,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.RecommendedFttRaidLevels = avsAssessmentData.Value.RecommendedFttRaidLevels;
                 obj.RecommendedExternalStorage = avsAssessmentData.Value.RecommendedExternalStorage;
                 obj.MonthlyTotalCostEstimate = avsAssessmentData.Value.TotalMonthlyCostEstimate;
+                obj.MonthlyAvsExternalStorageCost = avsAssessmentData.Value.TotalExternalStorageCost;
+                obj.MonthlyAvsNodeCost = avsAssessmentData.Value.TotalNodeCost;
+                obj.MonthlyAvsExternalNetworkCost = avsAssessmentData.Value.TotalExternalNetworkCost;
                 obj.PredictedCpuUtilizationPercentage = avsAssessmentData.Value.PredictedCpuUtilizationPercentage;
                 obj.PredictedMemoryUtilizationPercentage = avsAssessmentData.Value.PredictedMemoryUtilizationPercentage;
                 obj.PredictedStorageUtilizationPercentage = avsAssessmentData.Value.PredictedStorageUtilizationPercentage;

@@ -135,16 +135,16 @@ namespace Azure.Migrate.Explore.Factory
             {
                 externalStorageTypes.Add("AnfUltra");
             }
-            // uncomment this when elastic SAN is supported in AVS assessment (OCT 2025 end tentatively)
-            // if (AvsAssessmentConstants.AzureElasticSanBaseStorageRegionList.Contains(userInputObj.TargetRegion.Key))
-            // {
-            //     externalStorageTypes.Add("AzureElasticSanBase");
-            // }
 
-            // if (AvsAssessmentConstants.AzureElasticSanCapacityStorageRegionList.Contains(userInputObj.TargetRegion.Key))
-            // {
-            //     externalStorageTypes.Add("AzureElasticSanCapacity");
-            // }
+            if (AvsAssessmentConstants.AzureElasticSanBaseStorageRegionList.Contains(userInputObj.TargetRegion.Key))
+            {
+                externalStorageTypes.Add("AzureElasticSanBase");
+            }
+
+            if (AvsAssessmentConstants.AzureElasticSanCapacityStorageRegionList.Contains(userInputObj.TargetRegion.Key))
+            {
+                externalStorageTypes.Add("AzureElasticSanCapacity");
+            }
 
             // Performance based - Pay as you go
             AzureVMWareSolutionAssessmentSettingsJSON obj1 = new AzureVMWareSolutionAssessmentSettingsJSON();

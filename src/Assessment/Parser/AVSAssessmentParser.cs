@@ -292,7 +292,43 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                     totalMonthlyCost += totalMonthlyCostDetail ?? 0.00;
                 }
             }
+            var costComponentsWithTotalMonthlyAvsNodeCost = new List<CostComponent>(avsSummariesObj?.Values[0]?.Properties?.CostComponents?.FindAll(x => x.CostDetail.Exists(y => y.Name == "MonthlyAvsNodeCost")) ?? new List<CostComponent>());
+            // in each of the cost components, get the cost detail with name "TotalMonthlyCost" and get its value and add them up
+            double? totalMonthlyAvsNodeCost = 0.00;
+            foreach (var costComponent in costComponentsWithTotalMonthlyAvsNodeCost)
+            {
+                var totalMonthlyCostDetail = costComponent.CostDetail?.Find(x => x.Name == "MonthlyAvsNodeCost")?.Value;
+                if (totalMonthlyCostDetail != null)
+                {
+                    totalMonthlyAvsNodeCost += totalMonthlyCostDetail ?? 0.00;
+                }
+            }
+            var costComponentsWithTotalMonthlyExternalStorageCost = new List<CostComponent>(avsSummariesObj?.Values[0]?.Properties?.CostComponents?.FindAll(x => x.CostDetail.Exists(y => y.Name == "MonthlyAvsExternalStorageCost")) ?? new List<CostComponent>());
+            // in each of the cost components, get the cost detail with name "TotalMonthlyCost" and get its value and add them up
+            double? totalMonthlyExternalStorageCost = 0.00;
+            foreach (var costComponent in costComponentsWithTotalMonthlyExternalStorageCost)
+            {
+                var totalMonthlyCostDetail = costComponent.CostDetail?.Find(x => x.Name == "MonthlyAvsExternalStorageCost")?.Value;
+                if (totalMonthlyCostDetail != null)
+                {
+                    totalMonthlyExternalStorageCost += totalMonthlyCostDetail ?? 0.00;
+                }
+            }
+            var costComponentsWithTotalMonthlyExternalNetworkCost = new List<CostComponent>(avsSummariesObj?.Values[0]?.Properties?.CostComponents?.FindAll(x => x.CostDetail.Exists(y => y.Name == "MonthlyAvsNetworkCost")) ?? new List<CostComponent>());
+            // in each of the cost components, get the cost detail with name "TotalMonthlyCost" and get its value and add them up
+            double? totalMonthlyExternalNetworkCost = 0.00;
+            foreach (var costComponent in costComponentsWithTotalMonthlyExternalNetworkCost)
+            {
+                var totalMonthlyCostDetail = costComponent.CostDetail?.Find(x => x.Name == "MonthlyAvsNetworkCost")?.Value;
+                if (totalMonthlyCostDetail != null)
+                {
+                    totalMonthlyExternalNetworkCost += totalMonthlyCostDetail ?? 0.00;
+                }
+            }
             AVSAssessmentsData[assessmentInfo].TotalMonthlyCostEstimate = totalMonthlyCost ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].TotalExternalStorageCost = totalMonthlyExternalStorageCost ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].TotalNodeCost = totalMonthlyAvsNodeCost ?? 0.00;
+            AVSAssessmentsData[assessmentInfo].TotalExternalNetworkCost = totalMonthlyExternalNetworkCost ?? 0.00;
             AVSAssessmentsData[assessmentInfo].PredictedCpuUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.CpuUtilization ?? 0.00;
             AVSAssessmentsData[assessmentInfo].PredictedMemoryUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.RamUtilization ?? 0.00;
             AVSAssessmentsData[assessmentInfo].PredictedStorageUtilizationPercentage = avsSummariesObj?.Values[0]?.Properties?.StorageUtilization ?? 0.00;
