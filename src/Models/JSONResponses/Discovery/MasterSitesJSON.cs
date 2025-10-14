@@ -49,6 +49,9 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("sites")]
         public List<string> Sites { get; set; }
 
+        [JsonProperty("nestedSites")]
+        public List<string> NestedSites { get; set; }
+
         [JsonProperty("customerStorageAccountArmId")]
         public string CusotmerStorageAccountArmId { get; set; }
 

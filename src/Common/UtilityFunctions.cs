@@ -12,6 +12,8 @@ using Azure.Migrate.Explore.Models.CopilotSummary.MigrationSummary;
 using System.Reflection;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Linq;
 using Orionsoft.MarkdownToPdfLib;
 
 namespace Azure.Migrate.Explore.Common
@@ -332,6 +334,187 @@ namespace Azure.Migrate.Explore.Common
         {
             for (int i = 0; i < columns.Count; i++)
                 sheet.Cell(1, i + 1).Value = columns[i];
+        }
+
+        /// <summary>
+        /// Saves ARG (Azure Resource Graph) JSON response to an Excel worksheet.
+        /// This method specifically handles ARG responses with a "data" root element.
+        /// </summary>
+        /// <param name="argJsonResponse">ARG JSON response containing a "data" array</param>
+        /// <param name="worksheet">Excel worksheet to populate</param>
+        public static void SaveARGJsonDataToWorksheet(string argJsonResponse, IXLWorksheet worksheet)
+        {
+            SaveJsonDataToWorksheet(argJsonResponse, worksheet, "data");
+        }
+
+        /// <summary>
+        /// Saves JSON data to an Excel worksheet by flattening the JSON structure
+        /// </summary>
+        /// <param name="jsonResponse">JSON response containing an array of objects</param>
+        /// <param name="worksheet">Excel worksheet to populate</param>
+        /// <param name="rootElementName">Root element name containing the array data</param>
+        public static void SaveJsonDataToWorksheet(string jsonResponse, IXLWorksheet worksheet, string rootElementName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(jsonResponse))
+                {
+                    Console.WriteLine("JSON response is empty or null");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(rootElementName))
+                {
+                    Console.WriteLine("Root element name is required");
+                    return;
+                }
+
+                JToken parsedJson = JToken.Parse(jsonResponse);
+                JArray dataArray = null;
+
+                // Handle case where the entire JSON is already an array
+                if (parsedJson is JArray directArray)
+                {
+                    dataArray = directArray;
+                }
+                else if (parsedJson is JObject jsonObj)
+                {
+                    dataArray = jsonObj[rootElementName] as JArray;
+                    if (dataArray == null)
+                    {
+                        Console.WriteLine($"Root element '{rootElementName}' not found or is not an array");
+                        return;
+                    }
+                }
+
+                if (dataArray == null || dataArray.Count == 0)
+                {
+                    Console.WriteLine("No array data found in JSON response");
+                    return;
+                }
+
+                WriteJsonArrayToWorksheetWithFlattening(dataArray, worksheet);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error exporting JSON to Excel: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Writes a JArray to an Excel worksheet by flattening nested JSON objects into columns with dot-notation headers.
+        /// Each object in the array becomes a row, with nested properties flattened into separate columns.
+        /// </summary>
+        /// <param name="jsonArray">JArray containing JSON objects to export</param>
+        /// <param name="worksheet">Excel worksheet to populate with headers and data</param>
+        private static void WriteJsonArrayToWorksheetWithFlattening(JArray jsonArray, IXLWorksheet worksheet)
+        {
+            if (jsonArray == null || jsonArray.Count == 0)
+            {
+                Console.WriteLine("No data found in JSON array");
+                return;
+            }
+
+            // Flatten the first object to determine all possible column names
+            var firstItem = jsonArray[0] as JObject;
+            if (firstItem != null)
+            {
+                var flattenedColumns = FlattenJObject(firstItem);
+                var columnNames = flattenedColumns.Keys.ToList();
+
+                // Write column headers to the first row
+                for (int i = 0; i < columnNames.Count; i++)
+                {
+                    worksheet.Cell(1, i + 1).Value = columnNames[i];
+                }
+
+                // Write data rows starting from row 2
+                for (int rowIndex = 0; rowIndex < jsonArray.Count; rowIndex++)
+                {
+                    var item = jsonArray[rowIndex] as JObject;
+                    if (item != null)
+                    {
+                        var flattenedData = FlattenJObject(item);
+
+                        for (int colIndex = 0; colIndex < columnNames.Count; colIndex++)
+                        {
+                            var columnName = columnNames[colIndex];
+                            var cellValue = flattenedData.ContainsKey(columnName) ? flattenedData[columnName] : "";
+                            worksheet.Cell(rowIndex + 2, colIndex + 1).Value = cellValue;
+                        }
+                    }
+                }
+
+                // Auto-fit columns for better readability
+                worksheet.Columns().AdjustToContents();
+            }
+        }
+
+        /// <summary>
+        /// Recursively flattens a JObject into a dictionary with dot-notation keys
+        /// </summary>
+        /// <param name="obj">JObject to flatten</param>
+        /// <param name="prefix">Current prefix for nested properties</param>
+        /// <returns>Flattened dictionary</returns>
+        private static Dictionary<string, string> FlattenJObject(JObject obj, string prefix = "")
+        {
+            var result = new Dictionary<string, string>();
+            
+            foreach (var property in obj.Properties())
+            {
+                var key = string.IsNullOrEmpty(prefix) ? property.Name : $"{prefix}.{property.Name}";
+                
+                if (property.Value.Type == JTokenType.Object)
+                {
+                    // Recursively flatten nested objects
+                    var nestedObj = property.Value as JObject;
+                    if (nestedObj != null)
+                    {
+                        var nestedFlattened = FlattenJObject(nestedObj, key);
+                        foreach (var kvp in nestedFlattened)
+                        {
+                            result[kvp.Key] = kvp.Value;
+                        }
+                    }
+                }
+                else if (property.Value.Type == JTokenType.Array)
+                {
+                    var array = property.Value as JArray;
+                    if (array != null)
+                    {
+                        // For arrays, either flatten each object or create indexed entries
+                        if (array.Count > 0 && array[0].Type == JTokenType.Object)
+                        {
+                            // Array of objects - flatten each with index
+                            for (int i = 0; i < array.Count; i++)
+                            {
+                                var arrayObj = array[i] as JObject;
+                                if (arrayObj != null)
+                                {
+                                    var arrayFlattened = FlattenJObject(arrayObj, $"{key}[{i}]");
+                                    foreach (var kvp in arrayFlattened)
+                                    {
+                                        result[kvp.Key] = kvp.Value;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Array of primitives - join as comma-separated string
+                            var values = array.Select(token => token.ToString()).ToArray();
+                            result[key] = string.Join(", ", values);
+                        }
+                    }
+                }
+                else
+                {
+                    // Simple value
+                    result[key] = property.Value?.ToString() ?? "";
+                }
+            }
+            
+            return result;
         }
 
         public static double GetSecurityCost(List<AzureAssessmentCostComponent> costComponents)

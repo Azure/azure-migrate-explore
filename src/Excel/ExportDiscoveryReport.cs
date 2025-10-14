@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
+using System;
+using AzureMigrateExplore.Discovery;
 
 namespace Azure.Migrate.Explore.Excel
 {
@@ -13,13 +15,15 @@ namespace Azure.Migrate.Explore.Excel
         private readonly List<DiscoveryData> DiscoveredData;
         private readonly DiscoveryProperties DiscoveryPropertiesData;
         private readonly vCenterHostDiscovery VCenterHostDiscoveryData;
+        private readonly string DiscoveryDataFromARG;
         XLWorkbook DiscoveryWb;
 
-        public ExportDiscoveryReport(List<DiscoveryData> discoveredData, vCenterHostDiscovery vCenterHostData, DiscoveryProperties discoveryPropertiesData)
+        public ExportDiscoveryReport(List<DiscoveryData> discoveredData, vCenterHostDiscovery vCenterHostData, DiscoveryProperties discoveryPropertiesData, string discoveryDataFromARG = "")
         {
             DiscoveredData = discoveredData;
             DiscoveryPropertiesData = discoveryPropertiesData;
             VCenterHostDiscoveryData = vCenterHostData;
+            DiscoveryDataFromARG = discoveryDataFromARG;
             DiscoveryWb = new XLWorkbook();
         }
 
@@ -28,8 +32,16 @@ namespace Azure.Migrate.Explore.Excel
             GeneratePropertyWorksheet();
             GenerateDiscoveryReportWorksheet();
             GeneratevCenterHostReportWorksheet();
+            GenerateArgDataWorksheet();
 
             DiscoveryWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName);
+        }
+
+        private void GenerateArgDataWorksheet()
+        {
+            UtilityFunctions.SaveARGJsonDataToWorksheet(
+                DiscoveryDataFromARG,
+                DiscoveryWb.Worksheets.Add(DiscoveryReportConstants.ARGDataTabName, 4));
         }
 
         private void GeneratePropertyWorksheet()

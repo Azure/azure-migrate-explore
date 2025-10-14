@@ -3,13 +3,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.HttpRequestHelper;
 using Azure.Migrate.Explore.Models;
+using AzureMigrateExplore.Discovery;
+using Newtonsoft.Json;
 
 namespace Azure.Migrate.Explore.Discovery
 {
@@ -91,12 +93,19 @@ namespace Azure.Migrate.Explore.Discovery
                 return false;
             }
 
+            // Fetch all inventory data for all sites from ARG.
+            var allSites = masterSitesObj.Properties.Sites.Concat(masterSitesObj.Properties.NestedSites).ToList();
+            var argData = ARGDataFetcher.GetAllInventoryDataFromDiscoveryAsync(
+                UserInputObj,
+                new string[] { UserInputObj.Subscription.Key },
+                allSites).GetAwaiter().GetResult();
+
             UserInputObj.LoggerObj.LogInformation($"Retrieved discovery data for {DiscoveredData.Count.ToString()} machines");
 
             DiscoveryProperties discoveryProperties = new DiscoveryProperties();
             CreateDiscoveryPropertiesModel(discoveryProperties);
 
-            ExportDiscoveryReport exporter = new ExportDiscoveryReport(DiscoveredData, VCenterHostData, discoveryProperties);
+            ExportDiscoveryReport exporter = new ExportDiscoveryReport(DiscoveredData, VCenterHostData, discoveryProperties, argData);
             exporter.GenerateDiscoveryReportExcel();
 
             UserInputObj.LoggerObj.LogInformation(excelCreationPercentProgress, "Discovery report excel created successfully"); // IsExpressWorkflow ? 20 : 100 % Complete
