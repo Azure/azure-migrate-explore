@@ -352,7 +352,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
 
                 obj.MonthlyAzureSiteRecoveryCostEstimate = VMPerfDataKvp.Value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = VMPerfDataKvp.Value.AzureBackupMonthlyCostEstimate;
-                obj.GroupName = VMPerfDataKvp.Value.GroupName;
                 obj.MachineId = VMPerfDataKvp.Value.DatacenterMachineArmId;
 
                 All_VM_IaaS_Server_Rehost_Perf_List.Add(obj);
@@ -422,7 +421,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.SubscriptionId = avsAssessmentData.Value.SubscriptionId;
                 obj.ResourceGroup = avsAssessmentData.Value.ResourceGroup;
                 obj.ProjectName = avsAssessmentData.Value.AssessmentProjectName;
-                obj.GroupName = avsAssessmentData.Value.GroupName;
                 obj.AssessmentName = avsAssessmentData.Value.AssessmentName;
                 obj.SizingCriterion = avsAssessmentData.Value.SizingCriterion;
                 obj.AssessmentType = avsAssessmentData.Value.AssessmentType;
@@ -522,7 +520,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.NetworkInMBPS = UtilityFunctions.GetNetworkInMBPS(avsAssessedMachine.Value.NetworkAdapterList);
                 obj.NetworkOutMBPS = UtilityFunctions.GetNetworkOutMBPS(avsAssessedMachine.Value.NetworkAdapterList);
                 obj.DiskNames = UtilityFunctions.GetDiskNames(avsAssessedMachine.Value.Disks);
-                obj.GroupName = avsAssessedMachine.Value.GroupName;
                 obj.MachineId = avsAssessedMachine.Value.DatacenterMachineArmId;
 
                 AVS_IaaS_Rehost_Perf_List.Add(obj);
@@ -665,7 +662,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.AzureSQLMIConfigurationTargetHardwareType = UtilityFunctions.GetStringValue(azureSqlInstance.Value.AzureSQLMISkuHardwareGeneration);
                 obj.AzureSQLMIConfigurationTargetCores = azureSqlInstance.Value.AzureSQLMISkuCores;
                 obj.AzureSQLMIConfigurationTargetStorageInGB = Math.Round(azureSqlInstance.Value.AzureSQLMISkuStorageMaxSizeInMB / 1024.0);
-                obj.GroupName = azureSqlInstance.Value.GroupName;
                 obj.MachineId = AssessmentIdToDiscoveryIdLookup.ContainsKey(azureSqlInstance.Value.MachineArmId) ? AssessmentIdToDiscoveryIdLookup[azureSqlInstance.Value.MachineArmId] : "";
 
                 SQL_All_Instances_List.Add(obj);
@@ -764,7 +760,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.AzureSQLMIConfigurationTargetHardwareType = UtilityFunctions.GetStringValue(azureSqlInstance.Value.AzureSQLMISkuHardwareGeneration);
                 obj.AzureSQLMIConfigurationTargetCores = azureSqlInstance.Value.AzureSQLMISkuCores;
                 obj.AzureSQLMIConfigurationTargetStorageInGB = Math.Round(azureSqlInstance.Value.AzureSQLMISkuStorageMaxSizeInMB / 1024.0);
-                obj.GroupName = azureSqlInstance.Value.GroupName;
                 obj.MachineId = AssessmentIdToDiscoveryIdLookup.ContainsKey(azureSqlInstance.Value.MachineArmId) ? AssessmentIdToDiscoveryIdLookup[azureSqlInstance.Value.MachineArmId] : "";
 
                 SQL_MI_PaaS_List.Add(obj);
@@ -876,7 +871,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.SQLServerOnAzureVMConfigurationTargetCores = value.AzureSQLVMCores;
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.MonthlyAzureSiteRecoveryCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.MonthlyAzureBackupCostEstimate;
-                obj.GroupName = value.GroupName;
                 obj.MachineId = AssessmentIdToDiscoveryIdLookup.ContainsKey(value.MachineArmId) ? AssessmentIdToDiscoveryIdLookup[value.MachineArmId] : "";
 
                 SQL_IaaS_Instance_Rehost_Perf_List.Add(obj);
@@ -984,7 +978,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.AzureBackupMonthlyCostEstimate;
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 SQL_IaaS_Server_Rehost_Perf_List.Add(obj);
@@ -1080,7 +1073,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 SQL_IaaS_Server_Rehost_AsOnPrem_List.Add(obj);
@@ -1170,7 +1162,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.AzureSQLMIConfigurationTargetHardwareType = UtilityFunctions.GetStringValue(value.AzureSQLMISkuHardwareGeneration);
                 obj.AzureSQLMIConfigurationTargetCores = value.AzureSQLMISkuCores;
                 obj.AzureSQLMIConfigurationTargetStorageInGB = Math.Round(value.AzureSQLMISkuStorageMaxSizeInMB / 1024.0);
-                obj.GroupName = value.GroupName;
                 obj.MachineId = AssessmentIdToDiscoveryIdLookup.ContainsKey(value.MachineArmId) ? AssessmentIdToDiscoveryIdLookup[value.MachineArmId] : "";
 
                 SQL_MI_Opportunity_List.Add(obj);
@@ -1245,7 +1236,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyComputeCostEstimate_ASP3year = webApp.Value.EstimatedComputeCost_ASP3year;
                 obj.MonthlySecurityCostEstimate = webApp.Value.MonthlySecurityCost;
                 obj.AzureRecommendedTarget = webApp.Value.AzureRecommendedTarget;
-                obj.GroupName = webApp.Value.GroupName;
                 obj.MachineId = webApp.Value.DiscoveredMachineId;
 
                 WebApp_PaaS_List.Add(obj);
@@ -1446,7 +1436,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.AzureBackupMonthlyCostEstimate;
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 WebApp_IaaS_Server_Rehost_Perf_List.Add(obj);
@@ -1544,7 +1533,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 WebApp_IaaS_Server_Rehost_AsOnPrem_List.Add(obj);
@@ -1606,7 +1594,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.AzureAppServiceReadiness = new EnumDescriptionHelper().GetEnumDescription(value.Suitability);
                 obj.AzureAppServiceReadiness_Issues = UtilityFunctions.GetMigrationIssueByType(value.MigrationIssues, IssueCategories.Issue);
                 obj.AzureRecommendedTarget = value.AzureRecommendedTarget;
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DiscoveredMachineId;
 
                 WebApp_Opportunity_List.Add(obj);
@@ -1719,7 +1706,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.AzureBackupMonthlyCostEstimate;
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_SS_IaaS_Server_Rehost_Perf_List.Add(obj);
@@ -1822,7 +1808,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_SS_IaaS_Server_Rehost_AsOnPrem_List.Add(obj);
@@ -1929,7 +1914,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.AzureBackupMonthlyCostEstimate;
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_IaaS_Server_Rehost_Perf_List.Add(obj);
@@ -2026,7 +2010,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_IaaS_Server_Rehost_AsOnPrem_List.Add(obj);
@@ -2124,7 +2107,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyAzureSiteRecoveryCostEstimate = value.AzureSiteRecoveryMonthlyCostEstimate;
                 obj.MonthlyAzureBackupCostEstimate = value.AzureBackupMonthlyCostEstimate;
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_Opportunity_Perf_List.Add(obj);
@@ -2212,7 +2194,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 obj.MonthlyStorageCostForPremiumDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Premium) + UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.PremiumV2);
                 obj.MonthlyStorageCostForUltraDisks = UtilityFunctions.GetDiskTypeStorageCost(value.Disks, RecommendedDiskTypes.Ultra);
 
-                obj.GroupName = value.GroupName;
                 obj.MachineId = value.DatacenterMachineArmId;
 
                 VM_Opportunity_AsOnPrem_List.Add(obj);

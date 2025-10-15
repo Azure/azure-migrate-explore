@@ -13,38 +13,38 @@ namespace Azure.Migrate.Explore.Models
 
     public class AzureSQLAssessmentProperty
     {
+        [JsonProperty("settings")]
+        public AzureSQLAssessmentSettingsProperty Settings { get; set; } = new AzureSQLAssessmentSettingsProperty();
+
+        [JsonProperty("scope")]
+        public ScopeDetails Scope { get; set; } = new ScopeDetails();
+    }
+
+    public class AzureSQLAssessmentSettingsProperty
+    {
         [JsonProperty("azureLocation")]
         public string AzureLocation { get; set; }
 
         [JsonProperty("environmentType")]
-        public string EnvrionmentType { get; set; }
+        public string EnvironmentType { get; set; }
 
         [JsonProperty("sizingCriterion")]
         public string SizingCriterion { get; set; } = "PerformanceBased";
 
-        [JsonProperty("reservedInstance")]
-        public string ReservedInstance { get; set; }
+        [JsonProperty("performanceData")]
+        public PerfData PerformanceData { get; set; } = new PerfData();
 
-        [JsonProperty("reservedInstanceForVm")]
-        public string ReservedInstanceForVM { get; set; }
+        [JsonProperty("savingsSettings")]
+        public SavingsSettings SavingsSettings { get; set; } = new SavingsSettings();
+
+        [JsonProperty("billingSettings")]
+        public BillingSettings BillingSettings { get; set; } = new BillingSettings();
 
         [JsonProperty("currency")]
         public string Currency { get; set; }
 
         [JsonProperty("azureSecurityOfferingType")]
         public string AzureSecurityOfferingType = "MDC";
-
-        [JsonProperty("azureOfferCode")]
-        public string AzureOfferCode { get; set; } = "MSAZR0003P";
-
-        [JsonProperty("azureOfferCodeForVm")]
-        public string AzureOfferCodeForVM { get; set; } = "MSAZR0003P";
-
-        [JsonProperty("percentile")]
-        public string Percentile { get; set; } = "Percentile95";
-
-        [JsonProperty("timeRange")]
-        public string TimeRange { get; set; }
 
         [JsonProperty("scalingFactor")]
         public int ScalingFactor { get; set; } = 1;

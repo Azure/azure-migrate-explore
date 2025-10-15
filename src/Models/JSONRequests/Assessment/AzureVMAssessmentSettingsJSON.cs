@@ -8,31 +8,37 @@ namespace Azure.Migrate.Explore.Models
     public class AzureVMAssessmentSettingsJSON
     {
         [JsonProperty("properties")]
-        public AzureVMAssessmentSettingsProperty Properties { get; set; } = new AzureVMAssessmentSettingsProperty();
+        public AzureVMAssessmentProperty Properties { get; set; } = new AzureVMAssessmentProperty();
+    }
+
+    public class AzureVMAssessmentProperty
+    {
+        [JsonProperty("settings")]
+        public AzureVMAssessmentSettingsProperty Settings { get; set; } = new AzureVMAssessmentSettingsProperty();
+
+        [JsonProperty("scope")]
+        public ScopeDetails Scope { get; set; } = new ScopeDetails();
     }
 
     public class AzureVMAssessmentSettingsProperty
     {
         [JsonProperty("sizingCriterion")]
-        public string SizingCriterion { get; set; }
+        public string SizingCriterion { get; set; } = "PerformanceBased";
+
+        [JsonProperty("environmentType")]
+        public string EnvironmentType { get; set; } = "Production";
 
         [JsonProperty("azureHybridUseBenefit")]
-        public string AzureHybridUseBenefit { get; set; }
+        public string AzureHybridUseBenefit { get; set; } = "No";
 
-        [JsonProperty("reservedInstance")]
-        public string ReservedInstance { get; set; }
-
-        [JsonProperty("azureDiskType")]
-        public string AzureDiskType { get; set; } = "StandardOrPremium";
+        [JsonProperty("azureDiskTypes")]
+        public List<string> AzureDiskTypes { get; set; } = new List<string> { "StandardOrPremium" };
 
         [JsonProperty("scalingFactor")]
         public int ScalingFactor { get; set; } = 1;
 
         [JsonProperty("currency")]
         public string Currency { get; set; }
-
-        [JsonProperty("azureOfferCode")]
-        public string AzureOfferCode { get; set; }
 
         [JsonProperty("azureVmFamilies")]
         public List<string> AzureVMFamilies { get; set; } = new List<string>();
@@ -55,11 +61,14 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("azureStorageRedundancy")]
         public string AzureStorageRedundancy { get; set; } = "LocallyRedundant";
 
-        [JsonProperty("percentile")]
-        public string Percentile { get; set; } = "Percentile95";
+        [JsonProperty("billingSettings")]
+        public BillingSettings BillingSettings { get; set; } = new BillingSettings();
 
-        [JsonProperty("timeRange")]
-        public string TimeRange { get; set; }
+        [JsonProperty("savingsSettings")]
+        public SavingsSettings SavingsSettings { get; set; } = new SavingsSettings();
+
+        [JsonProperty("performanceData")]
+        public PerfData PerformanceData { get; set; } = new PerfData();
     }
 
     public class AzureVMUptime

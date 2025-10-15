@@ -61,7 +61,6 @@ namespace Azure.Migrate.Explore.Common
             "Azure SQL MI Configuration - Target Hardware Type",
             "Azure SQL MI Configuration - Target vCores",
             "Azure SQL MI Configuration - Target Storage (in GB)",
-            "Group Name",
             "Machine ID"
         };
 
@@ -96,7 +95,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Standard SSD Disks",
             "Monthly Storage Cost for Premium Disks",
             "Monthly Storage Cost for Ultra Disks",
-            "Group Name",
             "Machine ID"
         };
 
@@ -140,7 +138,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -153,7 +150,6 @@ namespace Azure.Migrate.Explore.Common
             "Azure App Service Readiness",
             "Azure App Service Readiness - Issues",
             "Azure Recommended Target",
-            "Group Name",
             "Machine ID",
         };
     }

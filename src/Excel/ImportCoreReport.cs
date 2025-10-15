@@ -376,7 +376,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.AzureSQLMIConfigurationTargetHardwareType = row.Cell(30).GetValue<string>();
                 obj.AzureSQLMIConfigurationTargetCores = row.Cell(31).GetValue<int>();
                 obj.AzureSQLMIConfigurationTargetStorageInGB = row.Cell(32).GetValue<double>();
-                obj.GroupName = row.Cell(33).GetValue<string>();
                 obj.MachineId = row.Cell(34).GetValue<string>();
 
                 SqlMIPaasList.Add(obj);
@@ -442,7 +441,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.SQLServerOnAzureVMConfigurationTargetCores = row.Cell(39).GetValue<int>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(40).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(41).GetValue<double>();
-                obj.GroupName = row.Cell(42).GetValue<string>();
                 obj.MachineId = row.Cell(43).GetValue<string>();
 
 
@@ -505,7 +503,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyStorageCostForUltraDisks = row.Cell(35).GetValue<double>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(36).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(37).GetValue<double>();
-                obj.GroupName = row.Cell(38).GetValue<string>();
                 obj.MachineId = row.Cell(39).GetValue<string>();
 
                 SqlIaasServerRehostPerfList.Add(obj);
@@ -542,7 +539,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyComputeCostEstimate_ASP3year = row.Cell(10).GetValue<double>();
                 obj.MonthlySecurityCostEstimate = row.Cell(11).GetValue<double>();
                 obj.AzureRecommendedTarget = row.Cell(12).GetValue<string>();
-                obj.GroupName = row.Cell(13).GetValue<string>();
                 obj.MachineId = row.Cell(14).GetValue<string>();
 
                 WebappPaasList.Add(obj);
@@ -604,7 +600,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyStorageCostForUltraDisks = row.Cell(35).GetValue<double>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(36).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(37).GetValue<double>();
-                obj.GroupName = row.Cell(38).GetValue<string>();
                 obj.MachineId = row.Cell(39).GetValue<string>();
 
                 WebappIaasServerRehostPerfList.Add(obj);
@@ -666,7 +661,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyStorageCostForUltraDisks = row.Cell(35).GetValue<double>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(36).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(37).GetValue<double>();
-                obj.GroupName = row.Cell(38).GetValue<string>();
                 obj.MachineId = row.Cell(39).GetValue<string>();
 
                 VMIaasServerRehostPerfList.Add(obj);
@@ -723,7 +717,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.AzureSQLMIConfigurationTargetHardwareType = row.Cell(30).GetValue<string>();
                 obj.AzureSQLMIConfigurationTargetCores = row.Cell(31).GetValue<int>();
                 obj.AzureSQLMIConfigurationTargetStorageInGB = row.Cell(32).GetValue<double>();
-                obj.GroupName = row.Cell(33).GetValue<string>();
                 obj.MachineId = row.Cell(34).GetValue<string>();
 
                 SqlAllInstancesList.Add(obj);
@@ -781,7 +774,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyStorageCostForUltraDisks = row.Cell(31).GetValue<double>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(32).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(33).GetValue<double>();
-                obj.GroupName = row.Cell(34).GetValue<string>();
                 obj.MachineId = row.Cell(35).GetValue<string>();
 
                 AllVMIaasServerRehostPerfList.Add(obj);
@@ -806,7 +798,6 @@ namespace Azure.Migrate.Explore.Excel
                     SubscriptionId = row.Cell(1).GetValue<string>(),
                     ResourceGroup = row.Cell(2).GetValue<string>(),
                     ProjectName = row.Cell(3).GetValue<string>(),
-                    GroupName = row.Cell(4).GetValue<string>(),
                     AssessmentName = row.Cell(5).GetValue<string>(),
                     SizingCriterion = row.Cell(6).GetValue<string>(),
                     AssessmentType = row.Cell(7).GetValue<string>(),
@@ -877,7 +868,6 @@ namespace Azure.Migrate.Explore.Excel
                     NetworkInMBPS = row.Cell(19).GetValue<double>(),
                     NetworkOutMBPS = row.Cell(20).GetValue<double>(),
                     DiskNames = row.Cell(21).GetValue<string>(),
-                    GroupName = row.Cell(22).GetValue<string>(),
                     MachineId = row.Cell(23).GetValue<string>()
                 };
 

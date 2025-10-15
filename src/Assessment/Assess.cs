@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Text;
 using Azure.Migrate.Explore.Assessment.Parser;
 using Azure.Migrate.Explore.Assessment.Processor;
 using Azure.Migrate.Explore.Common;
@@ -13,6 +13,8 @@ using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Factory;
 using Azure.Migrate.Explore.HttpRequestHelper;
 using Azure.Migrate.Explore.Models;
+using Microsoft.UI.Xaml.Input;
+using System.Threading.Tasks;
 
 namespace Azure.Migrate.Explore.Assessment
 {
@@ -140,9 +142,6 @@ namespace Azure.Migrate.Explore.Assessment
             HashSet<string> SqlServicesVM = new HashSet<string>();
             HashSet<string> GeneralVM = new HashSet<string>(); // Machines without sql, webapp or sql services
 
-            Dictionary<string, List<string>> GroupMachinesMap = new Dictionary<string, List<string>>();
-            List<string> CreatedGroups = new List<string>();
-
             HashSet<string> discoveryMachineArmIdSet = GetDiscoveredMachineIDsSet();
             Dictionary<string, string> DecommissionedMachinesData = new Dictionary<string, string>();
 
@@ -251,166 +250,77 @@ namespace Azure.Migrate.Explore.Assessment
 
             BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId, scopedMachineIds);
             KeyValuePair<BusinessCaseInformation, AssessmentPollResponse> bizCaseCompletionResultKvp = new KeyValuePair<BusinessCaseInformation, AssessmentPollResponse>(bizCaseObj, AssessmentPollResponse.NotCreated);
-            try
-            {
-                bizCaseCompletionResultKvp = new BusinessCaseBuilder(bizCaseObj).BuildBusinessCase(UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeBuildBizCase)
-            {
-                string errorMessage = "";
-                foreach (var e in aeBuildBizCase.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                throw new Exception(errorMessage);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            // try
+            // {
+            //     bizCaseCompletionResultKvp = new BusinessCaseBuilder(bizCaseObj).BuildBusinessCase(UserInputObj);
+            // }
+            // catch (OperationCanceledException)
+            // {
+            //     throw;
+            // }
+            // catch (AggregateException aeBuildBizCase)
+            // {
+            //     string errorMessage = "";
+            //     foreach (var e in aeBuildBizCase.Flatten().InnerExceptions)
+            //     {
+            //         if (e is OperationCanceledException)
+            //             throw e;
+            //         else
+            //         {
+            //             errorMessage = errorMessage + e.Message + " ";
+            //         }
+            //     }
+            //     throw new Exception(errorMessage);
+            // }
+            // catch (Exception)
+            // {
+            //     throw;
+            // }
 
-            UserInputObj.LoggerObj.LogInformation($"Business case {bizCaseCompletionResultKvp.Key.BusinessCaseName} is in {bizCaseCompletionResultKvp.Value.ToString()} state");
-
-            foreach (var kvp in AzureVM)
-            {
-                UserInputObj.LoggerObj.LogInformation($"Total {kvp.Key} environment machines: {kvp.Value.Count}");
-                GroupMachinesMap.Add($"AzureVM-{kvp.Key}-AME-{RandomSessionId}", ObtainAssessmentMachineIdList(kvp.Value));
-            }
-
-            if (AzureVMWareSolution.Count > 0)
-            {
-                UserInputObj.LoggerObj.LogInformation($"Machines for Azure VMWare solution: {AzureVMWareSolution.Count}");
-                GroupMachinesMap.Add($"Azure-VMWareSolution-AME-{RandomSessionId}", ObtainAssessmentMachineIdList(AzureVMWareSolution));
-            }
-
-            foreach (var kvp in AzureSql)
-            {
-                UserInputObj.LoggerObj.LogInformation($"{kvp.Key} environment SQL machines: {kvp.Value.Count}");
-                GroupMachinesMap.Add($"SQL-{kvp.Key}-AME-{RandomSessionId}", ObtainAssessmentMachineIdList(kvp.Value));
-            }
-
-            foreach (var kvp in AzureWebApp)
-            {
-                UserInputObj.LoggerObj.LogInformation($"{kvp.Key} environment machines with web applications: {kvp.Value.Count}");
-                GroupMachinesMap.Add($"WebApp-{kvp.Key}-AME-{RandomSessionId}", ObtainAssessmentMachineIdList(kvp.Value));
-            }
+            // UserInputObj.LoggerObj.LogInformation($"Business case {bizCaseCompletionResultKvp.Key.BusinessCaseName} is in {bizCaseCompletionResultKvp.Value.ToString()} state");
 
             UserInputObj.LoggerObj.LogInformation($"General VM count: {GeneralVM.Count}");
 
             UserInputObj.LoggerObj.LogInformation($"Machines with SQL services: {SqlServicesVM.Count}");
 
-            Dictionary<string, GroupPollResponse> GroupStatusMap = new Dictionary<string, GroupPollResponse>();
+            HttpClientHelper clientHelper = new HttpClientHelper();
 
-            foreach (var kvp in GroupMachinesMap)
+            var argQuery = $"migrateresources | where ['type'] contains 'sites' | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";
+
+            List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
+            string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
+            var deployResult = clientHelper.DeployAssessmentArmTemplateAsync(
+                UserInputObj,
+                UserInputObj.Subscription.Key,
+                UserInputObj.ResourceGroupName.Value,
+                assessmentProjectArmId,
+                "AME-HA2",
+                argQuery.ToString(),
+                resolvedScopes,
+                new Dictionary<string, object>()).Result;
+
+            var assessmentInfo = new AssessmentInformation(
+                UserInputObj.AssessmentProjectName,
+                AssessmentType.HeterogeneousAssessment,
+                AssessmentTag.PerformanceBased,
+                "ame-ha"
+            );
+
+            // Step 1: Wait for heterogeneous assessment to complete
+            var reportHandler = new HeterogeneousReportHandler();
+            bool isCompleted = reportHandler.WaitForHeterogeneousAssessmentCompletion(UserInputObj, assessmentInfo);
+
+            if (isCompleted)
             {
-                if (UserInputObj.CancellationContext.IsCancellationRequested)
-                    UtilityFunctions.InitiateCancellation(UserInputObj);
-
-                bool isGroupCreationComplete = false;
-                try
-                {
-                    GroupStatusMap.Add(kvp.Key, GroupPollResponse.Invalid);
-                    isGroupCreationComplete = new HttpClientHelper().CreateGroup(UserInputObj, kvp, GroupStatusMap).Result;
-                }
-                catch (OperationCanceledException)
-                {
-                    throw;
-                }
-                catch (AggregateException aeCreateGroup)
-                {
-                    string errorMessage = "";
-                    foreach (var e in aeCreateGroup.Flatten().InnerExceptions)
-                    {
-                        if (e is OperationCanceledException)
-                            throw e;
-                        else
-                        {
-                            errorMessage = errorMessage + e.Message + " ";
-                        }
-                    }
-                    UserInputObj.LoggerObj.LogWarning($"Group {kvp.Key} creation failed: {errorMessage}");
-                    isGroupCreationComplete = false;
-                }
-                catch (Exception ex)
-                {
-                    UserInputObj.LoggerObj.LogWarning($"Group {kvp.Key} creation failed: {ex.Message}");
-                    isGroupCreationComplete = false;
-                }
-
-                if (!isGroupCreationComplete)
-                {
-                    UserInputObj.LoggerObj.LogWarning($"Group {kvp.Key} could not be created, skipping corresponding assessments");
-                    continue;
-                }
-
-                UserInputObj.LoggerObj.LogInformation($"Group {kvp.Key} created successfully");
-                CreatedGroups.Add(kvp.Key);
+                reportHandler.GenerateAndDownloadHeterogeneousReportAsync(UserInputObj, assessmentInfo).Wait();
+            }
+            else
+            {
+                UserInputObj.LoggerObj.LogError("Heterogeneous assessment did not complete successfully. Skipping report generation.");
             }
 
-            if (CreatedGroups.Count <= 0)
-            {
-                UserInputObj.LoggerObj.LogError("No groups created, terminating process");
-                return false;
-            }
-
-            UserInputObj.LoggerObj.LogInformation(2, $"Created groups: {CreatedGroups.Count}"); // IsExpressWorkflow ? 27 : 7 % complete
-
-            int completedGroups = 0;
-            int invalidGroups = 0;
-            foreach (var kvp in GroupStatusMap)
-            {
-                if (kvp.Value == GroupPollResponse.Completed)
-                    completedGroups += 1;
-                else if (kvp.Value == GroupPollResponse.Invalid)
-                    invalidGroups += 1;
-            }
-
-            if (completedGroups <= 0)
-            {
-                UserInputObj.LoggerObj.LogError("No groups in completed state, terminating process");
-                return false;
-            }
-            if (invalidGroups > 0)
-                UserInputObj.LoggerObj.LogWarning($"Invalid groups: {invalidGroups}");
-
-            UserInputObj.LoggerObj.LogInformation(3, $"Completed groups: {completedGroups}"); // IsExpressWorkflow ? 30 : 10 % complete
 
             List<AssessmentInformation> AllAssessments = new List<AssessmentInformation>();
-
-            foreach (KeyValuePair<string, GroupPollResponse> group in GroupStatusMap)
-            {
-                if (group.Value != GroupPollResponse.Completed)
-                    continue;
-                if (string.IsNullOrEmpty(group.Key))
-                    continue;
-                try
-                {
-                    if (group.Key.Contains("AzureVM"))
-                        AllAssessments.AddRange(new AzureVMAssessmentSettingsFactory().GetAzureVMAssessmentSettings(UserInputObj, group.Key));
-
-                    else if (group.Key.Contains("Azure-VMWareSolution"))
-                        AllAssessments.AddRange(new AzureVMWareSolutionAssessmentSettingsFactory().GetAzureVMWareSolutionAssessmentSettings(UserInputObj, scopedMachineIds));
-
-                    else if (group.Key.Contains("SQL"))
-                        AllAssessments.AddRange(new AzureSQLAssessmentSettingsFactory().GetAzureSQLAssessmentSettings(UserInputObj, group.Key));
-
-                    else if (group.Key.Contains("WebApp"))
-                        AllAssessments.AddRange(new AzureWebAppAssessmentSettingsFactory().GetAzureWebAppAssessmentSettings(UserInputObj, group.Key));
-                }
-                catch (Exception exAssessmentFactory)
-                {
-                    UserInputObj.LoggerObj.LogError($"Retrieval from assessment factory failed: {exAssessmentFactory.Message}");
-                }
-            }
 
             if (AllAssessments.Count <= 0)
             {
@@ -882,15 +792,6 @@ namespace Azure.Migrate.Explore.Assessment
         #endregion
 
         #region Utilities
-        private List<string> ObtainAssessmentMachineIdList(List<AssessmentSiteMachine> assessmentSiteMachines)
-        {
-            List<string> result = new List<string>();
-            foreach (var assessmentSiteMachine in assessmentSiteMachines)
-                result.Add(assessmentSiteMachine.AssessmentId);
-
-            return result;
-        }
-
         private static int CompareAssessmentCreationPriority(AssessmentInformation a, AssessmentInformation b)
         {
             if (object.ReferenceEquals(a, b))

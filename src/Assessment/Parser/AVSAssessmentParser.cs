@@ -45,10 +45,8 @@ namespace Azure.Migrate.Explore.Assessment.Parser
 
                 userInputObj.LoggerObj.LogInformation($"Parsing AVS assessment {kvp.Key.AssessmentName}");
 
-                string apiVersion = Routes.AssessmentMachineListApiVersion;
-                if (kvp.Key.AssessmentType == AssessmentType.AVSAssessment)
-                    apiVersion = Routes.AvsAssessmentApiVersion;
-
+                string apiVersion = Routes.AssessmentApiVersion;
+                
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
                              Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
@@ -219,7 +217,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AVSAssessedMachinesData[key].StorageInUseGB = value.Properties?.ExtendedDetails?.StorageInUseGB ?? 0;
             AVSAssessedMachinesData[key].NetworkAdapters = value.Properties?.ExtendedDetails?.NetworkAdapters == null ? 0 : value.Properties?.ExtendedDetails?.NetworkAdapters.Count ?? 0;
             AVSAssessedMachinesData[key].NetworkAdapterList = GetAssessedNetworkAdapterList(value.Properties?.ExtendedDetails?.NetworkAdapters);
-            AVSAssessedMachinesData[key].GroupName = assessmentInfo.GroupName;
         }
 
         private void UpdateAVSPropertiesDataset(AVSAssessmentPropertiesJSON avsPropertiesObj, AVSAssessmentSummariesJSON avsSummariesObj, Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, AssessmentInformation assessmentInfo, UserInput userInputObj)
@@ -261,7 +258,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AVSAssessmentsData[assessmentInfo].SubscriptionId = userInputObj.Subscription.Key;
             AVSAssessmentsData[assessmentInfo].ResourceGroup = userInputObj.ResourceGroupName.Value;
             AVSAssessmentsData[assessmentInfo].AssessmentProjectName = userInputObj.AssessmentProjectName;
-            AVSAssessmentsData[assessmentInfo].GroupName = assessmentInfo.GroupName;
             AVSAssessmentsData[assessmentInfo].AssessmentName = avsPropertiesObj.Name;
             AVSAssessmentsData[assessmentInfo].SizingCriterion = new EnumDescriptionHelper().GetEnumDescription(assessmentInfo.AssessmentTag);
             AVSAssessmentsData[assessmentInfo].CreatedOn = avsPropertiesObj.Properties.Details?.CreatedTimestamp;
