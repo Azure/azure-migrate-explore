@@ -23,6 +23,7 @@ namespace Azure.Migrate.Explore.Assessment
         private UserInput UserInputObj;
         private List<DiscoveryData> DiscoveredData;
         private List<vCenterHostDiscovery> vCenterHostDiscoveries;
+        private List<string> ListOfSites;
 
         public Assess()
         {
@@ -35,6 +36,7 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj = userInputObj;
             DiscoveredData = new List<DiscoveryData>();
             vCenterHostDiscoveries = new List<vCenterHostDiscovery>();
+            ListOfSites = new List<string>();
         }
 
         public Assess(UserInput userInputObj, List<DiscoveryData> discoveredData)
@@ -51,6 +53,45 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj.LoggerObj.LogInformation("Initiating assessment");
 
             DeletePreviousAssessmentReports();
+             string masterSitesUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
+                                    Routes.SubscriptionPath + Routes.ForwardSlash + UserInputObj.Subscription.Key + Routes.ForwardSlash +
+                                    Routes.ResourceGroupPath + Routes.ForwardSlash + UserInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
+                                    Routes.ProvidersPath + Routes.ForwardSlash + Routes.OffAzureProvidersPath + Routes.ForwardSlash +
+                                    Routes.MasterSitesPath + Routes.ForwardSlash + UserInputObj.DiscoverySiteName +
+                                    Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.MasterSiteApiVersion;
+
+            string masterSitesJsonResponse = "";
+            try
+            {
+                masterSitesJsonResponse = new HttpClientHelper().GetHttpRequestJsonStringResponse(masterSitesUrl, UserInputObj).Result;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (AggregateException aeMasterSites)
+            {
+                string errorMessage = "";
+                foreach (var e in aeMasterSites.Flatten().InnerExceptions)
+                {
+                    if (e is OperationCanceledException)
+                        throw e;
+                    else
+                    {
+                        errorMessage = errorMessage + e.Message + " ";
+                    }
+                }
+                UserInputObj.LoggerObj.LogError($"Failed to retrieve master sites: {errorMessage}");
+                return false;
+            }
+            catch (Exception exMasterSitesHttpResponse)
+            {
+                UserInputObj.LoggerObj.LogError($"Failed to retrieve master sites: {exMasterSitesHttpResponse.Message}");
+                return false;
+            }
+
+            MasterSitesJSON masterSitesObj = JsonConvert.DeserializeObject<MasterSitesJSON>(masterSitesJsonResponse);
+            List<string> ListOfSites = masterSitesObj.Properties.Sites;
 
             if (DiscoveredData.Count <= 0)
             {
@@ -285,8 +326,14 @@ namespace Azure.Migrate.Explore.Assessment
 
             HttpClientHelper clientHelper = new HttpClientHelper();
 
-            var argQuery = $"migrateresources | where ['type'] contains 'sites' | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";
+            var siteConditions = ListOfSites != null && ListOfSites.Count > 0
+                ? string.Join(" or ", ListOfSites.Select(site =>
+                    $"id contains '{site.Replace("'", "''")}'"))
+                : null;
 
+            var argQuery = siteConditions != null
+                ? $"migrateresources | where {siteConditions}"
+                : $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";            
             List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
             string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
             var deployResult = clientHelper.DeployAssessmentArmTemplateAsync(
