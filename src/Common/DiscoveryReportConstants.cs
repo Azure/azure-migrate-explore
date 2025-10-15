@@ -23,7 +23,9 @@ namespace Azure.Migrate.Explore.Common
             "Azure Migrate Project Name",
             "Discovery Site Name",
             "Workflow",
-            "Source Appliances"
+            "Source Appliances",
+            "Azure Migrate Explore Version",
+            "Report Generated On"
         };
 
         public static readonly List<string> DiscoveryReportColumns = new List<string>

@@ -68,6 +68,8 @@ namespace Azure.Migrate.Explore.Excel
             propertiesWs.Cell(2, 5).Value = DiscoveryPropertiesData.DiscoverySiteName;
             propertiesWs.Cell(2, 6).Value = DiscoveryPropertiesData.Workflow;
             propertiesWs.Cell(2, 7).Value = DiscoveryPropertiesData.SourceAppliances;
+            propertiesWs.Cell(2, 8).Value = System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString();
+            propertiesWs.Cell(2, 9).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         private void GenerateDiscoveryReportWorksheet()
