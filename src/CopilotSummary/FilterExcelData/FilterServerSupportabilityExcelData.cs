@@ -43,35 +43,6 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
                 }
             }
 
-            foreach (All_VM_IaaS_Server_Rehost_Perf item in coreReportData.AllVMIaasServerRehostPerfList)
-            {
-                windowsUniqueMachineId.Add(item.MachineId);
-                if (item.SupportStatus == "Extended")
-                {
-                    windowsServerExtended++;
-                }
-                else if (item.SupportStatus == "Out of support")
-                {
-                    windowsServerOutOfSupport++;
-                }
-            }
-            windowsServerExtended = windowsServerExtended / windowsUniqueMachineId.Count();
-            windowsServerOutOfSupport = windowsServerOutOfSupport / windowsUniqueMachineId.Count();
-
-            foreach (SQL_All_Instances item in coreReportData.SqlAllInstancesList)
-            {
-                sqlUniqueMachineId.Add(item.MachineId);
-                if (item.SupportStatus == "Extended")
-                {
-                    sqlServerExtended++;
-                }
-                else if (item.SupportStatus == "Out of support")
-                {
-                    sqlServerOutOfSupport++;
-                }
-            }
-            sqlServerExtended = sqlServerExtended / sqlUniqueMachineId.Count();
-            sqlServerOutOfSupport = sqlServerOutOfSupport / sqlUniqueMachineId.Count();
 
             ServerSupportabilityData migrationData = new ServerSupportabilityData
             {

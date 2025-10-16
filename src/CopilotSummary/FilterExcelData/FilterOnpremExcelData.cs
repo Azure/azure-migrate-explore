@@ -105,22 +105,7 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
             }
 
             double totalStorageinMB = 0.00;
-            foreach (SQL_All_Instances item in coreReportData.SqlAllInstancesList)
-            {
-                sqlServerDatabases += item.UserDatabases;
-                totalStorageinMB += item.TotalDBSizeInMB;
-            }
-            totalStorageinTB = (totalStorageinMB / 1024.0) / 1024.0;
 
-            List<double> cpuUtilization = new List<double>();
-            List<double> memoryUtilization = new List<double>();
-            foreach (All_VM_IaaS_Server_Rehost_Perf item in coreReportData.AllVMIaasServerRehostPerfList)
-            {
-                cpuUtilization.Add(item.CpuUtilizationPercentage);
-                memoryUtilization.Add(item.MemoryUtilizationPercentage);
-            }
-            averageCpuUtilizationP95 = Statistics.Percentile(cpuUtilization, 95);
-            averageRamUtilizationP95 = Statistics.Percentile(memoryUtilization, 95);
 
             Business_Case business_CaseObj = coreReportData.BusinessCaseObj;
 
@@ -179,47 +164,16 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
 
             double computeCostPAYGAHBRI = 0.00;
             double computeCostPAYGRI = 0.00;
-            foreach (VM_IaaS_Server_Rehost_Perf item in coreReportData.VMIaasServerRehostPerfList)
-            {
-                if (item.OperatingSystem.Contains("Windows"))
-                {
-                    computeCostPAYGAHBRI += item.MonthlyComputeCostEstimate_AHUB_RI3year;
-                    computeCostPAYGRI += item.MonthlyComputeCostEstimate_RI3year;
-                }
-            }
-
-            foreach (WebApp_IaaS_Server_Rehost_Perf item in coreReportData.WebappIaasServerRehostPerfList)
-            {
-                computeCostPAYGAHBRI += item.MonthlyComputeCostEstimate_AHUB_RI3year;
-                computeCostPAYGRI += item.MonthlyComputeCostEstimate_RI3year;
-            }
-
+           
             windowsServerLicenseSavingsAhub = (computeCostPAYGRI - computeCostPAYGAHBRI) * 12;
 
             double computeCostsqlMIPaasPAYGAHBRI = 0.00;
             double computeCostsqlMIPaasPAYGRI = 0.00;
-            foreach (SQL_MI_PaaS item in coreReportData.SqlMIPaasList)
-            {
-                computeCostsqlMIPaasPAYGAHBRI += item.MonthlyComputeCostEstimate_AHUB_RI3year;
-                computeCostsqlMIPaasPAYGRI += item.MonthlyComputeCostEstimate_RI3year;
-            }
-
+    
             double sqlAhubSavingsMIPaas = (computeCostsqlMIPaasPAYGRI - computeCostsqlMIPaasPAYGAHBRI) * 12;
 
             double computeCostsqlIaasPaygAhubRI = 0.00;
             double computeCostsqlIaasPaygRI = 0.00;
-
-            foreach (SQL_IaaS_Server_Rehost_Perf item in coreReportData.SqlIaasServerRehostPerfList)
-            {
-                computeCostsqlIaasPaygAhubRI += item.MonthlyComputeCostEstimate_AHUB_RI3year;
-                computeCostsqlIaasPaygRI += item.MonthlyComputeCostEstimate_RI3year;
-            }
-
-            foreach (SQL_IaaS_Instance_Rehost_Perf item in coreReportData.SqlIaasInstanceRehostPerfList)
-            {
-                computeCostsqlIaasPaygAhubRI += item.MonthlyComputeCostEstimate_AHUB_RI3year;
-                computeCostsqlIaasPaygRI += item.MonthlyComputeCostEstimate_RI3year;
-            }
 
             double sqlAhubSavingsIaas = (computeCostsqlIaasPaygRI - computeCostsqlIaasPaygAhubRI) * 12;
 
