@@ -10,13 +10,13 @@
         "discountPercentage": {"type": "int", "defaultValue": 0},
         "environmentType": {"type": "string", "defaultValue": "Production"},
         "savingsOptions": {"type": "string", "defaultValue": "RI3Year"},
-        "performanceTimeRange": {"type": "string", "defaultValue": "Day"},
+        "performanceTimeRange": {"type": "string", "defaultValue": "Week"},
         "performancePercentile": {"type": "string", "defaultValue": "Percentile95"},
         "sizingCriterion": {"type": "string", "defaultValue": "PerformanceBased"}
     },
     "resources": [
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "settings": {
                     "performanceData": {"timeRange": "[parameters('performanceTimeRange')]","percentile": "[parameters('performancePercentile')]"},
@@ -87,7 +87,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/sqlAssessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "settings": {
                     "performanceData": {"timeRange": "[parameters('performanceTimeRange')]","percentile": "[parameters('performancePercentile')]"},
@@ -182,7 +182,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/assessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "settings": {
                     "appSvcContainerSettings": {
@@ -216,7 +216,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/webAppAssessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "settings": {
                     "environmentType": "[parameters('environmentType')]",
@@ -243,7 +243,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/aksAssessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "targetAssessmentArmIds": {
                     "azureAppService": "[concat(parameters('assessmentProjectId'), '/webAppAssessments/', parameters('assessmentName'), '-webApp')]",
@@ -299,7 +299,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/pgSqlAssessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "assessmentArmIds": [
                     "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
@@ -319,7 +319,7 @@
             "type": "Microsoft.Migrate/assessmentprojects/heterogeneousAssessments"
         },
         {
-            "apiVersion": "2024-03-03-preview",
+            "apiVersion": "2025-09-09-preview",
             "properties": {
                 "settings": {
                     "performanceData": {
@@ -336,12 +336,14 @@
                     "dedupeCompression": 1.5,
                     "memOvercommit": 1,
                     "isStretchClusterEnabled": false,
-                    "isVcfByolEnabled": false,
+                    "isVcfByolEnabled": true,
                     "externalStorageTypes": [
                         "AnfPremium",
                         "AnfStandard",
                         "AnfUltra",
-                        "vsan"
+                        "vsan",
+                        "AzureElasticSanBase",
+                        "AzureElasticSanCapacity"
                     ],
                     "avsAssessmentScenario": "NewAvsSddc",
                     "cpuHeadroom": 0,
@@ -359,7 +361,8 @@
                     "nodeTypes": [
                         "AV36",
                         "AV36P",
-                        "AV64"
+                        "AV64",
+                        "AV48"
                     ]
                 },
                 "scope": {

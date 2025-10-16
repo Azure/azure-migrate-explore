@@ -338,18 +338,25 @@ namespace Azure.Migrate.Explore.Assessment
                 : $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";            
             List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
             string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
+
+            Dictionary<string, object> argDict = new Dictionary<string, object>
+            {
+                {"azureLocation", UserInputObj.TargetRegion},
+                {"currency", UserInputObj.Currency},
+                {"performanceTimeRange", UserInputObj.AssessmentDuration},
+            };
             var deployResult = clientHelper.DeployAssessmentArmTemplateAsync(
                 UserInputObj,
                 UserInputObj.Subscription.Key,
                 UserInputObj.ResourceGroupName.Value,
                 assessmentProjectArmId,
-                "AME-HA6",
+                $"AME-{RandomSessionId}",
                 argQuery.ToString(),
                 resolvedScopes,
-                new Dictionary<string, object>()).Result;
+                argDict).Result;
 
             var assessmentInfo = new AssessmentInformation(
-                "AME-HA6",
+                $"AME-{RandomSessionId}",
                 AssessmentType.HeterogeneousAssessment,
                 AssessmentTag.PerformanceBased,
                 ""
