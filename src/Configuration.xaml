@@ -17,6 +17,7 @@
         <SolidColorBrush x:Key="BackgroundColor" Color="#F5F5F5"/>
         <SolidColorBrush x:Key="CardBackgroundColor" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="TextColor" Color="#000000"/>
+        <SolidColorBrush x:Key="DisabledTextColor" Color="#A9A9A9"/>
 
         <!-- Define styles -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
@@ -102,12 +103,12 @@
                                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
                                     <TextBlock Text="Discovery Source" FontWeight="Bold" Foreground="{StaticResource TextColor}" />
                                     <StackPanel Orientation="Horizontal">
-                                        <RadioButton x:Name="ImportRadioButton" GroupName="DiscoverySourceGroup" Checked="ImportRadioButton_Checked" />
-                                        <TextBlock Text="Import" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <RadioButton x:Name="ImportRadioButton" IsEnabled="False" GroupName="DiscoverySourceGroup" Checked="ImportRadioButton_Checked" />
+                                        <TextBlock Text="Import" VerticalAlignment="Center" Foreground="{StaticResource DisabledTextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <RadioButton x:Name="ApplianceRadioButton" GroupName="DiscoverySourceGroup" Checked="ApplianceRadioButton_Checked" />
-                                        <TextBlock Text="Appliance" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <TextBlock Text="Azure Migrate Collector" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel x:Name="ApplianceOptionsPanel" Orientation="Vertical" Visibility="Collapsed" Margin="20,0,0,0">
                                         <StackPanel Orientation="Horizontal">
@@ -115,12 +116,12 @@
                                             <TextBlock Text="VMWare" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
-                                            <CheckBox x:Name="HyperVCheckBox" Checked="HyperV_CheckedChanged" />
-                                            <TextBlock Text="HyperV" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                            <CheckBox x:Name="HyperVCheckBox" IsEnabled="False" Checked="HyperV_CheckedChanged"/>
+                                            <TextBlock Text="HyperV" VerticalAlignment="Center" Foreground="{StaticResource DisabledTextColor}" Margin="-80,0,0,0"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
-                                            <CheckBox x:Name="PhysicalCheckBox" Checked="Physical_CheckedChanged" />
-                                            <TextBlock Text="Physical" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                            <CheckBox x:Name="PhysicalCheckBox" IsEnabled="False" Checked="Physical_CheckedChanged"/>
+                                            <TextBlock Text="Physical" VerticalAlignment="Center" Foreground="{StaticResource DisabledTextColor}" Margin="-80,0,0,0"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
@@ -133,8 +134,8 @@
                                         <TextBlock Text="Express" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <RadioButton x:Name="CustomWorkflowRadioButton" GroupName="WorkflowGroup" Checked="Custom_CheckedChanged" />
-                                        <TextBlock Text="Custom" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <RadioButton x:Name="CustomWorkflowRadioButton" IsEnabled="False" GroupName="WorkflowGroup" Checked="Custom_CheckedChanged" />
+                                        <TextBlock Text="Custom" VerticalAlignment="Center" Foreground="{StaticResource DisabledTextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <ComboBox x:Name="CustomWorkflowPicker" PlaceholderText="Select Workflow" Foreground="{StaticResource TextColor}" SelectionChanged="CustomWorkflowPicker_SelectedIndexChanged">
                                         <x:String>Discovery</x:String>
@@ -145,11 +146,11 @@
                                     <TextBlock Text="Business Proposal" FontWeight="Bold" Foreground="{StaticResource TextColor}" />
                                     <StackPanel Orientation="Horizontal">
                                         <RadioButton x:Name="ComprehensiveRadioButton" GroupName="BusinessProposalGroup" Checked="ComprehensiveRadioButton_Checked" />
-                                        <TextBlock Text="Comprehensive Proposal for IaaS, PaaS and AVS targets" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <TextBlock Text="Comprehensive Proposal for IaaS and PaaS with Security" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <RadioButton x:Name="QuickAVSRadioButton" GroupName="BusinessProposalGroup" Checked="QuickAVSRadioButton_Checked" />
-                                        <TextBlock Text="Quick AVS Proposal" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <TextBlock Text="AVS Proposal" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

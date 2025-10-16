@@ -89,6 +89,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             BusinessCaseData.OnPremIaaSCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.SecurityCost ?? 0.00;
             BusinessCaseData.OnPremIaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ITLaborCost ?? 0.00;
             BusinessCaseData.OnPremIaaSCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.FacilitiesCost ?? 0.00;
+            BusinessCaseData.OnPremIaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
 
             BusinessCaseData.OnPremPaaSCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ComputeCost ?? 0.00;
             BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ESUSavings ?? 0.00;
@@ -97,6 +98,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             BusinessCaseData.OnPremPaaSCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.SecurityCost ?? 0.00;
             BusinessCaseData.OnPremPaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ITLaborCost ?? 0.00;
             BusinessCaseData.OnPremPaaSCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.FacilitiesCost ?? 0.00;
+            BusinessCaseData.OnPremPaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
 
             BusinessCaseData.OnPremAvsCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ComputeCost ?? 0.00;
             BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ESUSavings ?? 0.00;
@@ -105,9 +107,12 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             BusinessCaseData.OnPremAvsCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.SecurityCost ?? 0.00;
             BusinessCaseData.OnPremAvsCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ITLaborCost ?? 0.00;
             BusinessCaseData.OnPremAvsCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.FacilitiesCost ?? 0.00;
+            BusinessCaseData.OnPremAvsCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
 
             BusinessCaseData.AzureIaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureIaaSCostDetails?.ITLaborCost ?? 0.00;
+            BusinessCaseData.AzureIaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureIaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
             BusinessCaseData.AzurePaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzurePaaSCostDetails?.ITLaborCost ?? 0.00;
+            BusinessCaseData.AzurePaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzurePaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
 
             BusinessCaseData.AzureAvsCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ComputeCost ?? 0.00;
             BusinessCaseData.AzureAvsCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ESUSavings ?? 0.00;
@@ -115,6 +120,16 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             BusinessCaseData.AzureAvsCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.NetworkCost ?? 0.00;
             BusinessCaseData.AzureAvsCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.SecurityCost ?? 0.00;
             BusinessCaseData.AzureAvsCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ITLaborCost ?? 0.00;
+            BusinessCaseData.AzureAvsCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
+
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ComputeCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ESUSavings ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.StorageCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.NetworkCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.SecurityCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ITLaborCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.FacilitiesCost ?? 0.00;
+            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
 
             BusinessCaseData.WindowsServerLicense.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.WindowsAhubSavings ?? 0.00;
             BusinessCaseData.SqlServerLicense.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.SqlAhubSavings ?? 0.00;

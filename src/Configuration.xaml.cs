@@ -503,6 +503,9 @@ namespace AzureMigrateExplore
             {
                 DisableHypervAndPhysicalCheckBoxes();
             }
+
+            // Current MCAPs Pilot with Migrate offline collector only supports VMWare
+            DisableHypervAndPhysicalCheckBoxes();
         }
 
         private void ImportRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -546,6 +549,9 @@ namespace AzureMigrateExplore
                     PhysicalCheckBox.IsChecked = true;
                 }
             }
+
+            // Current MCAPs Pilot with Migrate offline collector only supports VMWare
+            DisableHypervAndPhysicalCheckBoxes();
 
             mainObj.MakeConfigurationActionButtonsEnabledDecision();
             mainObj.MakeConfigurationTabButtonEnableDecisions();

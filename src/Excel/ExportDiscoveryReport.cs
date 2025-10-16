@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
+using System;
+using AzureMigrateExplore.Discovery;
 
 namespace Azure.Migrate.Explore.Excel
 {
@@ -13,13 +15,25 @@ namespace Azure.Migrate.Explore.Excel
         private readonly List<DiscoveryData> DiscoveredData;
         private readonly DiscoveryProperties DiscoveryPropertiesData;
         private readonly vCenterHostDiscovery VCenterHostDiscoveryData;
+        private readonly string DiscoveryDataFromARG;
+        private readonly string WebAppSupportabilityDataFromARG;
+        private readonly string SoftwareInventoryInsights;
         XLWorkbook DiscoveryWb;
 
-        public ExportDiscoveryReport(List<DiscoveryData> discoveredData, vCenterHostDiscovery vCenterHostData, DiscoveryProperties discoveryPropertiesData)
+        public ExportDiscoveryReport(
+            List<DiscoveryData> discoveredData,
+            vCenterHostDiscovery vCenterHostData,
+            DiscoveryProperties discoveryPropertiesData,
+            string discoveryDataFromARG = "",
+            string webAppSupportabilityDataFromARG = "",
+            string softwareInventoryInsights = "")
         {
             DiscoveredData = discoveredData;
             DiscoveryPropertiesData = discoveryPropertiesData;
             VCenterHostDiscoveryData = vCenterHostData;
+            DiscoveryDataFromARG = discoveryDataFromARG;
+            WebAppSupportabilityDataFromARG = webAppSupportabilityDataFromARG;
+            SoftwareInventoryInsights = softwareInventoryInsights;
             DiscoveryWb = new XLWorkbook();
         }
 
@@ -28,9 +42,13 @@ namespace Azure.Migrate.Explore.Excel
             GeneratePropertyWorksheet();
             GenerateDiscoveryReportWorksheet();
             GeneratevCenterHostReportWorksheet();
+            GenerateArgDataWorksheet();
+            GenerateWebAppSupportabilityDataWorksheet();
+            GenerateSoftwareInventoryInsightsWorksheet();
 
             DiscoveryWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + DiscoveryReportConstants.DiscoveryReportName);
         }
+
 
         private void GeneratePropertyWorksheet()
         {
@@ -73,6 +91,31 @@ namespace Azure.Migrate.Explore.Excel
 
             dataWs.Cell(2, 1).Value = VCenterHostDiscoveryData.vCenters;
             dataWs.Cell(2, 2).Value = VCenterHostDiscoveryData.Hosts;
+        }
+
+        private void GenerateArgDataWorksheet()
+        {
+            UtilityFunctions.SaveARGJsonDataToWorksheet(
+                DiscoveryDataFromARG,
+                DiscoveryWb.Worksheets.Add(DiscoveryReportConstants.ARGDataTabName, 4));
+        }
+
+        private void GenerateWebAppSupportabilityDataWorksheet()
+        {
+            var newWorkSheet = DiscoveryWb.Worksheets.Add(DiscoveryReportConstants.WebAppSupportabilityDataTabName, 5);
+            UtilityFunctions.SaveARGJsonDataToWorksheet(
+                WebAppSupportabilityDataFromARG,
+                newWorkSheet);
+
+            // Add empty column.
+            UtilityFunctions.AddNewColumnToEnd(newWorkSheet, "SupportEndDate");
+        }
+
+        private void GenerateSoftwareInventoryInsightsWorksheet()
+        {
+            UtilityFunctions.SaveARGJsonDataToWorksheet(
+                SoftwareInventoryInsights,
+                DiscoveryWb.Worksheets.Add(DiscoveryReportConstants.SoftwareInventoryInsightsTabName, 6));
         }
     }
 }

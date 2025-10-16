@@ -11,5 +11,6 @@ namespace Azure.Migrate.Explore.Models
         public double SecurityCost { get; set; }
         public double ITStaffCost { get; set; }
         public double FacilitiesCost { get; set; }
+        public double ManagementCost { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -373,7 +374,8 @@ namespace AzureMigrateExplore
         #region Background worker
         private void azureMigrateExploreBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            UserInputObj.LoggerObj.LogInformation(1, "Initiating process"); // 1 % complete
+            UserInputObj.LoggerObj.LogInformation(1, "Initiating process."); // 1 % complete
+            ParseAMEConfigSettings(UserInputObj.AppSettings);
 
             Process processObj = new Process();
             processObj.Initiate(UserInputObj);
@@ -437,7 +439,7 @@ namespace AzureMigrateExplore
                 {
                     // Send notification to Windows notification center
                     SendToast("Assessment Completed", "Azure Migrate data analysis complete!");
-                    string folder= UtilityFunctions.GetReportsDirectory();
+                    string folder = UtilityFunctions.GetReportsDirectory();
                     string lastFolderName = folder.Split('\\', StringSplitOptions.RemoveEmptyEntries).Last();
 
                     if(UserInputObj.BusinessProposal.Equals(BusinessProposal.AVS.ToString())){
@@ -468,7 +470,7 @@ namespace AzureMigrateExplore
                         }
                     }
                     else
-                    { 
+                    {
                         processInfoMessage = "Unable to generate informational message regarding process completion, please review the log file.";
                     }
                 }
@@ -641,7 +643,7 @@ namespace AzureMigrateExplore
         {
             try
             {
-                if(e.Percentage >= 100)
+                if (e.Percentage >= 100)
                 {
                     DateTime now = DateTime.UtcNow;
                     string currentTimeStamp = now.ToString("yyyy-MM-dd-HH:mm:ss");
@@ -721,5 +723,73 @@ namespace AzureMigrateExplore
         }
         #endregion
 
+        /// <summary>
+        /// Parses an INI file in the same folder as this source file and returns a dictionary of key-value pairs.
+        /// Only supports simple key=value pairs, ignores comments and empty lines.
+        /// </summary>
+        /// <param name="iniFileName">The name of the INI file (e.g., "settings.ini").</param>
+        /// <returns>Dictionary of key-value pairs from the INI file.</returns>
+        private static Dictionary<string, string> ParseIniFile(string iniFileName)
+        {
+            var dict = new Dictionary<string, string>();
+            string folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string iniPath = Path.Combine(folder, iniFileName);
+
+            if (!File.Exists(iniPath))
+                return dict;
+
+            foreach (var line in File.ReadAllLines(iniPath))
+            {
+                var trimmed = line.Trim();
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith(";") || trimmed.StartsWith("#") || trimmed.StartsWith("["))
+                    continue;
+                int idx = trimmed.IndexOf('=');
+                if (idx > 0)
+                {
+                    string key = trimmed.Substring(0, idx).Trim();
+                    string value = trimmed.Substring(idx + 1).Trim();
+                    dict[key] = value;
+                }
+            }
+            return dict;
+        }
+
+        private void ParseAMEConfigSettings(UserInput.AMESettings settings)
+        {
+            Dictionary<string, string> iniSettings;
+            try {
+                iniSettings = ParseIniFile("settings.ini");
+            }
+            catch (Exception ex) {
+                UserInputObj.LoggerObj.LogError($"Could not parse settings file: {ex.Message}");
+                return;
+            }
+
+            Type type = typeof(UserInput.AMESettings);
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var field in fields)
+            {
+
+                // Get the value of the configuration in INI matching the name of the variable/field in AMESettings
+                if (!iniSettings.TryGetValue(field.Name, out string? value))
+                    continue;
+
+                object? val;
+                try
+                {
+                    val = Convert.ChangeType(value, field.FieldType);
+
+                    settings?.GetType()?.GetField(field.Name)?.SetValue(settings, val);
+                }
+                catch (Exception ex)
+                {
+                    UserInputObj.LoggerObj.LogError($"Error parsing settings: Could not convert value '{value}' to type {field.FieldType} for field '{field.Name}': {ex.Message}");
+                    continue;
+                }
+
+                UserInputObj.LoggerObj.LogInformation(1, $"Setting configured - {field.Name} : {val}");
+            }
+        }
     }
 }

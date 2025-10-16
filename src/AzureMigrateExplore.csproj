@@ -158,9 +158,15 @@
     <None Update="AVS_Migration.pbit">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+	<None Update="settings.ini">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
     <None Update="Properties\PublishProfiles\FolderProfile.pubxml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assessment\ARGQueries\" />
   </ItemGroup>
   <PropertyGroup>
     <WindowsPackageType>None</WindowsPackageType>

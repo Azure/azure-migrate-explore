@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Excel;
 using Azure.Migrate.Explore.Models;
+using AzureMigrateExplore.Excel;
+using AzureMigrateExplore.Models;
 
 namespace Azure.Migrate.Explore.Assessment.Processor
 {
@@ -16,6 +18,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         private readonly Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData;
         private readonly BusinessCaseDataset BusinessCaseData;
         private readonly Dictionary<string, string> DecommissionedMachinesData;
+        private readonly List<InventoryInsights> InventoryInsightsData;
+        private readonly List<SoftwareInsights> SoftwareInsightsData;
+        private readonly List<SoftwareVulnerabilities> SoftwareVulnerabilitiesData;
 
         private AzureAvsCostCalculator AzureAvsCalculator;
 
@@ -27,6 +32,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Dictionary<string, AVSAssessedMachinesDataset> avsAssessedMachinesData,
                 BusinessCaseDataset businessCaseData, 
                 Dictionary<string, string> decommissionedMachinesData,
+                List<InventoryInsights> inventoryInsightsData,
+                List<SoftwareInsights> softwareInsightsData,
+                List<SoftwareVulnerabilities> softwareVulnerabilitiesData,
 
                 UserInput userInputObj
             )
@@ -35,6 +43,9 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             AVSAssessedMachinesData = avsAssessedMachinesData;
             BusinessCaseData = businessCaseData;
             DecommissionedMachinesData = decommissionedMachinesData;
+            InventoryInsightsData = inventoryInsightsData;
+            SoftwareInsightsData = softwareInsightsData;
+            SoftwareVulnerabilitiesData = softwareVulnerabilitiesData;
             AzureAvsCalculator = new AzureAvsCostCalculator();
             UserInputObj = userInputObj;
         }
@@ -56,7 +67,21 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             List<YOY_Emissions> YOY_Emissions_List = new List<YOY_Emissions>();
             List<EmissionsDetails> EmissionsDetails_List = new List<EmissionsDetails>();
 
-  
+            // Opportunity report models
+            List<SQL_MI_Issues_and_Warnings> SQL_MI_Issues_and_Warnings_List = new List<SQL_MI_Issues_and_Warnings>();
+            List<SQL_MI_Opportunity> SQL_MI_Opportunity_List = new List<SQL_MI_Opportunity>();
+            List<WebApp_Opportunity> WebApp_Opportunity_List = new List<WebApp_Opportunity>();
+            List<VM_Opportunity_Perf> VM_Opportunity_Perf_List = new List<VM_Opportunity_Perf>();
+            List<VM_Opportunity_AsOnPrem> VM_Opportunity_AsOnPrem_List = new List<VM_Opportunity_AsOnPrem>();
+
+            // Clash report models
+            List<Clash_Report> Clash_Report_List = new List<Clash_Report>();
+
+            // Security and Software Insights report models
+            List<InventoryInsights> Inventory_Insights_List = new List<InventoryInsights>();
+            List<SoftwareInsights> Software_Insights_List = new List<SoftwareInsights>();
+            List<SoftwareVulnerabilities> Software_Vulnerabilities_List = new List<SoftwareVulnerabilities>();
+
             // Core report tabs
             CreateCorePropertiesModel(corePropertiesObj);
             Process_Business_Case_Model(Business_Case_Data);
@@ -67,6 +92,10 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Process_EmissionsDetails_Model(EmissionsDetails_List);
             Process_YOY_Emissions_Model(YOY_Emissions_List);
 
+            // Security and Software Insights report tabs
+            Process_Inventory_Insights_Model(Inventory_Insights_List);
+            Process_Software_Insights_Model(Software_Insights_List);
+            Process_Software_Vulnerabilities_Model(Software_Vulnerabilities_List);
 
             UserInputObj.LoggerObj.LogInformation(90 - UserInputObj.LoggerObj.GetCurrentProgress(), "Completed job for creating excel models");
 
@@ -88,6 +117,15 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             UserInputObj.LoggerObj.LogInformation(96 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated opportunity report excel sheet");
 
             UserInputObj.LoggerObj.LogInformation(100 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated clash report excel sheet");
+
+            UserInputObj.LoggerObj.LogInformation("Generating security and software insights report excel sheet");
+            ExportSecurityAndSoftwareInsightReport exportSecurityAndSoftwareInsightReportObj = new ExportSecurityAndSoftwareInsightReport
+                (
+                    Inventory_Insights_List,
+                    Software_Insights_List,
+                    Software_Vulnerabilities_List
+                );
+            exportSecurityAndSoftwareInsightReportObj.GenerateSecurityAndSoftwareInsightReportExcel();
         }
 
         private void CreateCorePropertiesModel(CoreProperties coreProperties)
@@ -279,6 +317,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.OnPremisesIaaSCost.SecurityCost = BusinessCaseData.OnPremIaaSCostDetails.SecurityCost;
             Business_Case_Data.OnPremisesIaaSCost.ITStaffCost = BusinessCaseData.OnPremIaaSCostDetails.ITStaffCost;
             Business_Case_Data.OnPremisesIaaSCost.FacilitiesCost = BusinessCaseData.OnPremIaaSCostDetails.FacilitiesCost;
+            Business_Case_Data.OnPremisesIaaSCost.ManagementCost = BusinessCaseData.OnPremIaaSCostDetails.ManagementCost;
 
             Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost = 
                 BusinessCaseData.OnPremPaaSCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost;
@@ -288,6 +327,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.OnPremisesPaaSCost.SecurityCost = BusinessCaseData.OnPremPaaSCostDetails.SecurityCost;
             Business_Case_Data.OnPremisesPaaSCost.ITStaffCost = BusinessCaseData.OnPremPaaSCostDetails.ITStaffCost;
             Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost = BusinessCaseData.OnPremPaaSCostDetails.FacilitiesCost;
+            Business_Case_Data.OnPremisesPaaSCost.ManagementCost = BusinessCaseData.OnPremPaaSCostDetails.ManagementCost;
 
             Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost = 
                 BusinessCaseData.OnPremAvsCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost;
@@ -297,6 +337,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.OnPremisesAvsCost.SecurityCost = BusinessCaseData.OnPremAvsCostDetails.SecurityCost;
             Business_Case_Data.OnPremisesAvsCost.ITStaffCost = BusinessCaseData.OnPremAvsCostDetails.ITStaffCost;
             Business_Case_Data.OnPremisesAvsCost.FacilitiesCost = BusinessCaseData.OnPremAvsCostDetails.FacilitiesCost;
+            Business_Case_Data.OnPremisesAvsCost.ManagementCost = BusinessCaseData.OnPremAvsCostDetails.ManagementCost;
 
             Business_Case_Data.TotalOnPremisesCost.ComputeLicenseCost =
                 Business_Case_Data.OnPremisesIaaSCost.ComputeLicenseCost +
@@ -333,6 +374,11 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost +
                 Business_Case_Data.OnPremisesAvsCost.FacilitiesCost;
 
+            Business_Case_Data.TotalOnPremisesCost.ManagementCost =
+                Business_Case_Data.OnPremisesIaaSCost.ManagementCost +
+                Business_Case_Data.OnPremisesPaaSCost.ManagementCost +
+                Business_Case_Data.OnPremisesAvsCost.ManagementCost;
+
             Business_Case_Data.AzureIaaSCost.ComputeLicenseCost = BusinessCaseData.AzureIaaSCostDetails.ComputeLicenseCost;
             Business_Case_Data.AzureIaaSCost.EsuLicenseCost = 0;
             Business_Case_Data.AzureIaaSCost.StorageCost = BusinessCaseData.AzureIaaSCostDetails.StorageCost;
@@ -341,6 +387,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzureIaaSCost.SecurityCost = BusinessCaseData.AzureIaaSCostDetails.SecurityCost;
             Business_Case_Data.AzureIaaSCost.ITStaffCost = BusinessCaseData.AzureIaaSCostDetails.ITStaffCost;
             Business_Case_Data.AzureIaaSCost.FacilitiesCost = BusinessCaseData.AzureIaaSCostDetails.FacilitiesCost;
+            Business_Case_Data.AzureIaaSCost.ManagementCost = BusinessCaseData.AzureIaaSCostDetails.ManagementCost;
 
             Business_Case_Data.AzurePaaSCost.ComputeLicenseCost = BusinessCaseData.AzurePaaSCostDetails.ComputeLicenseCost;
             Business_Case_Data.AzurePaaSCost.EsuLicenseCost = 0;
@@ -350,6 +397,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzurePaaSCost.SecurityCost = BusinessCaseData.AzurePaaSCostDetails.SecurityCost;
             Business_Case_Data.AzurePaaSCost.ITStaffCost = BusinessCaseData.AzurePaaSCostDetails.ITStaffCost;
             Business_Case_Data.AzurePaaSCost.FacilitiesCost = BusinessCaseData.AzurePaaSCostDetails.FacilitiesCost;
+            Business_Case_Data.AzurePaaSCost.ManagementCost = BusinessCaseData.AzurePaaSCostDetails.ManagementCost;
 
             if (UserInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && !AzureAvsCalculator.IsCalculationComplete())
             {
@@ -366,6 +414,17 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             Business_Case_Data.AzureAvsCost.ITStaffCost = BusinessCaseData.AzureAvsCostDetails.ITStaffCost;
             Business_Case_Data.AzureAvsCost.SecurityCost = BusinessCaseData.AzureAvsCostDetails.SecurityCost;
             Business_Case_Data.AzureAvsCost.FacilitiesCost = BusinessCaseData.AzureAvsCostDetails.FacilitiesCost;
+            Business_Case_Data.AzureAvsCost.ManagementCost = BusinessCaseData.AzureAvsCostDetails.ManagementCost;
+
+            // Populate AzureArcEnabledOnPremisesCost from BusinessCaseData
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ComputeLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ComputeLicenseCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.EsuLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.EsuLicenseCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.StorageCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.StorageCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.NetworkCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.NetworkCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.SecurityCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.SecurityCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ITStaffCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ITStaffCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.FacilitiesCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.FacilitiesCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost.ManagementCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ManagementCost;
 
             if (UserInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && UserInputObj.WorkflowObj.IsExpressWorkflow)
             {
@@ -409,6 +468,11 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                 Business_Case_Data.AzureIaaSCost.FacilitiesCost +
                 Business_Case_Data.AzurePaaSCost.FacilitiesCost +
                 Business_Case_Data.AzureAvsCost.FacilitiesCost;
+
+            Business_Case_Data.TotalAzureCost.ManagementCost =
+                Business_Case_Data.AzureIaaSCost.ManagementCost +
+                Business_Case_Data.AzurePaaSCost.ManagementCost +
+                Business_Case_Data.AzureAvsCost.ManagementCost;
 
             Business_Case_Data.WindowsServerLicense.ComputeLicenseCost = BusinessCaseData.WindowsServerLicense.ComputeLicenseCost;
             Business_Case_Data.SqlServerLicense.ComputeLicenseCost = BusinessCaseData.SqlServerLicense.ComputeLicenseCost;
@@ -538,6 +602,38 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             };
             Emissions_Details_List.Add(azureEmissionsDetails);
             Emissions_Details_List.Add(onPremisesEmissionsDetails);
+        }
+
+        private void Process_Inventory_Insights_Model(List<InventoryInsights> inventoryInsightsList)
+        {
+            if (InventoryInsightsData == null || InventoryInsightsData.Count == 0)
+                return;
+
+            foreach (var insight in InventoryInsightsData)
+            {
+                inventoryInsightsList.Add(insight);
+            }
+        }
+
+        private void Process_Software_Insights_Model(List<SoftwareInsights> softwareInsightsList)
+        {
+            if (SoftwareInsightsData == null || SoftwareInsightsData.Count == 0)
+                return;
+            foreach (var insight in SoftwareInsightsData)
+            {
+                softwareInsightsList.Add(insight);
+            }
+        }
+
+        private void Process_Software_Vulnerabilities_Model(List<SoftwareVulnerabilities> softwareVulnerabilitiesList)
+        {
+            if (SoftwareVulnerabilitiesData == null || SoftwareVulnerabilitiesData.Count == 0)
+                return;
+
+            foreach (var vulnerability in SoftwareVulnerabilitiesData)
+            {
+                softwareVulnerabilitiesList.Add(vulnerability);
+            }
         }
     }
 }

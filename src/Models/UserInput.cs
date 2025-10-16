@@ -66,6 +66,9 @@ namespace Azure.Migrate.Explore.Models
         public KeyValuePair<string, string> AssessmentDuration { get; }
         public PreferredOptimization PreferredOptimizationObj { get; }
 
+        // Application Settings
+        public AMESettings AppSettings { get; set; }
+
         // Logger
         public LogHandler LoggerObj { get; }
 
@@ -100,6 +103,12 @@ namespace Azure.Migrate.Explore.Models
 
             public KeyValuePair<string, string> OptimizationPreference { get; }
             public bool AssessSqlServicesSeparately { get; }
+        }
+
+        // Contains all configurable application settings read from settings file during start
+        public class AMESettings
+        {
+            public bool CallBusinessCaseV2Api = false;
         }
     }
 }
