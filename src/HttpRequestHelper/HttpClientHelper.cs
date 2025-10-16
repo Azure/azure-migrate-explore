@@ -263,6 +263,13 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                     }
                 }
 
+                const string heterogeneousType = "microsoft.migrate/assessmentprojects/heterogeneousassessments";
+                if (!types.Contains(heterogeneousType))
+                {
+                    types.Add(heterogeneousType);
+                    userInputObj.LoggerObj.LogInformation("Resolve scope did not include heterogeneous assessments; adding default scope type.");
+                }
+
                 userInputObj.LoggerObj.LogInformation($"Resolve scope returned {types.Count} resource types: {string.Join(", ", types)}");
                 return types;
             }

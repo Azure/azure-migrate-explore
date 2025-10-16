@@ -15,6 +15,7 @@ using Azure.Migrate.Explore.HttpRequestHelper;
 using Azure.Migrate.Explore.Models;
 using Microsoft.UI.Xaml.Input;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Azure.Migrate.Explore.Assessment
 {
@@ -291,34 +292,34 @@ namespace Azure.Migrate.Explore.Assessment
 
             BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId, scopedMachineIds);
             KeyValuePair<BusinessCaseInformation, AssessmentPollResponse> bizCaseCompletionResultKvp = new KeyValuePair<BusinessCaseInformation, AssessmentPollResponse>(bizCaseObj, AssessmentPollResponse.NotCreated);
-            // try
-            // {
-            //     bizCaseCompletionResultKvp = new BusinessCaseBuilder(bizCaseObj).BuildBusinessCase(UserInputObj);
-            // }
-            // catch (OperationCanceledException)
-            // {
-            //     throw;
-            // }
-            // catch (AggregateException aeBuildBizCase)
-            // {
-            //     string errorMessage = "";
-            //     foreach (var e in aeBuildBizCase.Flatten().InnerExceptions)
-            //     {
-            //         if (e is OperationCanceledException)
-            //             throw e;
-            //         else
-            //         {
-            //             errorMessage = errorMessage + e.Message + " ";
-            //         }
-            //     }
-            //     throw new Exception(errorMessage);
-            // }
-            // catch (Exception)
-            // {
-            //     throw;
-            // }
+            try
+            {
+                bizCaseCompletionResultKvp = new BusinessCaseBuilder(bizCaseObj).BuildBusinessCase(UserInputObj);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (AggregateException aeBuildBizCase)
+            {
+                string errorMessage = "";
+                foreach (var e in aeBuildBizCase.Flatten().InnerExceptions)
+                {
+                    if (e is OperationCanceledException)
+                        throw e;
+                    else
+                    {
+                        errorMessage = errorMessage + e.Message + " ";
+                    }
+                }
+                throw new Exception(errorMessage);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-            // UserInputObj.LoggerObj.LogInformation($"Business case {bizCaseCompletionResultKvp.Key.BusinessCaseName} is in {bizCaseCompletionResultKvp.Value.ToString()} state");
+            UserInputObj.LoggerObj.LogInformation($"Business case {bizCaseCompletionResultKvp.Key.BusinessCaseName} is in {bizCaseCompletionResultKvp.Value.ToString()} state");
 
             UserInputObj.LoggerObj.LogInformation($"General VM count: {GeneralVM.Count}");
 
@@ -341,19 +342,18 @@ namespace Azure.Migrate.Explore.Assessment
                 UserInputObj.Subscription.Key,
                 UserInputObj.ResourceGroupName.Value,
                 assessmentProjectArmId,
-                "AME-HA2",
+                "AME-HA6",
                 argQuery.ToString(),
                 resolvedScopes,
                 new Dictionary<string, object>()).Result;
 
             var assessmentInfo = new AssessmentInformation(
-                UserInputObj.AssessmentProjectName,
+                "AME-HA6",
                 AssessmentType.HeterogeneousAssessment,
                 AssessmentTag.PerformanceBased,
-                "ame-ha"
+                ""
             );
 
-            // Step 1: Wait for heterogeneous assessment to complete
             var reportHandler = new HeterogeneousReportHandler();
             bool isCompleted = reportHandler.WaitForHeterogeneousAssessmentCompletion(UserInputObj, assessmentInfo);
 
@@ -366,148 +366,88 @@ namespace Azure.Migrate.Explore.Assessment
                 UserInputObj.LoggerObj.LogError("Heterogeneous assessment did not complete successfully. Skipping report generation.");
             }
 
-
-            List<AssessmentInformation> AllAssessments = new List<AssessmentInformation>();
-
-            if (AllAssessments.Count <= 0)
-            {
-                UserInputObj.LoggerObj.LogError("Factories returned no assessment settings, terminating process");
-                return false;
-            }
-
-            UserInputObj.LoggerObj.LogInformation($"Total assessments to be created: {AllAssessments.Count}");
-
-            UserInputObj.LoggerObj.LogInformation("Sorting assessments based on creation priority, assessments which take the most time, will be created first");
-            AllAssessments.Sort(CompareAssessmentCreationPriority);
-
-            UserInputObj.LoggerObj.LogInformation($"Initiating Assessment creation");
-
-            Dictionary<AssessmentInformation, AssessmentPollResponse> AssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
-            try
-            {
-                AssessmentStatusMap = new BatchAssessments(AllAssessments).CreateAssessmentsInBatch(UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeBatchAssessment)
-            {
-                string errorMessage = "";
-                foreach (var e in aeBatchAssessment.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                throw new Exception(errorMessage);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            UserInputObj.LoggerObj.LogInformation($"Retrieved status information for {AssessmentStatusMap.Count} assessments");
-
-            int completedAssessmentsCount = 0;
-            int invalidAssessmentsCount = 0;
-            int outdatedAssessmentsCount = 0;
-            foreach (var kvp in AssessmentStatusMap)
-            {
-                if (kvp.Value == AssessmentPollResponse.Completed)
-                    completedAssessmentsCount += 1;
-
-                else if (kvp.Value == AssessmentPollResponse.Invalid)
-                    invalidAssessmentsCount += 1;
-
-                else if (kvp.Value == AssessmentPollResponse.OutDated)
-                    outdatedAssessmentsCount += 1;
-            }
-            if (completedAssessmentsCount <= 0 && outdatedAssessmentsCount <= 0)
-            {
-                UserInputObj.LoggerObj.LogError($"No assessments in completed or outdated state");
-                return false;
-            }
-            UserInputObj.LoggerObj.LogInformation($"Completed assessments: {completedAssessmentsCount}");
-            if (outdatedAssessmentsCount > 0)
-                UserInputObj.LoggerObj.LogWarning($"Out-dated assessments: {outdatedAssessmentsCount}");
-            if (invalidAssessmentsCount > 0)
-                UserInputObj.LoggerObj.LogError($"Invalid assessments: {invalidAssessmentsCount}");
-
             UserInputObj.LoggerObj.LogInformation(65 - UserInputObj.LoggerObj.GetCurrentProgress(), $"Completed assessment creation job"); // 65 % complete
 
-            Dictionary<AssessmentInformation, AssessmentPollResponse> AzureVMAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
-            Dictionary<AssessmentInformation, AssessmentPollResponse> AzureSQLAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
-            Dictionary<AssessmentInformation, AssessmentPollResponse> AVSAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
-            Dictionary<AssessmentInformation, AssessmentPollResponse> AzureAppServiceWebAppAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
+           Dictionary<AssessmentInformation, AssessmentPollResponse> AVSAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
 
-            UserInputObj.LoggerObj.LogInformation("Sorting different assessment types to create datasets");
-
-            foreach (var kvp in AssessmentStatusMap)
+            if (AVSAssessmentStatusMap.Count > 0)
             {
-                if (kvp.Key.AssessmentType == AssessmentType.MachineAssessment)
-                {
-                    if (!AzureVMAssessmentStatusMap.ContainsKey(kvp.Key))
-                        AzureVMAssessmentStatusMap.Add(kvp.Key, kvp.Value);
-                }
+                const int AvsMaxPollAttempts = 40;
+                const int AvsPollDelayMs = 60_000;
+                var avsPollHelper = new HttpClientHelper();
 
-                else if (kvp.Key.AssessmentType == AssessmentType.SQLAssessment)
+                foreach (var assessment in AVSAssessmentStatusMap.Keys.ToList())
                 {
-                    if (!AzureSQLAssessmentStatusMap.ContainsKey(kvp.Key))
-                        AzureSQLAssessmentStatusMap.Add(kvp.Key, kvp.Value);
-                }
+                    AssessmentPollResponse currentStatus = AVSAssessmentStatusMap[assessment];
 
-                else if (kvp.Key.AssessmentType == AssessmentType.AVSAssessment)
-                {
-                    if (!AVSAssessmentStatusMap.ContainsKey(kvp.Key))
-                        AVSAssessmentStatusMap.Add(kvp.Key, kvp.Value);
-                }
+                    for (int attempt = 1; attempt <= AvsMaxPollAttempts; attempt++)
+                    {
+                        if (UserInputObj.CancellationContext.IsCancellationRequested)
+                            UtilityFunctions.InitiateCancellation(UserInputObj);
 
-                else if (kvp.Key.AssessmentType == AssessmentType.WebAppAssessment)
-                {
-                    if (!AzureAppServiceWebAppAssessmentStatusMap.ContainsKey(kvp.Key))
-                        AzureAppServiceWebAppAssessmentStatusMap.Add(kvp.Key, kvp.Value);
+                        UserInputObj.LoggerObj.LogInformation($"Polling AVS assessment {assessment.AssessmentName} (Attempt {attempt}/{AvsMaxPollAttempts})...");
+
+                        try
+                        {
+                            currentStatus = avsPollHelper.PollAssessment(UserInputObj, assessment).Result;
+                        }
+                        catch (AggregateException aggregateEx)
+                        {
+                            var flattened = aggregateEx.Flatten();
+                            foreach (var inner in flattened.InnerExceptions)
+                            {
+                                if (inner is OperationCanceledException)
+                                    throw inner;
+                                UserInputObj.LoggerObj.LogWarning($"AVS assessment {assessment.AssessmentName} polling error: {inner.Message}");
+                            }
+                            currentStatus = AssessmentPollResponse.Error;
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            throw;
+                        }
+                        catch (Exception ex)
+                        {
+                            UserInputObj.LoggerObj.LogWarning($"AVS assessment {assessment.AssessmentName} polling error: {ex.Message}");
+                            currentStatus = AssessmentPollResponse.Error;
+                        }
+
+                        AVSAssessmentStatusMap[assessment] = currentStatus;
+
+                        if (currentStatus == AssessmentPollResponse.Completed)
+                        {
+                            UserInputObj.LoggerObj.LogInformation($"AVS assessment {assessment.AssessmentName} completed successfully.");
+                            break;
+                        }
+
+                        if (currentStatus == AssessmentPollResponse.OutDated ||
+                            currentStatus == AssessmentPollResponse.Invalid ||
+                            currentStatus == AssessmentPollResponse.Error)
+                        {
+                            UserInputObj.LoggerObj.LogWarning($"AVS assessment {assessment.AssessmentName} reached terminal state {currentStatus}.");
+                            break;
+                        }
+
+                        if (attempt == AvsMaxPollAttempts)
+                        {
+                            UserInputObj.LoggerObj.LogWarning($"AVS assessment {assessment.AssessmentName} did not complete within the polling window.");
+                            break;
+                        }
+
+                        Thread.Sleep(AvsPollDelayMs);
+                    }
                 }
             }
 
-            if (AzureVMAssessmentStatusMap.Count > 0)
-                UserInputObj.LoggerObj.LogInformation($"Total Azure VM Assessments: {AzureVMAssessmentStatusMap.Count}");
-            if (AzureSQLAssessmentStatusMap.Count > 0)
-                UserInputObj.LoggerObj.LogInformation($"Total Azure SQL Assessments: {AzureSQLAssessmentStatusMap.Count}");
             if (AVSAssessmentStatusMap.Count > 0)
                 UserInputObj.LoggerObj.LogInformation($"Total AVS Assessments: {AVSAssessmentStatusMap.Count}");
-            if (AzureAppServiceWebAppAssessmentStatusMap.Count > 0)
-                UserInputObj.LoggerObj.LogInformation($"Total Web Application Assessments: {AzureAppServiceWebAppAssessmentStatusMap.Count}");
 
-            Dictionary<string, AzureVMPerformanceBasedDataset> AzureVMPerformanceBasedMachinesData = new Dictionary<string, AzureVMPerformanceBasedDataset>();
-            Dictionary<string, AzureVMAsOnPremDataset> AzureVMAsOnPremMachinesData = new Dictionary<string, AzureVMAsOnPremDataset>();
-            if (AzureVMAssessmentStatusMap.Count > 0)
-            {
-                ParseAzureVMAssessments(AzureVMPerformanceBasedMachinesData, AzureVMAsOnPremMachinesData, AzureVMAssessmentStatusMap);
-            }
-
+            
             Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData = new Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset>();
             Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData = new Dictionary<string, AVSAssessedMachinesDataset>();
             if (AVSAssessmentStatusMap.Count > 0)
             {
                 ParseAVSAssessments(AVSAssessmentsData, AVSAssessedMachinesData, AVSAssessmentStatusMap);
-            }
-
-            Dictionary<string, AzureWebAppDataset> AzureWebAppData = new Dictionary<string, AzureWebAppDataset>();
-            if (AzureAppServiceWebAppAssessmentStatusMap.Count > 0)
-            {
-                ParseAzureWebAppAssessments(AzureWebAppData, AzureAppServiceWebAppAssessmentStatusMap);
-            }
-
-            Dictionary<string, AzureSQLInstanceDataset> AzureSQLInstancesData = new Dictionary<string, AzureSQLInstanceDataset>();
-            Dictionary<string, AzureSQLMachineDataset> AzureSQLMachinesData = new Dictionary<string, AzureSQLMachineDataset>();
-            if (AzureSQLAssessmentStatusMap.Count > 0)
-            {
-                ParseAzureSQLAssessedInstances(AzureSQLInstancesData, AzureSQLAssessmentStatusMap);
-                ParseAzureSQLAssessedMachines(AzureSQLMachinesData, AzureSQLAssessmentStatusMap);
             }
 
             BusinessCaseDataset BusinessCaseData = new BusinessCaseDataset();
@@ -518,17 +458,8 @@ namespace Azure.Migrate.Explore.Assessment
 
             ProcessDatasets processorObj = new ProcessDatasets
                 (
-                    AssessmentIdToDiscoveryIdLookup,
-                    AzureWebApp_IaaS,
-                    SqlServicesVM,
-                    GeneralVM,
-                    AzureVMPerformanceBasedMachinesData,
-                    AzureVMAsOnPremMachinesData,
                     AVSAssessmentsData,
                     AVSAssessedMachinesData,
-                    AzureWebAppData,
-                    AzureSQLInstancesData,
-                    AzureSQLMachinesData,
                     BusinessCaseData,
                     DecommissionedMachinesData,
                     UserInputObj
@@ -571,106 +502,6 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj.LoggerObj.LogInformation("Business case parsing job completed");
         }
 
-        private void ParseAzureSQLAssessedMachines(Dictionary<string, AzureSQLMachineDataset> AzureSQLMachinesData, Dictionary<AssessmentInformation, AssessmentPollResponse> AzureSQLAssessmentStatusMap)
-        {
-            UserInputObj.LoggerObj.LogInformation("Initiating parsing for Azure SQL assessed machines");
-
-            try
-            {
-                new AzureSQLAssessedMachinesParser(AzureSQLAssessmentStatusMap).ParseAssessedSQLMachines(AzureSQLMachinesData, UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeSqlMachinesParse)
-            {
-                string errorMessage = "";
-                foreach (var e in aeSqlMachinesParse.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                UserInputObj.LoggerObj.LogError($"Azure SQL assessed machines parsing error : {errorMessage}");
-            }
-            catch (Exception exSqlAssessmentParse)
-            {
-                UserInputObj.LoggerObj.LogError($"Azure SQL assessed machines parsing error {exSqlAssessmentParse.Message}");
-            }
-
-            UserInputObj.LoggerObj.LogInformation(85 - UserInputObj.LoggerObj.GetCurrentProgress(), "Azure SQL assessed machines parsing job completed"); // 85 % complete
-        }
-
-        private void ParseAzureSQLAssessedInstances(Dictionary<string, AzureSQLInstanceDataset> AzureSQLInstancesData, Dictionary<AssessmentInformation, AssessmentPollResponse> AzureSQLAssessmentStatusMap)
-        {
-            UserInputObj.LoggerObj.LogInformation("Initiating parsing for Azure SQL assessed instances");
-            try
-            {
-                new AzureSQLAssessedInstancesParser(AzureSQLAssessmentStatusMap).ParseAssessedSQLInstances(AzureSQLInstancesData, UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeSqlInstancesParse)
-            {
-                string errorMessage = "";
-                foreach (var e in aeSqlInstancesParse.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                UserInputObj.LoggerObj.LogError($"Azure SQL assessed instances parsing error : {errorMessage}");
-            }
-            catch (Exception exSqlAssessmentParse)
-            {
-                UserInputObj.LoggerObj.LogError($"Azure SQL assessed instances parsing error {exSqlAssessmentParse.Message}");
-            }
-
-            UserInputObj.LoggerObj.LogInformation(83 - UserInputObj.LoggerObj.GetCurrentProgress(), "Azure SQL assessed instances parsing job completed"); // 83 %  complete
-        }
-
-        private void ParseAzureWebAppAssessments(Dictionary<string, AzureWebAppDataset> AzureWebAppData, Dictionary<AssessmentInformation, AssessmentPollResponse> AzureWebAppAssessmentStatusMap)
-        {
-            UserInputObj.LoggerObj.LogInformation("Initiating parsing for Azure Web App assessments");
-            try
-            {
-                new AzureWebAppParser(AzureWebAppAssessmentStatusMap).ParseWebAppAssessments(AzureWebAppData, UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeWebAppAssessmentParse)
-            {
-                string errorMessage = "";
-                foreach (var e in aeWebAppAssessmentParse.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                UserInputObj.LoggerObj.LogError($"Azure web app assessment parsing error : {errorMessage}");
-            }
-            catch (Exception exWebAppAssessmentParse)
-            {
-                UserInputObj.LoggerObj.LogError($"Azure web app assessment parsing error {exWebAppAssessmentParse.Message}");
-            }
-
-            UserInputObj.LoggerObj.LogInformation(80 - UserInputObj.LoggerObj.GetCurrentProgress(), "Azure Web App assessment parsing job completed"); // 80 % complete
-        }
-
         private void ParseAVSAssessments(Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData, Dictionary<AssessmentInformation, AssessmentPollResponse> AVSAssessmentStatusMap)
         {
             UserInputObj.LoggerObj.LogInformation("Initiating parsing for AVS assessments");
@@ -702,39 +533,6 @@ namespace Azure.Migrate.Explore.Assessment
             }
 
             UserInputObj.LoggerObj.LogInformation(75 - UserInputObj.LoggerObj.GetCurrentProgress(), "AVS assessment parsing job completed"); // 75 % Complete
-        }
-
-        private void ParseAzureVMAssessments(Dictionary<string, AzureVMPerformanceBasedDataset> AzureVMPerformanceBasedMachinesData, Dictionary<string, AzureVMAsOnPremDataset> AzureVMAsOnPremMachinesData, Dictionary<AssessmentInformation, AssessmentPollResponse> AzureVMAssessmentStatusMap)
-        {
-            UserInputObj.LoggerObj.LogInformation("Initiating parsing for AzureVM assessments");
-            try
-            {
-                new AzureVMAssessmentParser(AzureVMAssessmentStatusMap).ParseVMAssessments(AzureVMPerformanceBasedMachinesData, AzureVMAsOnPremMachinesData, UserInputObj);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (AggregateException aeAzureVMAssessmentParse)
-            {
-                string errorMessage = "";
-                foreach (var e in aeAzureVMAssessmentParse.Flatten().InnerExceptions)
-                {
-                    if (e is OperationCanceledException)
-                        throw e;
-                    else
-                    {
-                        errorMessage = errorMessage + e.Message + " ";
-                    }
-                }
-                UserInputObj.LoggerObj.LogError($"Azure VM assessment parsing error : {errorMessage}");
-            }
-            catch (Exception exAzureVMAssessmentParse)
-            {
-                UserInputObj.LoggerObj.LogError($"Azure VM assessment parsing error {exAzureVMAssessmentParse.Message}");
-            }
-
-            UserInputObj.LoggerObj.LogInformation(70 - UserInputObj.LoggerObj.GetCurrentProgress(), "Azure VM assessment parsing job completed"); // 70 % Complete
         }
 
         #region Deletion
@@ -839,18 +637,6 @@ namespace Azure.Migrate.Explore.Assessment
         #endregion
 
         #region Utilities
-        private static int CompareAssessmentCreationPriority(AssessmentInformation a, AssessmentInformation b)
-        {
-            if (object.ReferenceEquals(a, b))
-                return 0;
-            if (a == null)
-                return -1;
-            if (b == null)
-                return 1;
-
-            return a.AssessmentCreationPriority.CompareTo(b.AssessmentCreationPriority);
-        }
-
         private HashSet<string> GetDiscoveredMachineIDsSet()
         {
             HashSet<string> result = new HashSet<string>();
