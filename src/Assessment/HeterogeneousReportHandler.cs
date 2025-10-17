@@ -268,6 +268,16 @@ namespace Azure.Migrate.Explore.Assessment
                 {
                     ZipFile.ExtractToDirectory(fileName, reportsDirectory, overwriteFiles: true);
                     userInputObj.LoggerObj.LogInformation($"Report extracted to: {reportsDirectory}");
+
+                    try
+                    {
+                        File.Delete(fileName);
+                        userInputObj.LoggerObj.LogInformation($"Report archive deleted: {fileName}");
+                    }
+                    catch (Exception ex)
+                    {
+                        userInputObj.LoggerObj.LogWarning($"Failed to delete report archive {fileName}: {ex.Message}");
+                    }
                 }
                 catch (Exception ex)
                 {
