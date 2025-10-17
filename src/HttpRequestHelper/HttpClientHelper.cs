@@ -488,7 +488,7 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
             string assessmentName,
             string resourceGraphQuery,
             List<string> allowedAssessmentResourceTypes,
-            Dictionary<string, object> assessmentSettings)
+            Dictionary<string, string> assessmentSettings)
         {
             userInputObj.LoggerObj.LogInformation($"Deploying assessment ARM template for {assessmentName}");
 
@@ -585,7 +585,16 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
             // Apply user-provided overrides
             foreach (var kvp in assessmentSettings)
             {
-                baseParameters[kvp.Key] = new JObject { ["value"] = JToken.FromObject(kvp.Value) };
+                string? parameterValue = kvp.Value?.Trim();
+
+                if (string.IsNullOrWhiteSpace(parameterValue))
+                {
+                    userInputObj.LoggerObj.LogWarning($"Skipping ARM parameter '{kvp.Key}' because no value was provided.");
+                    continue;
+                }
+
+                userInputObj.LoggerObj.LogInformation($"Setting ARM parameter '{kvp.Key}' to '{parameterValue}'.");
+                baseParameters[kvp.Key] = new JObject { ["value"] = parameterValue };
             }
 
             // Construct deployment payload
@@ -598,6 +607,8 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                     ["mode"] = "Incremental"
                 }
             };
+
+            userInputObj.LoggerObj.LogInformation($"ARM deployment payload parameters: {baseParameters.ToString(Formatting.None)}");
 
             string deploymentName = $"assessment-{assessmentName}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
             string url = $"https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}?api-version=2021-04-01";

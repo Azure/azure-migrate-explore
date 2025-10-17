@@ -339,7 +339,9 @@ namespace Azure.Migrate.Explore.Assessment
             List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
             string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
 
-            Dictionary<string, object> argDict = new Dictionary<string, object>
+            UserInputObj.LoggerObj.LogInformation($"ARM overrides: azureLocation='{UserInputObj.TargetRegion.Key}', currency='{UserInputObj.Currency.Key}', performanceTimeRange='{UserInputObj.AssessmentDuration.Key}'");
+
+            Dictionary<string, string> argDict = new Dictionary<string, string>
             {
                 {"azureLocation", UserInputObj.TargetRegion.Key},
                 {"currency", UserInputObj.Currency.Key},
