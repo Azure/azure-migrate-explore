@@ -64,7 +64,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -103,7 +102,6 @@ namespace Azure.Migrate.Explore.Common
             "Azure SQL MI Conifugration - Target Hardware Type",
             "Azure SQL MI Conifugration - Target vCores",
             "Azure SQL MI Conifugration - Target Storage (in GB)",
-            "Group Name",
             "Machine ID",
         };
 
@@ -151,7 +149,6 @@ namespace Azure.Migrate.Explore.Common
             "SQL Server on Azure VM Configuration - Target vCores",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -186,7 +183,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Standard SSD Disks",
             "Monthly Storage Cost for Premium Disks",
             "Monthly Storage Cost for Ultra Disks",
-            "Group Name",
             "Machine ID"
         };
 
@@ -230,7 +226,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -269,7 +264,6 @@ namespace Azure.Migrate.Explore.Common
             "Azure SQL MI Conifugration - Target Hardware Type",
             "Azure SQL MI Conifugration - Target vCores",
             "Azure SQL MI Conifugration - Target Storage (in GB)",
-            "Group Name",
             "Machine ID"
         };
 
@@ -304,7 +298,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Standard SSD Disks",
             "Monthly Storage Cost for Premium Disks",
             "Monthly Storage Cost for Ultra Disks",
-            "Group Name",
             "Machine ID"
         };
 
@@ -348,7 +341,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -381,7 +373,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Standard SSD Disks",
             "Monthly Storage Cost for Premium Disks",
             "Monthly Storage Cost for Ultra Disks",
-            "Group Name",
             "Machine ID"
         };
 
@@ -423,7 +414,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -458,7 +448,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Standard SSD Disks",
             "Monthly Storage Cost for Premium Disks",
             "Monthly Storage Cost for Ultra Disks",
-            "Group Name",
             "Machine ID"
         };
 
@@ -502,7 +491,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Storage Cost for Ultra Disks",
             "Monthly Azure Site Recovery Cost Estimate",
             "Monthly Azure Backup Cost Estimate",
-            "Group Name",
             "Machine ID"
         };
 
@@ -521,7 +509,6 @@ namespace Azure.Migrate.Explore.Common
             "Monthly Compute Cost Estimate (Pay as you go + ASP)",
             "Monthly Security Cost Estimate",
             "Azure Recommended Target",
-            "Group Name",
             "Machine ID"
         };
 
@@ -612,7 +599,6 @@ namespace Azure.Migrate.Explore.Common
             "Network in (in MBPS)",
             "Network out (in MBPS)",
             "Disk Names",
-            "Group Name",
             "Machine ID"
         };
 
@@ -622,7 +608,6 @@ namespace Azure.Migrate.Explore.Common
             "Subscription ID",
             "Resource Group",
             "Project Name",
-            "Group Name",
             "Assessment Name",
             "Sizing Criterion",
             "Assessment Type",

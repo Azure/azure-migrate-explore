@@ -11,21 +11,7 @@ namespace Azure.Migrate.Explore.Excel
     public class ExportCoreReport
     {
         private readonly CoreProperties CorePropertiesObj;
-        private readonly List<All_VM_IaaS_Server_Rehost_Perf> All_VM_IaaS_Server_Rehost_Perf_List;
-        private readonly List<SQL_All_Instances> SQL_All_Instances_List;
-        private readonly List<SQL_MI_PaaS> SQL_MI_PaaS_List;
-        private readonly List<SQL_IaaS_Instance_Rehost_Perf> SQL_IaaS_Instance_Rehost_Perf_List;
-        private readonly List<SQL_IaaS_Server_Rehost_Perf> SQL_IaaS_Server_Rehost_Perf_List;
-        private readonly List<SQL_IaaS_Server_Rehost_AsOnPrem> SQL_IaaS_Server_Rehost_AsOnPrem_List;
-        private readonly List<WebApp_PaaS> WebApp_PaaS_List;
-        private readonly List<WebApp_IaaS_Server_Rehost_Perf> WebApp_IaaS_Server_Rehost_Perf_List;
-        private readonly List<WebApp_IaaS_Server_Rehost_AsOnPrem> WebApp_IaaS_Server_Rehost_AsOnPrem_List;
-        private readonly List<VM_SS_IaaS_Server_Rehost_Perf> VM_SS_IaaS_Server_Rehost_Perf_List;
-        private readonly List<VM_SS_IaaS_Server_Rehost_AsOnPrem> VM_SS_IaaS_Server_Rehost_AsOnPrem_List;
-        private readonly List<VM_IaaS_Server_Rehost_Perf> VM_IaaS_Server_Rehost_Perf_List;
-        private readonly List<VM_IaaS_Server_Rehost_AsOnPrem> VM_IaaS_Server_Rehost_AsOnPrem_List;
         private readonly Business_Case Business_Case_Data;
-        private readonly List<Financial_Summary> Financial_Summary_List;
         private readonly Cash_Flows Cash_Flows_Data;
         private readonly List<AVS_Summary> AVS_Summary_List;
         private readonly List<AVS_IaaS_Rehost_Perf> AVS_IaaS_Rehost_Perf_List;
@@ -38,21 +24,7 @@ namespace Azure.Migrate.Explore.Excel
         public ExportCoreReport
             (
                 CoreProperties corePropertiesObj,
-                List<All_VM_IaaS_Server_Rehost_Perf> all_VM_IaaS_Server_Rehost_Perf_List,
-                List<SQL_All_Instances> sql_All_Instances_List,
-                List<SQL_MI_PaaS> sql_MI_PaaS_List,
-                List<SQL_IaaS_Instance_Rehost_Perf> sql_IaaS_Instance_Rehost_Perf_List,
-                List<SQL_IaaS_Server_Rehost_Perf> sql_IaaS_Server_Rehost_Perf_List,
-                List<SQL_IaaS_Server_Rehost_AsOnPrem> sql_IaaS_Server_Rehost_AsOnPrem_List,
-                List<WebApp_PaaS> webApp_PaaS_List,
-                List<WebApp_IaaS_Server_Rehost_Perf> webApp_IaaS_Server_Rehost_Perf_List,
-                List<WebApp_IaaS_Server_Rehost_AsOnPrem> webApp_IaaS_Server_Rehost_AsOnPrem_List,
-                List<VM_SS_IaaS_Server_Rehost_Perf> vm_SS_IaaS_Server_Rehost_Perf_List,
-                List<VM_SS_IaaS_Server_Rehost_AsOnPrem> vm_SS_IaaS_Server_Rehost_AsOnPrem_List,
-                List<VM_IaaS_Server_Rehost_Perf> vm_IaaS_Server_Rehost_Perf_List,
-                List<VM_IaaS_Server_Rehost_AsOnPrem> vm_IaaS_Server_Rehost_AsOnPrem_List,
                 Business_Case business_Case_Data,
-                List<Financial_Summary> financial_Summary_List,
                 Cash_Flows cash_Flows_Data,
                 List<AVS_Summary> avs_Summary_List,
                 List<AVS_IaaS_Rehost_Perf> avs_IaaS_Rehost_Perf_List,
@@ -62,21 +34,7 @@ namespace Azure.Migrate.Explore.Excel
             )
         {
             CorePropertiesObj = corePropertiesObj;
-            All_VM_IaaS_Server_Rehost_Perf_List = all_VM_IaaS_Server_Rehost_Perf_List;
-            SQL_All_Instances_List = sql_All_Instances_List;
-            SQL_MI_PaaS_List = sql_MI_PaaS_List;
-            SQL_IaaS_Instance_Rehost_Perf_List = sql_IaaS_Instance_Rehost_Perf_List;
-            SQL_IaaS_Server_Rehost_Perf_List = sql_IaaS_Server_Rehost_Perf_List;
-            SQL_IaaS_Server_Rehost_AsOnPrem_List = sql_IaaS_Server_Rehost_AsOnPrem_List;
-            WebApp_PaaS_List = webApp_PaaS_List;
-            WebApp_IaaS_Server_Rehost_Perf_List = webApp_IaaS_Server_Rehost_Perf_List;
-            WebApp_IaaS_Server_Rehost_AsOnPrem_List = webApp_IaaS_Server_Rehost_AsOnPrem_List;
-            VM_SS_IaaS_Server_Rehost_Perf_List = vm_SS_IaaS_Server_Rehost_Perf_List;
-            VM_SS_IaaS_Server_Rehost_AsOnPrem_List = vm_SS_IaaS_Server_Rehost_AsOnPrem_List;
-            VM_IaaS_Server_Rehost_Perf_List = vm_IaaS_Server_Rehost_Perf_List;
-            VM_IaaS_Server_Rehost_AsOnPrem_List = vm_IaaS_Server_Rehost_AsOnPrem_List;
             Business_Case_Data = business_Case_Data;
-            Financial_Summary_List = financial_Summary_List;
             Cash_Flows_Data = cash_Flows_Data;
             AVS_Summary_List = avs_Summary_List;
             AVS_IaaS_Rehost_Perf_List = avs_IaaS_Rehost_Perf_List;
@@ -92,20 +50,6 @@ namespace Azure.Migrate.Explore.Excel
             Generate_Properties_Worksheet();
             Generate_Business_Case_Worksheet();
             Generate_Cash_Flows_Worksheet();
-            Generate_Financial_Summary_Worksheet();
-            Generate_SQL_MI_PaaS_Worksheet();
-            Generate_SQL_IaaS_Instance_Rehost_Perf_Worksheet();
-            Generate_SQL_IaaS_Server_Rehost_Perf_Worksheet();
-            Generate_SQL_IaaS_Server_Rehost_AsOnPrem_Worksheet();
-            Generate_WebApp_PaaS_Worksheet();
-            Generate_WebApp_IaaS_Server_Rehost_Perf_Worksheet();
-            Generate_WebApp_IaaS_Server_Rehost_AsOnPrem_Worksheet();
-            Generate_VM_IaaS_Server_Rehost_Perf_Worksheet();
-            Generate_VM_IaaS_Server_Rehost_AsOnPrem_Worksheet();
-            //Generate_VM_SS_IaaS_Server_Rehost_Perf_Worksheet();
-            //Generate_VM_SS_IaaS_Server_Rehost_AsOnPrem_Worksheet();
-            Generate_SQL_All_Instances_Worksheet();
-            Generate_All_VM_IaaS_Server_Rehost_Perf_Worksheet();
             Generate_AVS_Summary_Worksheet();
             Generate_AVS_IaaS_Server_Rehost_Perf_Worksheet();
             Generate_Decommissioned_Machines_Worksheet();
@@ -357,147 +301,6 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(13, 5).Value = Cash_Flows_Data.AvsYOYCosts.SavingsYOY.Year2;
             dataWs.Cell(13, 6).Value = Cash_Flows_Data.AvsYOYCosts.SavingsYOY.Year3;
         }
-        private void Generate_Financial_Summary_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.Financial_Summary_TabName, 4);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.Financial_Summary_Columns);
-
-            if (Financial_Summary_List != null && Financial_Summary_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(Financial_Summary_List);
-        }
-        private void Generate_SQL_MI_PaaS_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.SQL_MI_PaaS_TabName, 5);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.SQL_MI_PaaS_Columns);
-
-            if (SQL_MI_PaaS_List != null && SQL_MI_PaaS_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(SQL_MI_PaaS_List);
-        }
-
-        private void Generate_SQL_IaaS_Instance_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.SQL_IaaS_Instance_Rehost_Perf_TabName, 6);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.SQL_IaaS_Instance_Rehost_Perf_Columns);
-
-            if (SQL_IaaS_Instance_Rehost_Perf_List != null && SQL_IaaS_Instance_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(SQL_IaaS_Instance_Rehost_Perf_List);
-        }
-
-        private void Generate_SQL_IaaS_Server_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.SQL_IaaS_Server_Rehost_Perf_TabName, 7);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.SQL_IaaS_Server_Rehost_Perf_Columns);
-
-            if (SQL_IaaS_Server_Rehost_Perf_List != null && SQL_IaaS_Server_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(SQL_IaaS_Server_Rehost_Perf_List);
-        }
-
-        private void Generate_SQL_IaaS_Server_Rehost_AsOnPrem_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.SQL_IaaS_Server_Rehost_AsOnPrem_TabName, 8);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.SQL_IaaS_Server_Rehost_AsOnPrem_Columns);
-
-            if (SQL_IaaS_Server_Rehost_AsOnPrem_List != null && SQL_IaaS_Server_Rehost_AsOnPrem_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(SQL_IaaS_Server_Rehost_AsOnPrem_List);
-        }
-
-        private void Generate_WebApp_PaaS_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.WebApp_PaaS_TabName, 9);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.WebApp_PaaS_Columns);
-
-            if (WebApp_PaaS_List != null && WebApp_PaaS_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(WebApp_PaaS_List);
-        }
-
-        private void Generate_WebApp_IaaS_Server_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.WebApp_IaaS_Server_Rehost_Perf_TabName, 10);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.WebApp_IaaS_Server_Rehost_Perf_Columns);
-
-            if (WebApp_IaaS_Server_Rehost_Perf_List != null && WebApp_IaaS_Server_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(WebApp_IaaS_Server_Rehost_Perf_List);
-        }
-
-        private void Generate_WebApp_IaaS_Server_Rehost_AsOnPrem_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.WebApp_IaaS_Server_Rehost_AsOnPrem_TabName, 11);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.WebApp_IaaS_Server_Rehost_AsOnPrem_Columns);
-
-            if (WebApp_IaaS_Server_Rehost_AsOnPrem_List != null && WebApp_IaaS_Server_Rehost_AsOnPrem_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(WebApp_IaaS_Server_Rehost_AsOnPrem_List);
-        }
-
-        private void Generate_VM_IaaS_Server_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.VM_IaaS_Server_Rehost_Perf_TabName, 12);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.VM_IaaS_Server_Rehost_Perf_Columns);
-
-            if (VM_IaaS_Server_Rehost_Perf_List != null && VM_IaaS_Server_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(VM_IaaS_Server_Rehost_Perf_List);
-        }
-
-        private void Generate_VM_IaaS_Server_Rehost_AsOnPrem_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.VM_IaaS_Server_Rehost_AsOnPrem_TabName, 13);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.VM_IaaS_Server_Rehost_AsOnPrem_Columns);
-
-            if (VM_IaaS_Server_Rehost_AsOnPrem_List != null && VM_IaaS_Server_Rehost_AsOnPrem_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(VM_IaaS_Server_Rehost_AsOnPrem_List);
-        }
-
-        /*
-        private void Generate_VM_SS_IaaS_Server_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.VM_SS_IaaS_Server_Rehost_Perf_TabName, 13);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.VM_SS_IaaS_Server_Rehost_Perf_Columns);
-
-            if (VM_SS_IaaS_Server_Rehost_Perf_List != null && VM_SS_IaaS_Server_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(VM_SS_IaaS_Server_Rehost_Perf_List);
-        }
-
-        private void Generate_VM_SS_IaaS_Server_Rehost_AsOnPrem_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.VM_SS_IaaS_Server_Rehost_AsOnPrem_TabName, 14);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.VM_SS_IaaS_Server_Rehost_AsOnPrem_Columns);
-
-            if (VM_SS_IaaS_Server_Rehost_AsOnPrem_List != null && VM_SS_IaaS_Server_Rehost_AsOnPrem_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(VM_SS_IaaS_Server_Rehost_AsOnPrem_List);
-        }
-        */
-
-        private void Generate_SQL_All_Instances_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.SQL_All_Instances_TabName, 14);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.SQL_All_Instances_Columns);
-
-            if (SQL_All_Instances_List != null && SQL_All_Instances_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(SQL_All_Instances_List);
-        }
-
-        private void Generate_All_VM_IaaS_Server_Rehost_Perf_Worksheet()
-        {
-            var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.All_VM_IaaS_Server_Rehost_Perf_TabName, 15);
-
-            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, CoreReportConstants.All_VM_IaaS_Server_Rehost_Perf_Columns);
-
-            if (All_VM_IaaS_Server_Rehost_Perf_List != null && All_VM_IaaS_Server_Rehost_Perf_List.Count > 0)
-                dataWs.Cell(2, 1).InsertData(All_VM_IaaS_Server_Rehost_Perf_List);
-        }
-
         private void Generate_AVS_Summary_Worksheet()
         {
             var dataWs = CoreWb.Worksheets.Add(CoreReportConstants.AVS_Summary_TabName, 16);

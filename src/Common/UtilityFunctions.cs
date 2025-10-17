@@ -336,6 +336,16 @@ namespace Azure.Migrate.Explore.Common
                 sheet.Cell(1, i + 1).Value = columns[i];
         }
 
+        public static void AddNewColumnToEnd(IXLWorksheet sheet, string newColumnName)
+        {
+            // Get the next available column (based on row 1)
+            int lastCol = sheet.Row(1).LastCellUsed()?.Address.ColumnNumber ?? 0;
+            int nextCol = lastCol + 1;
+
+            sheet.Cell(1, nextCol).Value = newColumnName;
+        }
+
+
         /// <summary>
         /// Saves ARG (Azure Resource Graph) JSON response to an Excel worksheet.
         /// This method specifically handles ARG responses with a "data" root element.

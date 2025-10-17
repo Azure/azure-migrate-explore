@@ -7,14 +7,6 @@ using System.Reflection;
 
 namespace Azure.Migrate.Explore.Common
 {
-    public enum GroupPollResponse
-    {
-        NotCompleted,
-        Completed,
-        Invalid,
-        Error
-    }
-
     public enum AssessmentPollResponse
     {
         [Description("Not Created")]
@@ -68,7 +60,10 @@ namespace Azure.Migrate.Explore.Common
         SQLAssessment,
 
         [Description("webAppAssessments")]
-        WebAppAssessment
+        WebAppAssessment,
+
+        [Description("heterogeneousAssessments")]
+        HeterogeneousAssessment
     }
 
     public enum AssessmentSizingCriterion

@@ -8,7 +8,6 @@ namespace Azure.Migrate.Explore.Common
         public const string AzureManagementApiHostname = @"management.azure.com";
         public const string SubscriptionPath = @"subscriptions";
         public const string ResourceGroupPath = @"resourceGroups";
-        public const string GroupsPath = @"groups";
         public const string ProvidersPath = @"providers";
         public const string MigrateProvidersPath = @"Microsoft.Migrate";
         public const string OffAzureProvidersPath = @"Microsoft.OffAzure";
@@ -37,13 +36,13 @@ namespace Azure.Migrate.Explore.Common
         public const string AzureAppServiceAssessedWebAppsPath = @"assessedWebApps";
         public const string AssessmentProjectsPath = @"assessmentProjects";
         public const string AssessmentProjectImportFilterPath = @"&%24filter=contains(Properties/DiscoveryMachineArmId%2C'ImportSites')";
-        public const string CreateGroupApiVersion = @"2019-10-01";
         public const string ProjectDetailsApiVersion = @"2020-05-01";
         public const string MasterSiteApiVersion = @"2024-05-01-preview";
         public const string DiscoverySitesApiVersion = @"2024-12-01-preview";
         public const string ImportSitesApiVersion = @"2023-06-06";
         public const string AssessmentMachineListApiVersion = @"2024-01-15";
-        public const string AvsAssessmentApiVersion = @"2025-09-09-preview";
+        public const string AssessmentApiVersion = @"2025-09-09-preview";
+        public const string ResolveScopeApiVersion = @"2025-09-09-preview";
         public const string BusinessCaseApiVersion = @"2024-03-03-preview";
         public const string QueryParameterApiVersion = @"api-version";
         public const string AzureMigrateQueryParameterFilter = @"filter";

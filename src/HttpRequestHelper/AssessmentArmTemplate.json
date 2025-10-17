@@ -1,0 +1,382 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assessmentProjectName": {"type": "string","metadata": {"description": "The name of the assessment project"}},
+        "assessmentProjectId": {"type": "string","metadata": {"description": "The resource ID of the assessment project"}},
+        "assessmentName": {"type": "string","metadata": {"description": "The name of the assessment"}},
+        "azureLocation": {"type": "string", "defaultValue": "westus2"},
+        "currency": {"type": "string", "defaultValue": "USD"},
+        "discountPercentage": {"type": "int", "defaultValue": 0},
+        "environmentType": {"type": "string", "defaultValue": "Production"},
+        "savingsOptions": {"type": "string", "defaultValue": "RI3Year"},
+        "performanceTimeRange": {"type": "string", "defaultValue": "Week"},
+        "performancePercentile": {"type": "string", "defaultValue": "Percentile95"},
+        "sizingCriterion": {"type": "string", "defaultValue": "PerformanceBased"}
+    },
+    "resources": [
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "performanceData": {"timeRange": "[parameters('performanceTimeRange')]","percentile": "[parameters('performancePercentile')]"},
+                    "scalingFactor": 1,
+                    "azureSecurityOfferingType": "MDC",
+                    "osLicense": "Yes",
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "preferredTargets": [
+                        "SqlMI"
+                    ],
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "currency": "[parameters('currency')]",
+                    "sizingCriterion": "[parameters('sizingCriterion')]",
+                    "savingsSettings": {
+                        "savingsOptions": "[parameters('savingsOptions')]"
+                    },
+                    "billingSettings": {
+                        "subscriptionId": null,
+                        "licensingProgram": "Retail"
+                    },
+                    "sqlServerLicense": "Yes",
+                    "azureSqlVmSettings": {
+                        "instanceSeries": [
+                            "Dadsv5_series",
+                            "Dasv4_series",
+                            "Ddsv4_series",
+                            "Ddsv5_series",
+                            "Edsv5_series",
+                            "Eadsv5_series",
+                            "Easv4_series",
+                            "Ebdsv5_series",
+                            "Ebsv5_series",
+                            "Edsv4_series",
+                            "M_series",
+                            "Mdsv2_series",
+                            "Mv2_series"
+                        ]
+                    },
+                    "entityUptime": {
+                        "daysPerMonth": 31,
+                        "hoursPerDay": 24
+                    },
+                    "azureSqlManagedInstanceSettings": {
+                        "azureSqlInstanceType": "SingleInstance",
+                        "azureSqlServiceTier": "SqlServiceTier_Automatic"
+                    },
+                    "azureSqlDatabaseSettings": {
+                        "azureSqlComputeTier": "Provisioned",
+                        "azureSqlPurchaseModel": "VCore",
+                        "azureSqlServiceTier": "SqlServiceTier_Automatic",
+                        "azureSqlDataBaseType": "SingleDatabase"
+                    },
+                    "environmentType": "[parameters('environmentType')]",
+                    "enableHadrAssessment": true,
+                    "disasterRecoveryLocation": "westcentralus",
+                    "multiSubnetIntent": "DisasterRecovery",
+                    "isInternetAccessAvailable": true,
+                    "asyncCommitModeIntent": "DisasterRecovery"
+                },
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                }
+            },
+            "dependsOn": [],
+            "id": "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-sql')]",
+            "type": "Microsoft.Migrate/assessmentprojects/sqlAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "performanceData": {"timeRange": "[parameters('performanceTimeRange')]","percentile": "[parameters('performancePercentile')]"},
+                    "scalingFactor": 1,
+                    "azureSecurityOfferingType": "MDC",
+                    "azureHybridUseBenefit": "Yes",
+                    "linuxAzureHybridUseBenefit": "Yes",
+                    "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
+                    "billingSettings": {
+                        "licensingProgram": "Retail",
+                        "subscriptionId": null
+                    },
+                    "azureDiskTypes": [
+                        "Premium",
+                        "StandardSSD",
+                        "Ultra",
+                        "PremiumV2"
+                    ],
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "azureVmFamilies": [
+                        "Av2_series",
+                        "Dadsv5_series",
+                        "Dasv4_series",
+                        "Dasv5_series",
+                        "Dav4_series",
+                        "Ddsv4_series",
+                        "Ddsv5_series",
+                        "Ddv4_series",
+                        "Ddv5_series",
+                        "Dsv4_series",
+                        "Dsv5_series",
+                        "Dv4_series",
+                        "Dv5_series",
+                        "Edsv5_series",
+                        "Edv5_series",
+                        "Esv5_series",
+                        "Ev5_series",
+                        "Eadsv5_series",
+                        "Easv4_series",
+                        "Easv5_series",
+                        "Eav4_series",
+                        "Ebdsv5_series",
+                        "Ebsv5_series",
+                        "Edsv4_series",
+                        "Edsv6_series",
+                        "Edv4_series",
+                        "Esv4_series",
+                        "Esv6_series",
+                        "Ev4_series",
+                        "F_series",
+                        "Fs_series",
+                        "Fsv2_series",
+                        "FX_series",
+                        "G_series",
+                        "GS_series",
+                        "Lasv3_series",
+                        "Lsv2_series",
+                        "Lsv3_series",
+                        "M_series",
+                        "Mbdsv3_series",
+                        "Mbsv3_series",
+                        "Mdsv2_series",
+                        "Msv2_series",
+                        "Mdsv3_series",
+                        "Msv3_series",
+                        "Mv2_series"
+                    ],
+                    "environmentType": "[parameters('environmentType')]",
+                    "currency": "[parameters('currency')]",
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "sizingCriterion": "[parameters('sizingCriterion')]",
+                    "azurePricingTier": "Standard",
+                    "azureStorageRedundancy": "LocallyRedundant",
+                    "vmUptime": {
+                        "daysPerMonth": 31,
+                        "hoursPerDay": 24
+                    },
+                    "azureVmSecurityOptions": [
+                        "Standard",
+                        "TVM"
+                    ]
+                },
+                "details": {},
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                }
+            },
+            "dependsOn": [],
+            "id": "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-vm')]",
+            "type": "Microsoft.Migrate/assessmentprojects/assessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "appSvcContainerSettings": {
+                        "isolationRequired": false
+                    },
+                    "appSvcNativeSettings": {
+                        "isolationRequired": false
+                    },
+                    "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
+                    "billingSettings": {
+                        "licensingProgram": "Retail",
+                        "subscriptionId": ""
+                    },
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "azureSecurityOfferingType": "MDC",
+                    "currency": "[parameters('currency')]",
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "environmentType": "[parameters('environmentType')]",
+                    "performanceData": {"timeRange": "[parameters('performanceTimeRange')]","percentile": "[parameters('performancePercentile')]"},
+                    "sizingCriterion": "AsOnPremises",
+                    "scalingFactor": 1
+                },
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                }
+            },
+            "dependsOn": [],
+            "id": "[concat(parameters('assessmentProjectId'), '/webAppAssessments/', parameters('assessmentName'), '-webApp')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-webApp')]",
+            "type": "Microsoft.Migrate/assessmentprojects/webAppAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "environmentType": "[parameters('environmentType')]",
+                    "billingSettings": {
+                        "licensingProgram": "Retail"
+                    },
+                    "currency": "[parameters('currency')]",
+                    "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "pricingTier": "Standard",
+                    "category": "All",
+                    "consolidation": "Full",
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "sizingCriterion": "AsOnPremises"
+                },
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                }
+            },
+            "dependsOn": [],
+            "id": "[concat(parameters('assessmentProjectId'), '/aksAssessments/', parameters('assessmentName'), '-aks')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-aks')]",
+            "type": "Microsoft.Migrate/assessmentprojects/aksAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "targetAssessmentArmIds": {
+                    "azureAppService": "[concat(parameters('assessmentProjectId'), '/webAppAssessments/', parameters('assessmentName'), '-webApp')]",
+                    "azureAppServiceContainer": "[concat(parameters('assessmentProjectId'), '/webAppAssessments/', parameters('assessmentName'), '-webApp')]",
+                    "aks": "[concat(parameters('assessmentProjectId'), '/aksAssessments/', parameters('assessmentName'), '-aks')]"
+                }
+            },
+            "dependsOn": [
+                "[concat(parameters('assessmentProjectId'), '/webAppAssessments/', parameters('assessmentName'), '-webApp')]",
+                "[concat(parameters('assessmentProjectId'), '/aksAssessments/', parameters('assessmentName'), '-aks')]"
+            ],
+            "id": "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-webapp')]",
+            "type": "Microsoft.Migrate/assessmentprojects/webAppCompoundAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "environmentType": "[parameters('environmentType')]",
+                    "billingSettings": {
+                        "licensingProgram": "Retail",
+                        "subscriptionId": null
+                    },
+                    "currency": "[parameters('currency')]",
+                    "savingsSettings": {
+                        "savingsOptions": "[parameters('savingsOptions')]"
+                    },
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "serviceTier": [
+                        "GeneralPurpose",
+                        "MemoryOptimized"
+                    ],
+                    "storageType": [
+                        "SSDV1"
+                    ],
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "sizingCriterion": "AsOnPremises",
+                    "performanceData": {},
+                    "scalingFactor": 1
+                },
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                },
+                "fallbackMachineAssessmentArmId": "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]"
+            },
+            "dependsOn": [
+                "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]"
+            ],
+            "id": "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-pgsql')]",
+            "type": "Microsoft.Migrate/assessmentprojects/pgSqlAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "assessmentArmIds": [
+                    "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+                    "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+                    "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]",
+                    "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]"
+                ]
+            },
+            "dependsOn": [
+                "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+                "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+                "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]",
+                "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]"
+            ],
+            "id": "[concat(parameters('assessmentProjectId'), '/heterogeneousAssessments/', parameters('assessmentName'))]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'))]",
+            "type": "Microsoft.Migrate/assessmentprojects/heterogeneousAssessments"
+        },
+        {
+            "apiVersion": "2025-09-09-preview",
+            "properties": {
+                "settings": {
+                    "performanceData": {
+                        "percentile": "[parameters('performancePercentile')]",
+                        "timeRange": "[parameters('performanceTimeRange')]"
+                    },
+                    "scalingFactor": 1,
+                    "azureSecurityOfferingType": "MDC",
+                    "failuresToTolerateAndRaidLevelList": [
+                        "Ftt1Raid1",
+                        "Ftt2Raid6"
+                    ],
+                    "vcpuOversubscription": 4,
+                    "dedupeCompression": 1.5,
+                    "memOvercommit": 1,
+                    "isStretchClusterEnabled": false,
+                    "isVcfByolEnabled": true,
+                    "externalStorageTypes": [
+                        "AnfPremium",
+                        "AnfStandard",
+                        "AnfUltra",
+                        "vsan",
+                        "AzureElasticSanBase",
+                        "AzureElasticSanCapacity"
+                    ],
+                    "avsAssessmentScenario": "NewAvsSddc",
+                    "cpuHeadroom": 0,
+                    "azureLocation": "[parameters('azureLocation')]",
+                    "currency": "[parameters('currency')]",
+                    "discountPercentage": "[parameters('discountPercentage')]",
+                    "sizingCriterion": "[parameters('sizingCriterion')]",
+                    "savingsSettings": {
+                        "savingsOptions": "[parameters('savingsOptions')]"
+                    },
+                    "environmentType": "[parameters('environmentType')]",
+                    "billingSettings": {
+                        "licensingProgram": "Retail"
+                    },
+                    "nodeTypes": [
+                        "AV36",
+                        "AV36P",
+                        "AV64",
+                        "AV48"
+                    ]
+                },
+                "scope": {
+                    "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+                    "scopeType": "AzureResourceGraphQuery"
+                },
+                "fallbackMachineAssessmentArmId": ""
+            },
+            "dependsOn": [],
+            "id": "[concat(parameters('assessmentProjectId'), '/avsAssessments/', parameters('assessmentName'), '-avs')]",
+            "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-avs')]",
+            "type": "Microsoft.Migrate/assessmentprojects/avsAssessments"
+        }
+    ],
+    "variables": {
+    }
+}

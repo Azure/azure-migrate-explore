@@ -8,6 +8,7 @@ namespace Azure.Migrate.Explore.Common
         public const string InventoryInsightsTabName = "Inventory Insights";
         public const string SoftwareInsightsTabName = "Software Insights";
         public const string SoftwareVulnerabilitiesTabName = "Software Vulnerabilities";
+        public const string PendingUpdatesTabName = "Pending Updates";
         public static readonly List<string> InventoryInsightsColumns = new List<string>
         {
             "Workload Name",
@@ -25,6 +26,7 @@ namespace Azure.Migrate.Explore.Common
         public static readonly List<string> SoftwareInsightsColumns = new List<string>
         {
             "Name",
+            "Provider",
             "Category",
             "Sub Category",
             "Support Status",
@@ -38,7 +40,14 @@ namespace Azure.Migrate.Explore.Common
             "SoftwareName",
             "Version",
             "Vulnerability",
-            "Severity"
+            "CveId",
+            "Severity",
+            "Servers Count"
+        };
+        public static readonly List<string> PendingUpdatesTabNameColumns = new List<string>
+        {
+            "Update Name",
+            "Servers"
         };
     }
 }

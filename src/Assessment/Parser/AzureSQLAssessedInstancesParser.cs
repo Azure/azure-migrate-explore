@@ -51,11 +51,10 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                             Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                              new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName + Routes.ForwardSlash +
                              Routes.AssessedSQLInstancesPath +
                              Routes.QueryStringQuestionMark +
-                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
+                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentApiVersion;
 
                 while (!string.IsNullOrEmpty(url))
                 {
@@ -197,8 +196,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AzureSQLInstancesData[key].DatabaseSummaryTotalDiscoveredUserDatabases = value.Properties.DatabaseSummary == null ? 0 : value.Properties.DatabaseSummary.TotalDiscoveredUserDatabases;
             AzureSQLInstancesData[key].DatabaseSummaryTotalDatabaseSizeInMB = value.Properties.DatabaseSummary == null ? 0 : value.Properties.DatabaseSummary.TotalDatabaseSizeInMB;
             AzureSQLInstancesData[key].DatabaseSumaryLargestDatabaseSizeInMB = value.Properties.DatabaseSummary == null ? 0 : value.Properties.DatabaseSummary.LargestDatabaseSizeInMB;
-
-            AzureSQLInstancesData[key].GroupName = assessmentInfo.GroupName;
 
             if (AzureSQLInstancesData[key].Environment.Equals("Dev"))
             {

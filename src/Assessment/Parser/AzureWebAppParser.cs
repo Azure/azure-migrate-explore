@@ -51,10 +51,9 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                             Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                              new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName +
                              Routes.QueryStringQuestionMark +
-                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
+                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentApiVersion;
                 
                 string assessmentPropertiesResponse = "";
                 try
@@ -97,11 +96,10 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                       Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                       Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                       Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                      Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                       new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName + Routes.ForwardSlash +
                       Routes.AzureAppServiceAssessedWebAppsPath +
                       Routes.QueryStringQuestionMark +
-                      Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
+                      Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentApiVersion;
 
                 while (!string.IsNullOrEmpty(url))
                 {
@@ -194,7 +192,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AzureWebAppData[key].MigrationIssues = GetAssessedMigrationIssueList(migrationIssues);
             AzureWebAppData[key].AppServicePlanName = assessmentResult?.AppServicePlanName;
             AzureWebAppData[key].WebAppSkuName = assessmentResult?.WebAppSkuName;
-            AzureWebAppData[key].GroupName = assessmentInfo.GroupName;
         }
 
         #region Utilities

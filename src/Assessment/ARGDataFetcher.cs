@@ -121,6 +121,7 @@ namespace AzureMigrateExplore.Assessment
             | extend
                 name = properties.softwareName,
                 category = properties.category,
+                provider = properties.provider,
                 subcategory = strcat_array(properties.subCategories, ', '),
                 supportStatus = properties.supportStatus,
                 version = properties.version,
@@ -130,6 +131,7 @@ namespace AzureMigrateExplore.Assessment
             | project
                 softwareId,
                 name,
+                provider,
                 category,
                 subcategory,
                 version,
@@ -160,6 +162,7 @@ namespace AzureMigrateExplore.Assessment
             | mv-expand vulnerabilityId = properties.vulnerabilityIds
             | extend vulnerabilityId = tostring(vulnerabilityId)
             | summarize
+                serverCount = count_distinct(machineId),
                 machinesSet = make_set(machineId),
                 softwareName = take_any(properties.softwareName),
                 softwareVersion = take_any(properties.version)
@@ -170,13 +173,17 @@ namespace AzureMigrateExplore.Assessment
                     or type contains 'Microsoft.OffAzure/vmwaresites/machines/inventoryinsights/vulnerabilities'
                     or type contains 'Microsoft.OffAzure/hypervsites/machines/inventoryinsights/vulnerabilities'
                     or type contains 'Microsoft.OffAzure/importsites/machines/inventoryinsights/vulnerabilities'
+                | extend id = tolower(id)
+                | where {1}
                 | extend cveId = tostring(properties.cveId)
             ) on $left.vulnerabilityId == $right.cveId
             | project
                 softwareName,
                 softwareVersion,
                 vulnerabilityId,
-                riskLevel = properties.baseSeverity
+                cveId = properties.cve,
+                riskLevel = properties.baseSeverity,
+                serverCount
             ";
 
         const string InventoryInsightsQuery = @"
@@ -202,9 +209,26 @@ namespace AzureMigrateExplore.Assessment
                 vulnerabilityCount = toint(properties.vulnerabilityCount),
                 criticalVulnerabilityCount = toint(properties.criticalVulnerabilityCount),
                 pendingUpdateCount = toint(properties.pendingUpdateCount),
+                pendingSecurityCriticalUpdateCount = toint(properties.pendingSecurityCriticalUpdateCount),
                 endOfSupportSoftwareCount = toint(properties.endOfSupportSoftwareCount),
                 hasSecuritySoftware = tobool(properties.hasSecuritySoftware),
                 hasPatchingSoftware = tobool(properties.hasPatchingSoftware)";
+
+        const string PendingUpdatesServerCountQuery = @"
+            machinesinventoryinsightsresources
+            | where type in~ (
+                ""Microsoft.OffAzure/vmwareSites/machines/inventoryInsights/pendingUpdates"",
+                ""Microsoft.OffAzure/hypervSites/machines/inventoryInsights/pendingUpdates"",
+                ""Microsoft.OffAzure/serverSites/machines/inventoryInsights/pendingUpdates""
+            )
+            | where {0}
+            | parse id with machineId ""/inventoryInsights/default"" *
+            | extend updateTitle = tostring(properties['title']),
+                updateId = tostring(properties.updateId),
+                severity = tostring(properties.severity)
+            | where severity in (""Security"", ""Critical"")
+            | summarize serverCount = count_distinct(machineId) by updateTitle
+            ";
 
         // Helper methods to create ARG API compatible JSON payloads
         public static string CreateSoftwareAnalysisArgPayload(string[] subscriptions, string machineIdsList)
@@ -219,9 +243,9 @@ namespace AzureMigrateExplore.Assessment
             return CreateArgPayload(subscriptions, query);
         }
 
-        public static string CreateSoftwareVulnerabilitiesArgPayload(string[] subscriptions, string machineIdsList)
+        public static string CreateSoftwareVulnerabilitiesArgPayload(string[] subscriptions, string siteIds, string machineIdsList)
         {
-            var query = string.Format(SoftwareVulnerabilitiesQuery, machineIdsList);
+            var query = string.Format(SoftwareVulnerabilitiesQuery, machineIdsList, siteIds);
             return CreateArgPayload(subscriptions, query);
         }
 
@@ -263,30 +287,16 @@ namespace AzureMigrateExplore.Assessment
                 // Format machine IDs for KQL
                 var machineIdsList = string.Join(", ", machineIds.Select(id => $"\"{id.ToLower()}\""));
                 
-                userInputObj.LoggerObj?.LogInformation($"Software Analysis query - Formatted machine IDs: {machineIdsList}");
-                
                 // Create ARG payload
                 string payload = CreateSoftwareAnalysisArgPayload(subscriptions, machineIdsList);
                 
-                userInputObj.LoggerObj?.LogInformation($"Software Analysis ARG Payload: {payload}");
-                
-                // Execute query
+                // Execute query with automatic pagination handled by HttpClientHelper
                 var httpHelper = new HttpClientHelper();
-                HttpResponseMessage response = await httpHelper.GetHttpResponseForARGQuery(userInputObj, payload);
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, payload);
                 
-                if (!response.IsSuccessStatusCode)
-                {
-                    string errorContent = await response.Content.ReadAsStringAsync();
-                    userInputObj.LoggerObj?.LogError($"ARG Software Analysis query failed: {response.StatusCode}: {errorContent}");
-                    throw new Exception($"ARG Software Analysis query failed: {response.StatusCode}: {errorContent}");
-                }
-                
-                // Parse response
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                userInputObj.LoggerObj?.LogInformation($"Software Analysis response: {jsonResponse}");
-                
+                // Parse consolidated response
                 var results = ParseSoftwareAnalysisResponse(jsonResponse);
-                userInputObj.LoggerObj?.LogInformation($"Software Analysis parsed {results.Count} results");
+                userInputObj.LoggerObj?.LogInformation($"Software Analysis completed - Total results: {results.Count}");
                 
                 return results;
             }
@@ -299,29 +309,24 @@ namespace AzureMigrateExplore.Assessment
 
         public static async Task<List<SoftwareVulnerabilities>> GetSoftwareVulnerabilitiesData(
             UserInput userInputObj, 
-            string[] subscriptions, 
+            string[] subscriptions,
+            List<string> siteIds,
             List<string> machineIds)
         {
             try
             {
                 // Format machine IDs for KQL
                 var machineIdsList = string.Join(", ", machineIds.Select(id => $"\"{id.ToLower()}\""));
-                
+                var siteFilters = string.Join(" or ", siteIds.Select(siteId => $"id has \"{siteId.ToLower()}\"").ToList());
+
                 // Create ARG payload
-                string payload = CreateSoftwareVulnerabilitiesArgPayload(subscriptions, machineIdsList);
+                string payload = CreateSoftwareVulnerabilitiesArgPayload(subscriptions, siteFilters, machineIdsList);
                 
-                // Execute query
+                // Execute query with automatic pagination handled by HttpClientHelper
                 var httpHelper = new HttpClientHelper();
-                HttpResponseMessage response = await httpHelper.GetHttpResponseForARGQuery(userInputObj, payload);
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, payload);
                 
-                if (!response.IsSuccessStatusCode)
-                {
-                    string errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"ARG Software Vulnerabilities query failed: {response.StatusCode}: {errorContent}");
-                }
-                
-                // Parse response
-                string jsonResponse = await response.Content.ReadAsStringAsync();
+                // Parse consolidated response
                 return ParseSoftwareVulnerabilitiesResponse(jsonResponse);
             }
             catch (Exception ex)
@@ -331,7 +336,7 @@ namespace AzureMigrateExplore.Assessment
             }
         }
 
-        public static List<InventoryInsights> GetInventoryInsightsData(
+        public static async Task<List<InventoryInsights>> GetInventoryInsightsDataAsync(
             UserInput userInputObj, 
             string[] subscriptions, 
             List<string> siteIds)
@@ -347,26 +352,45 @@ namespace AzureMigrateExplore.Assessment
                 // Create ARG payload
                 string payload = CreateInventoryInsightsArgPayload(subscriptions, siteFilter);
                 
-                userInputObj.LoggerObj?.LogInformation($"ARG Payload: {payload}");
-                
-                // Execute query
+                // Execute query with automatic pagination handled by HttpClientHelper
                 var httpHelper = new HttpClientHelper();
-                HttpResponseMessage response = httpHelper.GetHttpResponseForARGQuery(userInputObj, payload).Result;
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, payload);
                 
-                if (!response.IsSuccessStatusCode)
-                {
-                    string errorContent = response.Content.ReadAsStringAsync().Result;
-                    userInputObj.LoggerObj?.LogError($"ARG Inventory Insights query failed: {response.StatusCode}: {errorContent}");
-                    throw new Exception($"ARG Inventory Insights query failed: {response.StatusCode}: {errorContent}");
-                }
-                
-                // Parse response
-                string jsonResponse = response.Content.ReadAsStringAsync().Result;
+                // Parse consolidated response
                 return ParseInventoryInsightsResponse(jsonResponse);
             }
             catch (Exception ex)
             {
                 userInputObj.LoggerObj?.LogError($"Error executing inventory insights query: {ex.Message}");
+                throw;
+            }
+        }
+
+        public static async Task<List<PendingUpdatesServerCounts>> GetPendingUpdatesServerCountDataAsync(
+            UserInput userInputObj,
+            string[] subscriptions,
+            List<string> siteIds)
+        {
+            try
+            {
+                // Create site filter for KQL - build OR condition for site IDs
+                var siteFilters = siteIds.Select(siteId => $"id has \"{siteId.ToLower()}\"").ToList();
+                var siteFilter = string.Join(" or ", siteFilters);
+                var query = string.Format(PendingUpdatesServerCountQuery, siteFilter);
+
+                // Create ARG payload
+                string payload = CreateArgPayload(subscriptions, query);
+
+                // Execute query with automatic pagination handled by HttpClientHelper
+                var httpHelper = new HttpClientHelper();
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, payload);
+
+                // Parse consolidated response
+                return ParsePendingUpdatesServerCountsResponse(jsonResponse);
+            }
+            catch (Exception ex)
+            {
+                userInputObj.LoggerObj?.LogError($"Error executing pending updates query: {ex.Message}");
                 throw;
             }
         }
@@ -418,6 +442,7 @@ namespace AzureMigrateExplore.Assessment
                         results.Add(new SoftwareInsights
                         {
                             Name = rowObject["name"]?.ToString() ?? string.Empty,
+                            Provider = rowObject["provider"]?.ToString() ?? string.Empty,
                             Category = rowObject["category"]?.ToString() ?? string.Empty,
                             SubCategory = rowObject["subcategory"]?.ToString() ?? string.Empty,
                             Version = rowObject["version"]?.ToString() ?? string.Empty,
@@ -487,7 +512,9 @@ namespace AzureMigrateExplore.Assessment
                             SoftwareName = rowObject["softwareName"]?.ToString() ?? string.Empty,
                             Version = rowObject["softwareVersion"]?.ToString() ?? string.Empty,
                             Vulnerability = rowObject["vulnerabilityId"]?.ToString() ?? string.Empty,
-                            Severity = rowObject["riskLevel"]?.ToString() ?? string.Empty
+                            CveId = rowObject["cveId"]?.ToString() ?? string.Empty,
+                            Severity = rowObject["riskLevel"]?.ToString() ?? string.Empty,
+                            ServerCount = int.TryParse(rowObject["serverCount"]?.ToString(), out var serverCount) ? serverCount : 0
                         });
                     }
                     else
@@ -551,13 +578,15 @@ namespace AzureMigrateExplore.Assessment
                         var version = rowObject["version"]?.ToString() ?? string.Empty;
                         var resourceType = rowObject["resourceType"]?.ToString() ?? string.Empty;
                         var supportStatus = rowObject["supportStatus"]?.ToString() ?? string.Empty;
-                        var vulnerabilityCount = rowObject["vulnerabilityCount"]?.ToObject<int>() ?? 0;
-                        var criticalVulnerabilityCount = rowObject["criticalVulnerabilityCount"]?.ToObject<int>() ?? 0;
-                        var pendingUpdateCount = rowObject["pendingUpdateCount"]?.ToObject<int>() ?? 0;
-                        var endOfSupportSoftwareCount = rowObject["endOfSupportSoftwareCount"]?.ToObject<int>() ?? 0;
-                        var hasSecuritySoftware = rowObject["hasSecuritySoftware"]?.ToObject<bool>() ?? false;
-                        var hasPatchingSoftware = rowObject["hasPatchingSoftware"]?.ToObject<bool>() ?? false;
-                        
+                        var vulnerabilityCount = int.TryParse(rowObject["vulnerabilityCount"]?.ToString(), out var vulnVal) ? vulnVal : 0;
+                        var criticalVulnerabilityCount = int.TryParse(rowObject["criticalVulnerabilityCount"]?.ToString(), out var critVal) ? critVal : 0;
+                        var pendingUpdateCount = int.TryParse(rowObject["pendingUpdateCount"]?.ToString(), out var pendingVal) ? pendingVal : 0;
+                        var pendingSecurityCriticalUpdateCount = int.TryParse(rowObject["pendingSecurityCriticalUpdateCount"]?.ToString(), out var secVal) ? secVal : 0;
+                        var endOfSupportSoftwareCount = int.TryParse(rowObject["endOfSupportSoftwareCount"]?.ToString(), out var eosVal) ? eosVal : 0;
+
+                        var hasSecuritySoftware = bool.TryParse(rowObject["hasSecuritySoftware"]?.ToString(), out var hasSecVal) && hasSecVal;
+                        var hasPatchingSoftware = bool.TryParse(rowObject["hasPatchingSoftware"]?.ToString(), out var hasPatchVal) && hasPatchVal;
+
                         // Determine category based on resource type using centralized logic
                         var category = GetCategoryFromResourceType(resourceType);
                         
@@ -571,6 +600,7 @@ namespace AzureMigrateExplore.Assessment
                             VulnerabilityCount = vulnerabilityCount,
                             CriticalVulnerabilityCount = criticalVulnerabilityCount,
                             PendingUpdateCount = pendingUpdateCount,
+                            PendingSecurityCriticalUpdateCount = pendingSecurityCriticalUpdateCount,
                             EndOfSupportSoftwareCount = endOfSupportSoftwareCount,
                             HasSecuritySoftware = hasSecuritySoftware,
                             HasPatchingSoftware = hasPatchingSoftware
@@ -588,6 +618,71 @@ namespace AzureMigrateExplore.Assessment
                 throw new Exception($"Error parsing inventory insights response: {ex.Message}");
             }
             
+            return results;
+        }
+
+        private static List<PendingUpdatesServerCounts> ParsePendingUpdatesServerCountsResponse(string jsonResponse)
+        {
+            var results = new List<PendingUpdatesServerCounts>();
+
+            try
+            {
+                var responseObj = JObject.Parse(jsonResponse);
+
+                // Try different possible structures for ARG response
+                JArray? dataArray = null;
+
+                // First try: data.rows structure (common for ARG)
+                if (responseObj["data"] is JObject dataObj && dataObj["rows"] is JArray rowsArray)
+                {
+                    dataArray = rowsArray;
+                }
+                // Second try: data is directly an array
+                else if (responseObj["data"] is JArray directArray)
+                {
+                    dataArray = directArray;
+                }
+
+                if (dataArray == null)
+                {
+                    // Log the actual response structure for debugging
+                    System.Diagnostics.Debug.WriteLine($"Unexpected ARG response structure for pending updates: {jsonResponse}");
+                    return results;
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Found {dataArray.Count} rows in pending updates");
+                if (dataArray.Count > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine($"First row type: {dataArray[0].GetType()}, content: {dataArray[0]}");
+                }
+
+                foreach (var row in dataArray)
+                {
+                    // Handle JObject row format (ARG returns objects with named properties)
+                    if (row is JObject rowObject)
+                    {
+                        // Extract data from the query results by property names
+                        var updateTitle = rowObject["updateTitle"]?.ToString() ?? string.Empty;
+                        var serverCount = int.TryParse(rowObject["serverCount"]?.ToString(), out var vulnVal) ? vulnVal : 0;
+
+                        results.Add(new PendingUpdatesServerCounts
+                        {
+                            UpdateTitle = updateTitle,
+                            ServerCount = serverCount
+                        });
+                    }
+                    else
+                    {
+                        // Log unexpected row format
+                        System.Diagnostics.Debug.WriteLine($"Unexpected row format: {row.GetType()}, content: {row}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error parsing pending updates response: {ex.Message}");
+            }
+
             return results;
         }
     }

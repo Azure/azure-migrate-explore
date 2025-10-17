@@ -52,11 +52,10 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                             Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                              new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName + Routes.ForwardSlash +
                              Routes.AssessedMachinesPath +
                              Routes.QueryStringQuestionMark +
-                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
+                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentApiVersion;
 
                 while (!string.IsNullOrEmpty(url))
                 {
@@ -156,7 +155,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AzureVMAsOnPremMachinesData[key].StorageMonthlyCost = value.Properties.MonthlyStorageCost;
             AzureVMAsOnPremMachinesData[key].MonthlyComputeCostEstimate = value.Properties.MonthlyComputeCostForRecommendedSize;
             AzureVMAsOnPremMachinesData[key].MonthlySecurityCost = UtilityFunctions.GetSecurityCost(value.Properties.CostComponents);
-            AzureVMAsOnPremMachinesData[key].GroupName = assessmentInfo.GroupName;
         }
 
         private void UpdatePerformanceBasedDataset(Dictionary<string, AzureVMPerformanceBasedDataset> AzureVMPerformanceBasedMachinesData, string key, AzureVMAssessedMachineValue value, AssessmentInformation assessmentInfo, string currencySymbol)
@@ -190,7 +188,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AzureVMPerformanceBasedMachinesData[key].Disks = GetAssessedDiskList(value.Properties.Disks);
             AzureVMPerformanceBasedMachinesData[key].StorageMonthlyCost = value.Properties.MonthlyStorageCost;
             AzureVMPerformanceBasedMachinesData[key].MonthlySecurityCost = UtilityFunctions.GetSecurityCost(value.Properties.CostComponents);
-            AzureVMPerformanceBasedMachinesData[key].GroupName = assessmentInfo.GroupName;
 
             if (AzureVMPerformanceBasedMachinesData[key].Environment.Equals("Dev"))
             {

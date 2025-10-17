@@ -149,8 +149,13 @@ namespace Azure.Migrate.Explore.Discovery
                 // parse IP Address and MAC Address
                 Dictionary<string, List<string>> macIpAddressMap = new Dictionary<string, List<string>>();
                 foreach (var networkAdapter in value.Properties.NetworkAdapters)
-                    if (!macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
+                {
+                    if (networkAdapter.MacAddress != null && networkAdapter.IpAddressList != null &&
+                        !macIpAddressMap.ContainsKey(networkAdapter.MacAddress))
+                    {
                         macIpAddressMap.Add(networkAdapter.MacAddress, networkAdapter.IpAddressList);
+                    }
+                }
                 KeyValuePair<string, string> parsedMacIpAddressMap = ParseMacIpAddressMap(macIpAddressMap, userInputObj);
 
                 discoveryDataObj.IpAddress = parsedMacIpAddressMap.Value;

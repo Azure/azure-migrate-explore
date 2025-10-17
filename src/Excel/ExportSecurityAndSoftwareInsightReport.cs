@@ -11,6 +11,7 @@ namespace AzureMigrateExplore.Excel
         private readonly List<InventoryInsights> Inventory_Insights_List;
         private readonly List<SoftwareInsights> Software_Insights_List;
         private readonly List<SoftwareVulnerabilities> Software_Vulnerabilities_List;
+        private readonly List<PendingUpdatesServerCounts> PendingUpdates_ServerCounts_List;
 
         XLWorkbook SecurityAndSoftwareInsightsWb;
 
@@ -18,12 +19,15 @@ namespace AzureMigrateExplore.Excel
             (
                 List<InventoryInsights> inventory_Insights_List,
                 List<SoftwareInsights> software_Insights_List,
-                List<SoftwareVulnerabilities> software_Vulnerabilities_List
+                List<SoftwareVulnerabilities> software_Vulnerabilities_List,
+                List<PendingUpdatesServerCounts> pendingUpdates_ServerCounts_List
             )
         {
             Inventory_Insights_List = inventory_Insights_List;
             Software_Insights_List = software_Insights_List;
             Software_Vulnerabilities_List = software_Vulnerabilities_List;
+            PendingUpdates_ServerCounts_List = pendingUpdates_ServerCounts_List;
+
             SecurityAndSoftwareInsightsWb = new XLWorkbook();
         }
 
@@ -32,6 +36,7 @@ namespace AzureMigrateExplore.Excel
             GenerateInventoryInsightsWorksheet();
             GenerateSoftwareInsightsWorksheet();
             GenerateSoftwareVulnerabilitiesWorksheet();
+            GeneratePendingUpdatesWorksheet();
             SecurityAndSoftwareInsightsWb.SaveAs(UtilityFunctions.GetReportsDirectory() + "\\" + SoftwareAndSecurityInsightsReportConstants.SecurityAndSoftwareInsightsReportName);
         }
 
@@ -57,6 +62,14 @@ namespace AzureMigrateExplore.Excel
             UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, SoftwareAndSecurityInsightsReportConstants.SoftwareVulnerabilitiesColumns);
             if (Software_Vulnerabilities_List != null && Software_Vulnerabilities_List.Count > 0)
                 dataWs.Cell(2, 1).InsertData(Software_Vulnerabilities_List);
+        }
+
+        public void GeneratePendingUpdatesWorksheet()
+        {
+            var dataWs = SecurityAndSoftwareInsightsWb.Worksheets.Add(SoftwareAndSecurityInsightsReportConstants.PendingUpdatesTabName, 4);
+            UtilityFunctions.AddColumnHeadersToWorksheet(dataWs, SoftwareAndSecurityInsightsReportConstants.PendingUpdatesTabNameColumns);
+            if (PendingUpdates_ServerCounts_List != null && PendingUpdates_ServerCounts_List.Count > 0)
+                dataWs.Cell(2, 1).InsertData(PendingUpdates_ServerCounts_List);
         }
     }
 }

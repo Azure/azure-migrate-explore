@@ -50,11 +50,10 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
-                             Routes.GroupsPath + Routes.ForwardSlash + kvp.Key.GroupName + Routes.ForwardSlash +
                              new EnumDescriptionHelper().GetEnumDescription(kvp.Key.AssessmentType) + Routes.ForwardSlash + kvp.Key.AssessmentName + Routes.ForwardSlash +
                              Routes.AssessedSQLMachinesPath +
                              Routes.QueryStringQuestionMark +
-                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentMachineListApiVersion;
+                             Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.AssessmentApiVersion;
 
                 while (!string.IsNullOrEmpty(url))
                 {
@@ -158,7 +157,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             AzureSQLMachinesData[key].PercentageCoresUtilization = value.Properties.PercentageCoresUtilization;
             AzureSQLMachinesData[key].PercentageMemoryUtilization = value.Properties.PercentageMemoryUtilization;
             AzureSQLMachinesData[key].Suitability = value.Properties.Suitability;
-            AzureSQLMachinesData[key].GroupName = assessmentInfo.GroupName;
 
             if (AzureSQLMachinesData[key].Environment.Equals("Dev"))
             {

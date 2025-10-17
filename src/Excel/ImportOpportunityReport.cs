@@ -155,7 +155,6 @@ namespace Azure.Migrate.Explore.Excel
                 obj.MonthlyStorageCostForUltraDisks = row.Cell(35).GetValue<double>();
                 obj.MonthlyAzureSiteRecoveryCostEstimate = row.Cell(36).GetValue<double>();
                 obj.MonthlyAzureBackupCostEstimate = row.Cell(37).GetValue<double>();
-                obj.GroupName = row.Cell(38).GetValue<string>();
                 obj.MachineId = row.Cell(39).GetValue<string>();
 
                 VmOpportunityPerfList.Add(obj);
