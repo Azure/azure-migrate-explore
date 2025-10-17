@@ -161,6 +161,9 @@
 	<None Update="settings.ini">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</None>
+    <None Update="HttpRequestHelper\AssessmentArmTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Properties\PublishProfiles\FolderProfile.pubxml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

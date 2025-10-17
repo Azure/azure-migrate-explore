@@ -341,9 +341,9 @@ namespace Azure.Migrate.Explore.Assessment
 
             Dictionary<string, object> argDict = new Dictionary<string, object>
             {
-                {"azureLocation", UserInputObj.TargetRegion},
-                {"currency", UserInputObj.Currency},
-                {"performanceTimeRange", UserInputObj.AssessmentDuration},
+                {"azureLocation", UserInputObj.TargetRegion.Key},
+                {"currency", UserInputObj.Currency.Key},
+                {"performanceTimeRange", UserInputObj.AssessmentDuration.Key},
             };
             var deployResult = clientHelper.DeployAssessmentArmTemplateAsync(
                 UserInputObj,
