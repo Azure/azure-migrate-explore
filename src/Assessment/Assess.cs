@@ -93,7 +93,11 @@ namespace Azure.Migrate.Explore.Assessment
             }
 
             MasterSitesJSON masterSitesObj = JsonConvert.DeserializeObject<MasterSitesJSON>(masterSitesJsonResponse);
-            List<string> ListOfSites = masterSitesObj.Properties.Sites;
+            ListOfSites = new List<string>();
+            if (masterSitesObj?.Properties?.Sites != null)
+                ListOfSites.AddRange(masterSitesObj.Properties.Sites);
+            if (masterSitesObj?.Properties?.NestedSites != null)
+                ListOfSites.AddRange(masterSitesObj.Properties.NestedSites);
 
             if (DiscoveredData.Count <= 0)
             {

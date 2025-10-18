@@ -19,6 +19,7 @@ namespace Azure.Migrate.Explore.Common
             "Vulnerability Count",
             "Critical Vulnerability Count",
             "Pending Update Count",
+            "Pending Security Critical Update Count",
             "End Of Support Software Count",
             "Has Security Software",
             "Has Patching Software"
