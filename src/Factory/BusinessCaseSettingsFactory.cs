@@ -48,7 +48,7 @@ namespace Azure.Migrate.Explore.Factory
             }
 
             // Generate ARG query if scoped machines are provided
-            if (scopedMachineIds != null && scopedMachineIds.Any())
+            if (scopedMachineIds != null && scopedMachineIds.Any() && scopedMachineIds.Count < 300)
             {
                 obj.Properties.BusinessCaseScope.AzureResourceGraphQuery = GenerateArgQuery(userInputObj, scopedMachineIds);
                 obj.Properties.BusinessCaseScope.ScopeType = "AzureResourceGraphQuery";
