@@ -383,7 +383,13 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj.LoggerObj.LogInformation(65 - UserInputObj.LoggerObj.GetCurrentProgress(), $"Completed assessment creation job"); // 65 % complete
 
            Dictionary<AssessmentInformation, AssessmentPollResponse> AVSAssessmentStatusMap = new Dictionary<AssessmentInformation, AssessmentPollResponse>();
-
+            AssessmentInformation AVSAssessmentInformationObj = new AssessmentInformation(
+                $"AME-{RandomSessionId}-avs",
+                AssessmentType.AVSAssessment,
+                AssessmentTag.PerformanceBased,
+                ""
+            );
+            AVSAssessmentStatusMap[AVSAssessmentInformationObj] = AssessmentPollResponse.Completed;
             if (AVSAssessmentStatusMap.Count > 0)
             {
                 const int AvsMaxPollAttempts = 40;
