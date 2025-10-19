@@ -68,9 +68,9 @@ namespace Azure.Migrate.Explore.Assessment
             int numberOfTries = 0;
             AssessmentPollResponse pollResult = AssessmentPollResponse.Created;
 
-            while (numberOfTries < 25)
+            while (numberOfTries < 40)
             {
-                Thread.Sleep(60000);
+                Thread.Sleep(120000);
                 try
                 {
                     pollResult = await new HttpClientHelper().PollBusinessCase(userInputObj, BusinessCaseInformationObj);
@@ -78,6 +78,11 @@ namespace Azure.Migrate.Explore.Assessment
                     if (pollResult == AssessmentPollResponse.Error)
                     {
                         userInputObj.LoggerObj.LogInformation($"Polling for business case {BusinessCaseInformationObj.BusinessCaseName} resulted in non-retryable error");
+                        numberOfTries += 1;
+                    }
+                    else
+                    {
+                        userInputObj.LoggerObj.LogInformation($"Business case {BusinessCaseInformationObj.BusinessCaseName} polling attempt {numberOfTries + 1} resulted in status: {pollResult}");
                         numberOfTries += 1;
                     }
                 }
