@@ -456,10 +456,16 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 }
 
                 const string heterogeneousType = "microsoft.migrate/assessmentprojects/heterogeneousassessments";
+                const string avsType = "microsoft.migrate/assessmentprojects/avsassessments";
                 if (!types.Contains(heterogeneousType))
                 {
                     types.Add(heterogeneousType);
                     userInputObj.LoggerObj.LogInformation("Resolve scope did not include heterogeneous assessments; adding default scope type.");
+                }
+
+                if (!types.Contains(avsType) && userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
+                {
+                    types.Add(avsType);
                 }
 
                 userInputObj.LoggerObj.LogInformation($"Resolve scope returned {types.Count} resource types: {string.Join(", ", types)}");
