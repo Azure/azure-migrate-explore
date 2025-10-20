@@ -55,12 +55,12 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj.LoggerObj.LogInformation("Initiating assessment");
 
             DeletePreviousAssessmentReports();
-             string masterSitesUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                                    Routes.SubscriptionPath + Routes.ForwardSlash + UserInputObj.Subscription.Key + Routes.ForwardSlash +
-                                    Routes.ResourceGroupPath + Routes.ForwardSlash + UserInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
-                                    Routes.ProvidersPath + Routes.ForwardSlash + Routes.OffAzureProvidersPath + Routes.ForwardSlash +
-                                    Routes.MasterSitesPath + Routes.ForwardSlash + UserInputObj.DiscoverySiteName +
-                                    Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.MasterSiteApiVersion;
+            string masterSitesUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
+                                   Routes.SubscriptionPath + Routes.ForwardSlash + UserInputObj.Subscription.Key + Routes.ForwardSlash +
+                                   Routes.ResourceGroupPath + Routes.ForwardSlash + UserInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
+                                   Routes.ProvidersPath + Routes.ForwardSlash + Routes.OffAzureProvidersPath + Routes.ForwardSlash +
+                                   Routes.MasterSitesPath + Routes.ForwardSlash + UserInputObj.DiscoverySiteName +
+                                   Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.MasterSiteApiVersion;
 
             string masterSitesJsonResponse = "";
             try
@@ -389,7 +389,7 @@ namespace Azure.Migrate.Explore.Assessment
                 AssessmentTag.PerformanceBased,
                 ""
             );
-            AVSAssessmentStatusMap[AVSAssessmentInformationObj] = AssessmentPollResponse.Completed;
+            AVSAssessmentStatusMap[AVSAssessmentInformationObj] = AssessmentPollResponse.Created;
             if (AVSAssessmentStatusMap.Count > 0)
             {
                 const int AvsMaxPollAttempts = 40;
