@@ -412,9 +412,10 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
             {
                 numberOfTries++;
                 HttpClient httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(60) };
-
+                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                            Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                            Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                             Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                             Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                             Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -750,9 +751,11 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     Timeout = TimeSpan.FromSeconds(60),
                 };
+                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
 
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -826,9 +829,11 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     Timeout = TimeSpan.FromSeconds(60),
                 };
+                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
 
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -957,9 +962,11 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     Timeout = TimeSpan.FromSeconds(60),
                 };
+                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
 
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -1032,9 +1039,11 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     Timeout = TimeSpan.FromSeconds(60),
                 };
+                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
 
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +

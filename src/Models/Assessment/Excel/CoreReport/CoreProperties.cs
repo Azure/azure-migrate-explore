@@ -19,5 +19,6 @@ namespace Azure.Migrate.Explore.Models
         public string VCpuOverSubscription { get; set; }
         public string MemoryOverCommit { get; set; }
         public double DedupeCompression { get; set; }
+        public string EamcaSubscription { get; set; }
     }
 }

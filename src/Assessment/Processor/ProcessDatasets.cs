@@ -26,6 +26,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         private AzureAvsCostCalculator AzureAvsCalculator;
 
         private UserInput UserInputObj;
+        private string subscriptionValue;
 
         public ProcessDatasets
             (
@@ -51,6 +52,8 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             PendingUpdatesServerCountsData = pendingUpdatesServerCountsData;
             AzureAvsCalculator = new AzureAvsCostCalculator();
             UserInputObj = userInputObj;
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
         }
 
         public void InititateProcessing()
@@ -152,6 +155,7 @@ namespace Azure.Migrate.Explore.Assessment.Processor
             coreProperties.VCpuOverSubscription = AvsAssessmentConstants.VCpuOversubscription;
             coreProperties.MemoryOverCommit = AvsAssessmentConstants.MemoryOvercommit;
             coreProperties.DedupeCompression = AvsAssessmentConstants.DedupeCompression;
+            coreProperties.EamcaSubscription = subscriptionValue;
         }
 
         private void Process_AVS_Summary_Model(List<AVS_Summary> AVS_Summary_List)

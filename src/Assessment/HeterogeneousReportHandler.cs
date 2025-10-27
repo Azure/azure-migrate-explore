@@ -29,9 +29,10 @@ namespace Azure.Migrate.Explore.Assessment
                 throw new ArgumentNullException("Invalid input to polling method");
 
             userInputObj.LoggerObj.LogInformation($"Waiting for heterogeneous assessment '{assessmentInfo.AssessmentName}' to complete...");
-
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
             string statusUrl =
-                $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{userInputObj.AssessmentProjectName}/HeterogeneousAssessments/{assessmentInfo.AssessmentName}?api-version=2024-03-03-preview";
+                $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{subscriptionValue}/resourceGroups/{userInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{userInputObj.AssessmentProjectName}/HeterogeneousAssessments/{assessmentInfo.AssessmentName}?api-version=2024-03-03-preview";
 
             try
             {
@@ -110,10 +111,11 @@ namespace Azure.Migrate.Explore.Assessment
             {
                 throw new Exception($"Failed to get Azure token: {ex.Message}");
             }
-
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
             // 🔹 2. Construct the URLs dynamically
             string basePath =
-                $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{userInputObj.AssessmentProjectName}/HeterogeneousAssessments/{assessmentInfo.AssessmentName}";
+                $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{subscriptionValue}/resourceGroups/{userInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{userInputObj.AssessmentProjectName}/HeterogeneousAssessments/{assessmentInfo.AssessmentName}";
 
             string generateReportUrl = $"{basePath}/generateReport?api-version=2024-03-03-preview";
             string downloadUrl = $"{basePath}/downloadUrl?api-version=2024-03-03-preview";

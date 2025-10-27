@@ -23,9 +23,10 @@ namespace Azure.Migrate.Explore.Assessment.Parser
         {
             if (userInputObj == null)
                 throw new Exception("Received null user input object");
-
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
             string commonUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                               Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                               Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                                Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                                Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                                Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +

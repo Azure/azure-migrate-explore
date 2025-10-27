@@ -16,10 +16,13 @@ namespace Azure.Migrate.Explore.Assessment.Parser
         public AVSAssessmentParser(Dictionary<AssessmentInformation, AssessmentPollResponse> avsAssessmentStatusMap)
         {
             AVSAssessmentStatusMap = avsAssessmentStatusMap;
+            
         }
 
         public void ParseAVSAssessment(Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData, UserInput userInputObj)
         {
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
             if (userInputObj == null)
                 throw new Exception("Received null user input object.");
 
@@ -48,7 +51,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                 string apiVersion = Routes.AssessmentApiVersion;
                 
                 string url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -57,7 +60,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                              Routes.QueryParameterApiVersion + Routes.QueryStringEquals + apiVersion;
 
                 string summariesUrl = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                             Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                             Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                              Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                              Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                              Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -134,7 +137,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                 UpdateAVSPropertiesDataset(avsPropertiesObj, avsSummariesObj, AVSAssessmentsData, kvp.Key, userInputObj);
 
                 url = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
-                      Routes.SubscriptionPath + Routes.ForwardSlash + userInputObj.Subscription.Key + Routes.ForwardSlash +
+                      Routes.SubscriptionPath + Routes.ForwardSlash + subscriptionValue + Routes.ForwardSlash +
                       Routes.ResourceGroupPath + Routes.ForwardSlash + userInputObj.ResourceGroupName.Value + Routes.ForwardSlash +
                       Routes.ProvidersPath + Routes.ForwardSlash + Routes.MigrateProvidersPath + Routes.ForwardSlash +
                       Routes.AssessmentProjectsPath + Routes.ForwardSlash + userInputObj.AssessmentProjectName + Routes.ForwardSlash +
@@ -254,8 +257,9 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             {
                 recommendedExternalStorages = recommendedExternalStorages.Substring(0, recommendedExternalStorages.Length - 2);
             }
-
-            AVSAssessmentsData[assessmentInfo].SubscriptionId = userInputObj.Subscription.Key;
+            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
+                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
+            AVSAssessmentsData[assessmentInfo].SubscriptionId = subscriptionValue;
             AVSAssessmentsData[assessmentInfo].ResourceGroup = userInputObj.ResourceGroupName.Value;
             AVSAssessmentsData[assessmentInfo].AssessmentProjectName = userInputObj.AssessmentProjectName;
             AVSAssessmentsData[assessmentInfo].AssessmentName = avsPropertiesObj.Name;
