@@ -1092,6 +1092,20 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
         }
         #endregion
 
+        private static string MapProgramOfferToLicensingProgram(string programOfferKey)
+        {
+            if (string.IsNullOrWhiteSpace(programOfferKey))
+                return "Retail";
+
+            return programOfferKey.ToLowerInvariant() switch
+            {
+                "payasyougo" => "Retail",
+                "enterpriseagreementsupport" => "EA",
+                "microsoftcustomeragreement" => "MCA",
+                _ => "Retail"
+            };
+        }
+
         private static string GetAssessmentTemplatePath([CallerFilePath] string callerFilePath = "")
         {
             string? callerDirectory = string.IsNullOrEmpty(callerFilePath) ? null : Path.GetDirectoryName(callerFilePath);

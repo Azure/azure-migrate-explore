@@ -8,6 +8,7 @@ using System.Text;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Azure.Migrate.Explore.Factory
 {
@@ -27,6 +28,8 @@ namespace Azure.Migrate.Explore.Factory
             obj.Name = "bizcase-ame-" + sessionId;
             obj.Properties.Settings.CommonSettings.TargetLocation = userInputObj.TargetRegion.Key;
             obj.Properties.Settings.CommonSettings.Currency = userInputObj.Currency.Key;
+            obj.Properties.Settings.BillingSettings.LicensingProgram = userInputObj.ProgramOffer.Key;
+            obj.Properties.Settings.BillingSettings.SubscriptionId = userInputObj.EamcaSubscription.Key;
 
             BusinessCaseTypes type = BusinessCaseTypes.OptimizeForPaas;
             

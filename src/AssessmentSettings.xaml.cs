@@ -13,10 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Azure.Migrate.Explore.Authentication;
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
 using System.ComponentModel;
@@ -24,10 +27,13 @@ using Azure.Migrate.Explore.Logger;
 using Azure.Migrate.Explore.Discovery;
 using Azure.Migrate.Explore.Factory;
 using Azure.Migrate.Explore.Assessment;
+using Azure.Migrate.Explore.HttpRequestHelper;
 using static Azure.Migrate.Explore.Discovery.Discover;
 using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
+using Process = Azure.Migrate.Explore.Processor.Process;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,9 +45,10 @@ namespace AzureMigrateExplore
     /// </summary>
     public sealed partial class AssessmentSettings : Page
     {
-        private readonly MainWindow mainObj;
-        private BackgroundWorker azureMigrateExploreBackgroundWorker;
-        private UserInput UserInputObj;
+    private readonly MainWindow mainObj;
+    private BackgroundWorker azureMigrateExploreBackgroundWorker;
+    private UserInput UserInputObj;
+    private List<SubscriptionRecord>? cachedSubscriptions;
 
         public AssessmentSettings(MainWindow obj)
         {
@@ -56,6 +63,7 @@ namespace AzureMigrateExplore
             InitializeCurrencyPicker();
             InitializeAssessmentDurationPicker();
             InitializeTargetRegionPicker();
+            InitializeProgramOfferPicker();
             //InitializeOptimizationPreference(BusinessProposal.Comprehensive);
         }
 
@@ -124,6 +132,27 @@ namespace AzureMigrateExplore
             TargetRegionPicker.SelectedItem = null;
             DecideAssessmentDurationComboBox();
             DecideOptimizationPreferenceComboBox();
+        }
+
+        private void InitializeProgramOfferPicker()
+        {
+            var programOffers = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("PayAsYouGo", "Pay-As-You-Go"),
+                new KeyValuePair<string, string>("EnterpriseAgreementSupport", "Enterprise Agreement Support"),
+                new KeyValuePair<string, string>("MicrosoftCustomerAgreement", "Microsoft Customer Agreement"),
+            };
+
+            ProgramOfferPicker.ItemsSource = programOffers;
+            ProgramOfferPicker.SelectedValuePath = "Key";
+            ProgramOfferPicker.DisplayMemberPath = "Value";
+            ProgramOfferPicker.SelectedItem = null;
+
+            SubscriptionPicker.ItemsSource = Array.Empty<KeyValuePair<string, string>>();
+            SubscriptionPicker.SelectedValuePath = "Key";
+            SubscriptionPicker.DisplayMemberPath = "Value";
+            SubscriptionPicker.SelectedItem = null;
+            SubscriptionPicker.IsEnabled = false;
         }
 
         public void InitializeCurrencyPicker()
@@ -208,7 +237,9 @@ namespace AzureMigrateExplore
                 return false;
             if (!ValidateAssessmentDuration())
                 return false;
-            if (!ValidateOptimizationPreference())
+            if (!ValidateProgramOffer())
+                return false;
+            if (!ValidateSubscription())
                 return false;
 
             return true;
@@ -234,6 +265,20 @@ namespace AzureMigrateExplore
                 return false;
 
             return true;
+        }
+
+        private bool ValidateProgramOffer()
+        {
+            return ProgramOfferPicker.SelectedItem != null;
+        }
+
+        private bool ValidateSubscription()
+        {
+            var program = GetSelectedProgramOffer();
+            if (string.Equals(program.Key, "PayAsYouGo", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return SubscriptionPicker.SelectedItem != null;
         }
 
         private bool ValidateOptimizationPreference()
@@ -266,6 +311,7 @@ namespace AzureMigrateExplore
 
             mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
             mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
+            RefreshSubscriptionPickerEnabledState();
         }
 
         private async void TargetRegionPicker_SelectedIndexChanged(object sender, RoutedEventArgs e)
@@ -286,7 +332,202 @@ namespace AzureMigrateExplore
             mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
             mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
         }
+
+        private async void ProgramOfferPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selection = GetSelectedProgramOffer();
+
+            bool isPayAsYouGo = string.Equals(selection.Key, "PayAsYouGo", StringComparison.OrdinalIgnoreCase);
+            SubscriptionPicker.IsEnabled = !isPayAsYouGo;
+
+            if (isPayAsYouGo)
+            {
+                SubscriptionPicker.ItemsSource = Array.Empty<KeyValuePair<string, string>>();
+                SubscriptionPicker.SelectedItem = null;
+            }
+            else
+            {
+                await PrepareSubscriptionPickerForSelectedProgram(selection.Key);
+            }
+
+            if (UserInputObj != null)
+            {
+                UserInputObj.ProgramOffer = selection;
+            }
+
+            mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
+            mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
+        }
+
+        private void SubscriptionPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
+            mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
+            if (UserInputObj != null)
+            {
+                UserInputObj.EamcaSubscription = GetSelectedSubscription();
+            }
+        }
+
+        private async Task PrepareSubscriptionPickerForSelectedProgram(string programKey)
+        {
+            SubscriptionPicker.ItemsSource = Array.Empty<KeyValuePair<string, string>>();
+            SubscriptionPicker.SelectedItem = null;
+            SubscriptionPicker.IsEnabled = false;
+
+            try
+            {
+                List<SubscriptionRecord> subscriptions = await FetchAllSubscriptionsAsync();
+
+                IEnumerable<SubscriptionRecord> filtered = subscriptions;
+
+                if (string.Equals(programKey, "EnterpriseAgreementSupport", StringComparison.OrdinalIgnoreCase))
+                    filtered = subscriptions.Where(IsEnterpriseAgreementSubscription);
+
+                var subscriptionItems = filtered
+                    .OrderBy(sub => sub.DisplayName, StringComparer.OrdinalIgnoreCase)
+                    .Select(sub => new KeyValuePair<string, string>(sub.SubscriptionId, $"{sub.DisplayName} - {sub.SubscriptionId}"))
+                    .ToList();
+
+                SubscriptionPicker.ItemsSource = subscriptionItems;
+                SubscriptionPicker.IsEnabled = subscriptionItems.Count > 0;
+                RefreshSubscriptionPickerEnabledState();
+            }
+            catch (Exception ex)
+            {
+                LogProgramOfferError(programKey, ex);
+                SubscriptionPicker.ItemsSource = Array.Empty<KeyValuePair<string, string>>();
+                SubscriptionPicker.SelectedItem = null;
+                SubscriptionPicker.IsEnabled = false;
+            }
+        }
         #endregion
+
+        private void RefreshSubscriptionPickerEnabledState()
+        {
+            if (SubscriptionPicker == null)
+                return;
+
+            var selection = GetSelectedProgramOffer();
+            bool isPayAsYouGo = string.Equals(selection.Key, "PayAsYouGo", StringComparison.OrdinalIgnoreCase);
+
+            if (isPayAsYouGo)
+            {
+                SubscriptionPicker.IsEnabled = false;
+                return;
+            }
+
+            bool hasItems = SubscriptionPicker.Items != null && SubscriptionPicker.Items.Count > 0;
+            SubscriptionPicker.IsEnabled = hasItems;
+        }
+
+        private async Task<List<SubscriptionRecord>> FetchAllSubscriptionsAsync()
+        {
+            if (cachedSubscriptions != null && cachedSubscriptions.Count > 0)
+                return cachedSubscriptions;
+
+            var subscriptions = new List<SubscriptionRecord>();
+
+            try
+            {
+                if (await AzureAuthenticationHandler.IsTestFilePresent())
+                {
+                    subscriptions.Add(new SubscriptionRecord
+                    {
+                        SubscriptionId = "mock-subscription-id",
+                        DisplayName = "Mock Subscription",
+                        QuotaId = string.Empty
+                    });
+
+                    cachedSubscriptions = subscriptions;
+                    return subscriptions;
+                }
+
+                HttpClientHelper httpClientHelperObj = new HttpClientHelper();
+
+                string nextLink = Routes.ProtocolScheme + Routes.AzureManagementApiHostname + Routes.ForwardSlash +
+                                  Routes.SubscriptionPath +
+                                  Routes.QueryStringQuestionMark + Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.ProjectDetailsApiVersion;
+
+                while (!string.IsNullOrEmpty(nextLink))
+                {
+                    JToken jsonTokenResponse = await httpClientHelperObj.GetProjectDetailsHttpJsonResponse(nextLink);
+                    if (jsonTokenResponse == null || !jsonTokenResponse.HasValues)
+                        break;
+
+                    var valueArray = jsonTokenResponse["value"] as JArray;
+                    if (valueArray != null)
+                    {
+                        foreach (var entry in valueArray)
+                        {
+                            string? subscriptionId = entry?["subscriptionId"]?.Value<string>();
+                            string? displayName = entry?["displayName"]?.Value<string>();
+
+                            if (string.IsNullOrWhiteSpace(subscriptionId) || string.IsNullOrWhiteSpace(displayName))
+                                continue;
+
+                            string? quotaId = entry?["subscriptionPolicies"]?["quotaId"]?.Value<string>();
+
+                            subscriptions.Add(new SubscriptionRecord
+                            {
+                                SubscriptionId = subscriptionId,
+                                DisplayName = displayName,
+                                QuotaId = quotaId
+                            });
+                        }
+                    }
+
+                    nextLink = jsonTokenResponse["nextLink"]?.Value<string>();
+                }
+
+                cachedSubscriptions = subscriptions;
+            }
+            catch (Exception ex)
+            {
+                LogProgramOfferError("FetchAll", ex);
+                throw;
+            }
+
+            return subscriptions;
+        }
+
+        private static bool IsEnterpriseAgreementSubscription(SubscriptionRecord subscription)
+        {
+            if (subscription == null)
+                return false;
+
+            string? quotaId = subscription.QuotaId;
+            if (string.IsNullOrWhiteSpace(quotaId))
+                return false;
+
+            string normalized = quotaId.Trim();
+            if (normalized.StartsWith(EnterpriseAgreementQuotaPrefix, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return normalized.IndexOf("ENTERPRISE", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   normalized.IndexOf("EA", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void LogProgramOfferError(string programKey, Exception ex)
+        {
+            try
+            {
+                UserInputObj?.LoggerObj?.LogError($"Program offer '{programKey}' subscription load failed: {ex.Message}");
+            }
+            catch
+            {
+                Debug.WriteLine($"Program offer '{programKey}' subscription load failed: {ex}");
+            }
+        }
+
+        private const string EnterpriseAgreementQuotaPrefix = "MS-AZR-";
+
+        private sealed class SubscriptionRecord
+        {
+            public string SubscriptionId { get; set; } = string.Empty;
+            public string DisplayName { get; set; } = string.Empty;
+            public string? QuotaId { get; set; }
+        }
 
         #region Getter Methods
         public KeyValuePair<string, string> GetTargetRegion()
@@ -323,6 +564,16 @@ namespace AzureMigrateExplore
                 return empty;
 
             return (KeyValuePair<string, string>)MigrationStrategyPicker.SelectedItem;
+        }
+
+        public KeyValuePair<string, string> GetSelectedProgramOffer()
+        {
+            return ProgramOfferPicker.SelectedItem is KeyValuePair<string, string> kvp ? kvp : new KeyValuePair<string, string>("", "");
+        }
+
+        public KeyValuePair<string, string> GetSelectedSubscription()
+        {
+            return SubscriptionPicker.SelectedItem is KeyValuePair<string, string> kvp ? kvp : new KeyValuePair<string, string>("", "");
         }
 
         public bool IsAssessSqlServicesSeparatelyChecked()
@@ -589,6 +840,8 @@ namespace AzureMigrateExplore
             CurrencyPicker.IsEnabled = false;
             AssessmentDurationPicker.IsEnabled = false;
             MigrationStrategyPicker.IsEnabled = false;
+            ProgramOfferPicker.IsEnabled = false;
+            SubscriptionPicker.IsEnabled = false;
         }
 
         public void EnableAssessmentQuestionnaire()
@@ -597,6 +850,8 @@ namespace AzureMigrateExplore
             CurrencyPicker.IsEnabled = true;
             AssessmentDurationPicker.IsEnabled = true;
             MigrationStrategyPicker.IsEnabled = true;
+            ProgramOfferPicker.IsEnabled = true;
+            RefreshSubscriptionPickerEnabledState();
         }
 
         #endregion
