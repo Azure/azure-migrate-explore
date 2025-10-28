@@ -25,19 +25,21 @@ namespace Azure.Migrate.Explore.Factory
 
             BusinessCaseSettingsJSON obj = new BusinessCaseSettingsJSON();
             obj.Name = "bizcase-ame-" + sessionId;
-            obj.Properties.Settings.AzureSettings.TargetLocation = userInputObj.TargetRegion.Key;
-            obj.Properties.Settings.AzureSettings.Currency = userInputObj.Currency.Key;
+            obj.Properties.Settings.CommonSettings.TargetLocation = userInputObj.TargetRegion.Key;
+            obj.Properties.Settings.CommonSettings.Currency = userInputObj.Currency.Key;
 
             BusinessCaseTypes type = BusinessCaseTypes.OptimizeForPaas;
+            
+            
             if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MinimizetimewithAzureVM"))
                 type = BusinessCaseTypes.IaaSOnly;
             else if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MigrateToAvs"))
                 type = BusinessCaseTypes.AVSOnly;
 
-            obj.Properties.Settings.AzureSettings.BusinessCaseType = type.ToString();
-            obj.Properties.Settings.AzureSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Appliance.ToString();
+            obj.Properties.Settings.CommonSettings.BusinessCaseType = type.ToString();
+            obj.Properties.Settings.CommonSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Appliance.ToString();
             if (userInputObj.AzureMigrateSourceAppliances.Contains("import"))
-                obj.Properties.Settings.AzureSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Import.ToString();
+                obj.Properties.Settings.CommonSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Import.ToString();
 
             obj.Properties.Settings.AzureSettings.SavingsOption = "SavingsPlan3Year";
             if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
@@ -48,7 +50,7 @@ namespace Azure.Migrate.Explore.Factory
             }
 
             // Generate ARG query if scoped machines are provided
-            if (scopedMachineIds != null && scopedMachineIds.Any() && scopedMachineIds.Count < 300)
+            if (scopedMachineIds != null && scopedMachineIds.Any())
             {
                 obj.Properties.BusinessCaseScope.AzureResourceGraphQuery = GenerateArgQuery(userInputObj, scopedMachineIds);
                 obj.Properties.BusinessCaseScope.ScopeType = "AzureResourceGraphQuery";
