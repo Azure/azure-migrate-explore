@@ -350,6 +350,11 @@ namespace AzureMigrateExplore
                 await PrepareSubscriptionPickerForSelectedProgram(selection.Key);
             }
 
+            if (UserInputObj != null)
+            {
+                UserInputObj.ProgramOffer = selection;
+            }
+
             mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
             mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
         }

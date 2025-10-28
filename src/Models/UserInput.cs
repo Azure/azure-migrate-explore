@@ -65,6 +65,7 @@ namespace Azure.Migrate.Explore.Models
         public KeyValuePair<string, string> Currency { get; }
         public KeyValuePair<string, string> AssessmentDuration { get; }
         public PreferredOptimization PreferredOptimizationObj { get; }
+        public KeyValuePair<string, string> ProgramOffer { get; set; } = new KeyValuePair<string, string>(string.Empty, string.Empty);
         public KeyValuePair<string, string> EamcaSubscription { get; set; } = new KeyValuePair<string, string>(string.Empty, string.Empty);
 
         // Application Settings

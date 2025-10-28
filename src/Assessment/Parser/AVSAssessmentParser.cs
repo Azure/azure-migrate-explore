@@ -16,7 +16,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
         public AVSAssessmentParser(Dictionary<AssessmentInformation, AssessmentPollResponse> avsAssessmentStatusMap)
         {
             AVSAssessmentStatusMap = avsAssessmentStatusMap;
-            
         }
 
         public void ParseAVSAssessment(Dictionary<AssessmentInformation, AVSAssessmentPropertiesDataset> AVSAssessmentsData, Dictionary<string, AVSAssessedMachinesDataset> AVSAssessedMachinesData, UserInput userInputObj)
@@ -255,7 +254,7 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             {
                 recommendedExternalStorages = recommendedExternalStorages.Substring(0, recommendedExternalStorages.Length - 2);
             }
-            
+
             AVSAssessmentsData[assessmentInfo].SubscriptionId = userInputObj.Subscription.Key;
             AVSAssessmentsData[assessmentInfo].ResourceGroup = userInputObj.ResourceGroupName.Value;
             AVSAssessmentsData[assessmentInfo].AssessmentProjectName = userInputObj.AssessmentProjectName;

@@ -110,7 +110,7 @@ namespace Azure.Migrate.Explore.Assessment
             {
                 throw new Exception($"Failed to get Azure token: {ex.Message}");
             }
-            
+
             // 🔹 2. Construct the URLs dynamically
             string basePath =
                 $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{userInputObj.AssessmentProjectName}/HeterogeneousAssessments/{assessmentInfo.AssessmentName}";

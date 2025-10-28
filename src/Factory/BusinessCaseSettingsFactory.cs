@@ -8,7 +8,6 @@ using System.Text;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
-using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Azure.Migrate.Explore.Factory
 {
