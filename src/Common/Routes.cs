@@ -43,7 +43,7 @@ namespace Azure.Migrate.Explore.Common
         public const string AssessmentMachineListApiVersion = @"2024-01-15";
         public const string AssessmentApiVersion = @"2025-09-09-preview";
         public const string ResolveScopeApiVersion = @"2025-09-09-preview";
-        public const string BusinessCaseApiVersion = @"2024-03-03-preview";
+        public const string BusinessCaseApiVersion = @"2025-09-09-preview";
         public const string QueryParameterApiVersion = @"api-version";
         public const string AzureMigrateQueryParameterFilter = @"filter";
         public const string AzureMigrateQueryPathProperties = @"Properties";

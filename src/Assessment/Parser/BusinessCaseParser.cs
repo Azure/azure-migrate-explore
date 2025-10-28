@@ -33,154 +33,87 @@ namespace Azure.Migrate.Explore.Assessment.Parser
                                "{BusinessCaseSummariesPath}" + Routes.QueryStringQuestionMark +
                                Routes.QueryParameterApiVersion + Routes.QueryStringEquals + Routes.BusinessCaseApiVersion;
 
-            BusinessCaseIaaSSummaryJSON bizCaseIaasSummariesJsonObj = null;
-            BusinessCasePaaSSummaryJSON bizCasePaasSummariesJsonObj = null;
-            BusinessCaseAvsSummaryJSON bizCaseAvsSummariesJsonObj = null;
-
-            string compareSummaryUrl = commonUrl.Replace("{BusinessCaseSummariesPath}", Routes.BusinessCaseCompareSummariesPath);
-            BusinessCaseCompareSummaryJSON bizCaseCompareSummaryJsonObj = ParseBusinessCaseCompareSummary(compareSummaryUrl, userInputObj);
-
             string overviewSummariesUrl = commonUrl.Replace("{BusinessCaseSummariesPath}", Routes.BusinessCaseOverviewSummariesPath + Routes.ForwardSlash + Routes.DefaultPath);
             BusinessCaseOverviewSummaryJSON bizCaseOverviewSummariesJsonObj = ParseBusinessCaseOverviewSummaries(overviewSummariesUrl, userInputObj);
 
-            if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
-            {
-                string avsSummariesUrl = commonUrl.Replace("{BusinessCaseSummariesPath}", Routes.BusinessCaseAvsSummariesPath + Routes.ForwardSlash + Routes.DefaultPath);
-                bizCaseAvsSummariesJsonObj = ParseBusinessCaseAvsSummaries(avsSummariesUrl, userInputObj);
-            }
-            else
-            {
-                string iaasSummariesUrl = commonUrl.Replace("{BusinessCaseSummariesPath}", Routes.BusinessCaseIaasSummariesPath + Routes.ForwardSlash + Routes.DefaultPath);
-                bizCaseIaasSummariesJsonObj = ParseBusinessCaseIaasSummaries(iaasSummariesUrl, userInputObj);
-
-                string paasSummariesUrl = commonUrl.Replace("{BusinessCaseSummariesPath}", Routes.BusinessCasePaasSummariesPath + Routes.ForwardSlash + Routes.DefaultPath);
-                bizCasePaasSummariesJsonObj = ParseBusinessCasePaasSummaries(paasSummariesUrl, userInputObj);
-            }
-
-            UpdateBusinessCaseDataset(bizCaseCompareSummaryJsonObj,
-                                      bizCaseOverviewSummariesJsonObj,
-                                      bizCaseIaasSummariesJsonObj,
-                                      bizCasePaasSummariesJsonObj,
-                                      bizCaseAvsSummariesJsonObj,
+            UpdateBusinessCaseDataset(bizCaseOverviewSummariesJsonObj,
                                       BusinessCaseData,
                                       userInputObj);
         }
 
-        private void UpdateBusinessCaseDataset(BusinessCaseCompareSummaryJSON bizCaseCompareSummaryJsonObj,
-                                               BusinessCaseOverviewSummaryJSON bizCaseOverviewSummariesJsonObj,
-                                               BusinessCaseIaaSSummaryJSON bizCaseIaaSSummariesJsonObj,
-                                               BusinessCasePaaSSummaryJSON bizCasePaaSSummariesJsonObj,
-                                               BusinessCaseAvsSummaryJSON bizCaseAvsSummariesJsonObj,
-                                               BusinessCaseDataset BusinessCaseData,
-                                               UserInput userInputObj)
+        private void UpdateBusinessCaseDataset(BusinessCaseOverviewSummaryJSON bizCaseOverviewSummariesJsonObj, BusinessCaseDataset BusinessCaseData, UserInput userInputObj)
         {
-            if ((bizCaseCompareSummaryJsonObj == null || bizCaseOverviewSummariesJsonObj == null) ||
-                (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && bizCaseAvsSummariesJsonObj == null) ||
-                (userInputObj.BusinessProposal != BusinessProposal.AVS.ToString() && (bizCasePaaSSummariesJsonObj == null || bizCaseIaaSSummariesJsonObj == null)))
+            if (bizCaseOverviewSummariesJsonObj == null)
             {
                 userInputObj.LoggerObj.LogWarning("Business case information not parsed successfully, dataset may not be complete");
                 return;
             }
 
-            BusinessCaseData.OnPremIaaSCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ComputeCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ESUSavings ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.StorageCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.NetworkCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.SecurityCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.FacilitiesCost ?? 0.00;
-            BusinessCaseData.OnPremIaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesIaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.OnPremPaaSCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ComputeCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ESUSavings ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.StorageCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.NetworkCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.SecurityCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.FacilitiesCost ?? 0.00;
-            BusinessCaseData.OnPremPaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesPaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.OnPremAvsCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ComputeCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ESUSavings ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.StorageCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.NetworkCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.SecurityCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.FacilitiesCost ?? 0.00;
-            BusinessCaseData.OnPremAvsCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.OnPremisesAvsCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.AzureIaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureIaaSCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.AzureIaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureIaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-            BusinessCaseData.AzurePaaSCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzurePaaSCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.AzurePaaSCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzurePaaSCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.AzureAvsCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ComputeCost ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ESUSavings ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.StorageCost ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.NetworkCost ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.SecurityCost ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.AzureAvsCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureAvsCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ComputeLicenseCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ComputeCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.EsuLicenseCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ESUSavings ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.StorageCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.StorageCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.NetworkCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.NetworkCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.SecurityCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.SecurityCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ITStaffCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ITLaborCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.FacilitiesCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.FacilitiesCost ?? 0.00;
-            BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ManagementCost = bizCaseCompareSummaryJsonObj.AzureArcEnabledOnPremisesCostDetails?.ManagementCostDetails?.ManagementCost ?? 0.00;
-
-            BusinessCaseData.WindowsServerLicense.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.WindowsAhubSavings ?? 0.00;
-            BusinessCaseData.SqlServerLicense.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.SqlAhubSavings ?? 0.00;
-            BusinessCaseData.EsuSavings.ComputeLicenseCost = bizCaseOverviewSummariesJsonObj.Properties?.EsuSavingsFor4years ?? 0.00;
-
+            BusinessCaseData.ApplicationSummaryCostDetails = ConvertFromBusinessCaseCostDetailsJSON(bizCaseOverviewSummariesJsonObj.Properties.ApplicationSummary);
+            BusinessCaseData.CotsApplicationSummaryCostDetails = ConvertFromBusinessCaseCostDetailsJSON(bizCaseOverviewSummariesJsonObj.Properties.CotsApplicationSummary);
+            BusinessCaseData.CustomApplicationSummaryCostDetails = ConvertFromBusinessCaseCostDetailsJSON(bizCaseOverviewSummariesJsonObj.Properties.CustomApplicationSummary);
+            BusinessCaseData.IndependentWorkloadsSummaryCostDetails = ConvertFromBusinessCaseCostDetailsJSON(bizCaseOverviewSummariesJsonObj.Properties.IndependentWorkloadsSummary);
+            BusinessCaseData.TotalAzureCostDetails = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseOverviewSummariesJsonObj.Properties.TotalAzureCostDetails);
+            BusinessCaseData.TotalOnPremisesCostDetails = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseOverviewSummariesJsonObj.Properties.TotalOnPremisesCostDetails);
+            BusinessCaseData.azureArcEnabledOnPremisesCostDetails = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseOverviewSummariesJsonObj.Properties.AzureArcEnabledOnPremisesCostDetails);
+            BusinessCaseData.futureAzureArcEnabledOnPremisesCostDetails = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseOverviewSummariesJsonObj.Properties.FutureAzureArcEnabledOnPremisesCostDetails);
+            BusinessCaseData.futureCostDetails = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseOverviewSummariesJsonObj.Properties.FutureCostDetails);
+            BusinessCaseData.WindowsAhubSavings = bizCaseOverviewSummariesJsonObj.Properties.WindowsAHUBSavings ?? 0;
+            BusinessCaseData.LinuxAhubSavings = bizCaseOverviewSummariesJsonObj.Properties.LinuxAHUBSavings ?? 0;
+            BusinessCaseData.SqlAhubSavings = bizCaseOverviewSummariesJsonObj.Properties.SqlAHUBSavings ?? 0;
+            BusinessCaseData.SqlAzureCost = bizCaseOverviewSummariesJsonObj.Properties.SqlAzureCost ?? 0;
+            BusinessCaseData.MachineAzureCost = bizCaseOverviewSummariesJsonObj.Properties.MachineAzureCost ?? 0;
+            BusinessCaseData.AzureArcEnabledOnPremisesCost = bizCaseOverviewSummariesJsonObj.Properties.AzureArcEnabledOnPremisesCost ?? 0;
+            BusinessCaseData.FutureCostIncludingAzureArc = bizCaseOverviewSummariesJsonObj.Properties.FutureCostIncludingAzureArc ?? 0;
+            BusinessCaseData.FutureEsuSavingsFor4YearsIncludingAzureArc = bizCaseOverviewSummariesJsonObj.Properties.FutureEsuSavingsFor4YearsIncludingAzureArc ?? 0;
+            BusinessCaseData.FutureManagementCostSavingsIncludingAzureArc = bizCaseOverviewSummariesJsonObj.Properties.FutureManagementCostSavingsIncludingAzureArc ?? 0;
+            BusinessCaseData.FutureSecurityCostSavingsIncludingAzureArc = bizCaseOverviewSummariesJsonObj.Properties.FutureSecurityCostSavingsIncludingAzureArc ?? 0;
+            BusinessCaseData.AzureArcServicesCost = bizCaseOverviewSummariesJsonObj.Properties.AzureArcServicesCost ?? 0;
+            BusinessCaseData.FutureAzureArcEnabledOnPremisesCost = bizCaseOverviewSummariesJsonObj.Properties.FutureAzureArcEnabledOnPremisesCost ?? 0;
+            BusinessCaseData.FutureAzureArcServicesCost = bizCaseOverviewSummariesJsonObj.Properties.FutureAzureArcServicesCost ?? 0;
             BusinessCaseData.TotalYOYCashFlowsAndEmissions = bizCaseOverviewSummariesJsonObj.Properties.YearOnYearEstimates;
             BusinessCaseData.TotalAzureSustainabilityDetails = bizCaseOverviewSummariesJsonObj.Properties.TotalAzureSustainabilityDetails;
             BusinessCaseData.TotalOnPremisesSustainabilityDetails = bizCaseOverviewSummariesJsonObj.Properties.TotalOnPremisesSustainabilityDetails;
-            if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
-                BusinessCaseData.AvsYOYCashFlows = bizCaseAvsSummariesJsonObj.Properties.AzureAvsSummary.YearOnYearEstimates;
-            else
-                BusinessCaseData.IaaSYOYCashFlows = bizCaseIaaSSummariesJsonObj.Properties.AzureIaaSSummary.YearOnYearEstimates;
         }
 
-        private BusinessCasePaaSSummaryJSON ParseBusinessCasePaasSummaries(string url, UserInput userInputObj)
+        private BusinessCaseDatasetCostDetails ConvertFromBusinessCaseCostDetailsJSON(BusinessCaseCostDetailsJSON bizCaseCostDetailsJsonObj)
         {
-            string response = GetJsonResponse(url, userInputObj);
+            if (bizCaseCostDetailsJsonObj == null)
+                return new BusinessCaseDatasetCostDetails();
 
-            if (string.IsNullOrEmpty(response))
+            BusinessCaseDatasetCostDetails bizCaseDatasetCostDetails = new BusinessCaseDatasetCostDetails
             {
-                userInputObj.LoggerObj.LogWarning($"Received empty response for business case url: {url}");
-                return null;
-            }
+                AzureCost = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseCostDetailsJsonObj.AzureCost),
+                OnPremCost = ConvertFromBusinessCaseCostDetailsBreakupJSON(bizCaseCostDetailsJsonObj.OnPremCost)
+            };
 
-            return JsonConvert.DeserializeObject<BusinessCasePaaSSummaryJSON>(response);
+            return bizCaseDatasetCostDetails;
         }
 
-        private BusinessCaseIaaSSummaryJSON ParseBusinessCaseIaasSummaries(string url, UserInput userInputObj)
+        private BusinessCaseDatasetCostDetailsBreakup ConvertFromBusinessCaseCostDetailsBreakupJSON(BusinessCaseCostDetailsBreakupJSON bizCaseCostDetailsBreakupJsonObj)
         {
-            string response = GetJsonResponse(url, userInputObj);
+            if (bizCaseCostDetailsBreakupJsonObj == null)
+                return new BusinessCaseDatasetCostDetailsBreakup();
 
-            if (string.IsNullOrEmpty(response))
+            BusinessCaseDatasetCostDetailsBreakup bizCaseDatasetCostDetailsBreakup = new BusinessCaseDatasetCostDetailsBreakup
             {
-                userInputObj.LoggerObj.LogWarning($"Received empty response for business case url: {url}");
-                return null;
-            }
+                TotalCost = bizCaseCostDetailsBreakupJsonObj.TotalCost ?? 0,
+                StorageCost = bizCaseCostDetailsBreakupJsonObj.StorageCost ?? 0,
+                ComputeCost = bizCaseCostDetailsBreakupJsonObj.ComputeCost ?? 0,
+                ITLaborCost = bizCaseCostDetailsBreakupJsonObj.ITLaborCost ?? 0,
+                NetworkCost = bizCaseCostDetailsBreakupJsonObj.NetworkCost ?? 0,
+                AhubSavings = bizCaseCostDetailsBreakupJsonObj.AHUBSavings ?? 0,
+                EsuSavings = bizCaseCostDetailsBreakupJsonObj.ESUSavings ?? 0,
+                SecurityCost = bizCaseCostDetailsBreakupJsonObj.SecurityCost ?? 0,
+                FacilitiesCost = bizCaseCostDetailsBreakupJsonObj.FacilitiesCost ?? 0,
+                ManagementCost = bizCaseCostDetailsBreakupJsonObj.ManagementCostDetails != null ?
+                                 bizCaseCostDetailsBreakupJsonObj.ManagementCostDetails.ManagementCost ?? 0 : 0,
+                LicenseCost = bizCaseCostDetailsBreakupJsonObj.LicenseCostDetails != null ?
+                              bizCaseCostDetailsBreakupJsonObj.LicenseCostDetails.LicenseCost ?? 0 : 0,
+                LinuxAhubSavings = bizCaseCostDetailsBreakupJsonObj.LinuxAHUBSavings ?? 0
+            };
 
-            return JsonConvert.DeserializeObject<BusinessCaseIaaSSummaryJSON>(response);
-        }
-
-        private BusinessCaseAvsSummaryJSON ParseBusinessCaseAvsSummaries(string url, UserInput userInputObj)
-        {
-            string response = GetJsonResponse(url, userInputObj);
-
-            if (string.IsNullOrEmpty(response))
-            {
-                userInputObj.LoggerObj.LogWarning($"Received empty response for business case url: {url}");
-                return null;
-            }
-
-            return JsonConvert.DeserializeObject<BusinessCaseAvsSummaryJSON>(response);
+            return bizCaseDatasetCostDetailsBreakup;
         }
 
         private BusinessCaseOverviewSummaryJSON ParseBusinessCaseOverviewSummaries(string url, UserInput userInputObj)
@@ -194,19 +127,6 @@ namespace Azure.Migrate.Explore.Assessment.Parser
             }
 
             return JsonConvert.DeserializeObject<BusinessCaseOverviewSummaryJSON>(response);
-        }
-
-        private BusinessCaseCompareSummaryJSON ParseBusinessCaseCompareSummary(string url, UserInput userInputObj)
-        {
-            string response = GetJsonResponse(url, userInputObj, true);
-
-            if (string.IsNullOrEmpty(response))
-            {
-                userInputObj.LoggerObj.LogWarning($"Received empty response for business case url: {url}");
-                return null;
-            }
-
-            return JsonConvert.DeserializeObject<BusinessCaseCompareSummaryJSON>(response);
         }
 
         private string GetJsonResponse(string url, UserInput userInputObj, bool isPost = false)
