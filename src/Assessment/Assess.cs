@@ -26,7 +26,6 @@ namespace Azure.Migrate.Explore.Assessment
         private List<DiscoveryData> DiscoveredData;
         private List<vCenterHostDiscovery> vCenterHostDiscoveries;
         private List<string> ListOfSites;
-        private string subscriptionValue;
 
         public Assess()
         {
@@ -40,16 +39,12 @@ namespace Azure.Migrate.Explore.Assessment
             DiscoveredData = new List<DiscoveryData>();
             vCenterHostDiscoveries = new List<vCenterHostDiscovery>();
             ListOfSites = new List<string>();
-            subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
-                userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
         }
 
         public Assess(UserInput userInputObj, List<DiscoveryData> discoveredData)
         {
             UserInputObj = userInputObj;
             DiscoveredData = discoveredData;
-            string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
-                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
         }
 
         public bool BeginAssessment()
@@ -358,7 +353,7 @@ namespace Azure.Migrate.Explore.Assessment
             };
             var deployResult = clientHelper.DeployAssessmentArmTemplateAsync(
                 UserInputObj,
-                subscriptionValue,
+                UserInputObj.Subscription.Key,
                 UserInputObj.ResourceGroupName.Value,
                 assessmentProjectArmId,
                 $"AME-{RandomSessionId}",

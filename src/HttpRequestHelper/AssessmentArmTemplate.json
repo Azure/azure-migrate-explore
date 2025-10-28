@@ -10,9 +10,11 @@
         "discountPercentage": {"type": "int", "defaultValue": 0},
         "environmentType": {"type": "string", "defaultValue": "Production"},
         "savingsOptions": {"type": "string", "defaultValue": "RI3Year"},
-        "performanceTimeRange": {"type": "string", "defaultValue": "Week"},
-        "performancePercentile": {"type": "string", "defaultValue": "Percentile95"},
-        "sizingCriterion": {"type": "string", "defaultValue": "PerformanceBased"}
+    "performanceTimeRange": {"type": "string", "defaultValue": "Week"},
+    "performancePercentile": {"type": "string", "defaultValue": "Percentile95"},
+    "sizingCriterion": {"type": "string", "defaultValue": "PerformanceBased"},
+    "billingLicensingProgram": {"type": "string", "defaultValue": "Retail"},
+    "billingSubscriptionId": {"type": "string", "defaultValue": ""}
     },
     "resources": [
         {
@@ -34,8 +36,8 @@
                         "savingsOptions": "[parameters('savingsOptions')]"
                     },
                     "billingSettings": {
-                        "subscriptionId": null,
-                        "licensingProgram": "Retail"
+                        "subscriptionId": "[if(equals(parameters('billingSubscriptionId'), ''), json('null'), parameters('billingSubscriptionId'))]",
+                        "licensingProgram": "[parameters('billingLicensingProgram')]"
                     },
                     "sqlServerLicense": "Yes",
                     "azureSqlVmSettings": {
@@ -97,8 +99,8 @@
                     "linuxAzureHybridUseBenefit": "Yes",
                     "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
                     "billingSettings": {
-                        "licensingProgram": "Retail",
-                        "subscriptionId": null
+                        "licensingProgram": "[parameters('billingLicensingProgram')]",
+                        "subscriptionId": "[if(equals(parameters('billingSubscriptionId'), ''), json('null'), parameters('billingSubscriptionId'))]"
                     },
                     "azureDiskTypes": [
                         "Premium",
@@ -193,8 +195,8 @@
                     },
                     "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
                     "billingSettings": {
-                        "licensingProgram": "Retail",
-                        "subscriptionId": ""
+                        "licensingProgram": "[parameters('billingLicensingProgram')]",
+                        "subscriptionId": "[if(equals(parameters('billingSubscriptionId'), ''), json('null'), parameters('billingSubscriptionId'))]"
                     },
                     "azureLocation": "[parameters('azureLocation')]",
                     "azureSecurityOfferingType": "MDC",
@@ -221,7 +223,7 @@
                 "settings": {
                     "environmentType": "[parameters('environmentType')]",
                     "billingSettings": {
-                        "licensingProgram": "Retail"
+                        "licensingProgram": "[parameters('billingLicensingProgram')]"
                     },
                     "currency": "[parameters('currency')]",
                     "savingsSettings": {"savingsOptions": "[parameters('savingsOptions')]"},
@@ -265,8 +267,8 @@
                 "settings": {
                     "environmentType": "[parameters('environmentType')]",
                     "billingSettings": {
-                        "licensingProgram": "Retail",
-                        "subscriptionId": null
+                        "licensingProgram": "[parameters('billingLicensingProgram')]",
+                        "subscriptionId": "[if(equals(parameters('billingSubscriptionId'), ''), json('null'), parameters('billingSubscriptionId'))]"
                     },
                     "currency": "[parameters('currency')]",
                     "savingsSettings": {
@@ -356,7 +358,7 @@
                     },
                     "environmentType": "[parameters('environmentType')]",
                     "billingSettings": {
-                        "licensingProgram": "Retail"
+                        "licensingProgram": "[parameters('billingLicensingProgram')]"
                     },
                     "nodeTypes": [
                         "AV36",

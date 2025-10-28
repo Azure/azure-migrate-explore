@@ -8,6 +8,7 @@ using System.Text;
 
 using Azure.Migrate.Explore.Common;
 using Azure.Migrate.Explore.Models;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Azure.Migrate.Explore.Factory
 {
@@ -68,8 +69,7 @@ namespace Azure.Migrate.Explore.Factory
                 // Create the machine IDs filter (using discovery machine ARM IDs)
                 var machineIdsList = scopedMachineIds.Select(id => $"\"{id}\"").ToArray();
                 string machineIdsFilter = string.Join(", ", machineIdsList);
-                string subscriptionValue = userInputObj.EamcaSubscription.Key == string.Empty ?
-                    userInputObj.Subscription.Key : userInputObj.EamcaSubscription.Key;
+                
                 // Construct the ARG query
                 var argQuery = new StringBuilder();
                 argQuery.AppendLine("(migrateresources");
@@ -79,7 +79,7 @@ namespace Azure.Migrate.Explore.Factory
                 argQuery.AppendLine("     | mv-expand properties_machineArmIds");
                 argQuery.AppendLine("     | extend machineArmIds=tostring(properties_machineArmIds)");
                 argQuery.AppendLine("     | extend parentId = case(type contains \"/machines\", id, type contains \"/sqlservers\", machineArmIds, type contains \"/webappsites\", machineArmIds, \"\")");
-                argQuery.AppendLine($"     | where parentId has \"/subscriptions/{subscriptionValue}/resourceGroups/{userInputObj.ResourceGroupName.Value}\"");
+                argQuery.AppendLine($"     | where parentId has \"/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}\"");
                 argQuery.AppendLine("     | extend id = tolower(id), siteId = case(id has \"machines\", tostring(split(tolower(id),\"/machines/\")[0]), id has \"sqlsites\", tostring(split(tolower(id),\"/sqlsites/\")[0]), id has \"webappsites\", tostring(split(tolower(id),\"/webappsites/\")[0]), \"\")");
                 argQuery.AppendLine("     | extend disks = iff(array_length(properties.disks) > 0, properties.disks, pack_array(pack_dictionary(\"\",\"\")))");
                 argQuery.AppendLine("     | mv-expand disks");
