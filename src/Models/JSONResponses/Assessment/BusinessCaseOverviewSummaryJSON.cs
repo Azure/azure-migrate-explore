@@ -27,7 +27,7 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("totalAzureCostDetails")]
         public BusinessCaseCostDetailsBreakupJSON TotalAzureCostDetails { get; set; }
 
-        [JsonProperty("totalOnPremisesCostDetails")]
+        [JsonProperty("totalOnPremCostDetails")]
         public BusinessCaseCostDetailsBreakupJSON TotalOnPremisesCostDetails { get; set; }
 
         [JsonProperty("azureArcEnabledOnPremisesCostDetails")]

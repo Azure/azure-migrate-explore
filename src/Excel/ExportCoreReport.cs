@@ -276,9 +276,9 @@ namespace Azure.Migrate.Explore.Excel
             dataWs.Cell(2, 22).Value = Business_Case_Data.FutureEsuSavingsFor4YearsIncludingAzureArc;
             dataWs.Cell(2, 23).Value = Business_Case_Data.FutureManagementCostSavingsIncludingAzureArc;
             dataWs.Cell(2, 24).Value = Business_Case_Data.FutureSecurityCostSavingsIncludingAzureArc;
-            dataWs.Cell(2, 24).Value = Business_Case_Data.AzureArcServicesCost;
-            dataWs.Cell(2, 24).Value = Business_Case_Data.FutureAzureArcEnabledOnPremisesCost;
-            dataWs.Cell(2, 24).Value = Business_Case_Data.FutureAzureArcServicesCost;
+            dataWs.Cell(2, 25).Value = Business_Case_Data.AzureArcServicesCost;
+            dataWs.Cell(2, 26).Value = Business_Case_Data.FutureAzureArcEnabledOnPremisesCost;
+            dataWs.Cell(2, 27).Value = Business_Case_Data.FutureAzureArcServicesCost;
         }
 
         private void Generate_Cash_Flows_Worksheet()
@@ -298,9 +298,6 @@ namespace Azure.Migrate.Explore.Excel
             for (int i = 0; i < CoreReportConstants.Cash_Flows_Types.Count; i++)
             {
                 dataWs.Cell(3 * 1 + i - 1, 2).Value = CoreReportConstants.Cash_Flows_Types[i];
-                dataWs.Cell(3 * 2 + i - 1, 2).Value = CoreReportConstants.Cash_Flows_Types[i];
-                dataWs.Cell(3 * 3 + i - 1, 2).Value = CoreReportConstants.Cash_Flows_Types[i];
-                dataWs.Cell(3 * 4 + i - 1, 2).Value = CoreReportConstants.Cash_Flows_Types[i];
             }
 
             // Total
