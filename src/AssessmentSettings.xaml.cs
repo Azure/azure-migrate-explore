@@ -382,7 +382,13 @@ namespace AzureMigrateExplore
                 IEnumerable<SubscriptionRecord> filtered = subscriptions;
 
                 if (string.Equals(programKey, "EnterpriseAgreementSupport", StringComparison.OrdinalIgnoreCase))
-                    filtered = subscriptions.Where(IsEnterpriseAgreementSubscription);
+                {
+                    filtered = await FilterSubscriptionsByAgreementTypeAsync(subscriptions, "EnterpriseAgreement");
+                }
+                else if (string.Equals(programKey, "MicrosoftCustomerAgreement", StringComparison.OrdinalIgnoreCase))
+                {
+                    filtered = await FilterSubscriptionsByAgreementTypeAsync(subscriptions, "MicrosoftCustomerAgreement");
+                }
 
                 var subscriptionItems = filtered
                     .OrderBy(sub => sub.DisplayName, StringComparer.OrdinalIgnoreCase)
@@ -491,21 +497,79 @@ namespace AzureMigrateExplore
             return subscriptions;
         }
 
-        private static bool IsEnterpriseAgreementSubscription(SubscriptionRecord subscription)
+        private async Task<IEnumerable<SubscriptionRecord>> FilterSubscriptionsByAgreementTypeAsync(
+            List<SubscriptionRecord> subscriptions, 
+            string agreementType)
         {
-            if (subscription == null)
-                return false;
+            var filteredSubscriptions = new List<SubscriptionRecord>();
+            var tasks = new List<Task>();
 
-            string? quotaId = subscription.QuotaId;
-            if (string.IsNullOrWhiteSpace(quotaId))
-                return false;
+            foreach (var subscription in subscriptions)
+            {
+                tasks.Add(Task.Run(async () =>
+                {
+                    try
+                    {
+                        string billingPropertyUrl = 
+                            $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}/subscriptions/{subscription.SubscriptionId}/providers/Microsoft.Billing/billingProperty/default?api-version=2024-04-01";
 
-            string normalized = quotaId.Trim();
-            if (normalized.StartsWith(EnterpriseAgreementQuotaPrefix, StringComparison.OrdinalIgnoreCase))
-                return true;
+                        // Get authentication token directly without UserInputObj
+                        var authResult = await AzureAuthenticationHandler.RetrieveAuthenticationToken();
+                        
+                        using var httpClient = new System.Net.Http.HttpClient();
+                        httpClient.DefaultRequestHeaders.Authorization = 
+                            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResult.AccessToken);
+                        
+                        var response = await httpClient.GetAsync(billingPropertyUrl);
+                        
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string billingPropertyJson = await response.Content.ReadAsStringAsync();
+                            
+                            if (!string.IsNullOrEmpty(billingPropertyJson))
+                            {
+                                var billingProperty = System.Text.Json.JsonSerializer.Deserialize<BillingPropertyResponse>(
+                                    billingPropertyJson,
+                                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return normalized.IndexOf("ENTERPRISE", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   normalized.IndexOf("EA", StringComparison.OrdinalIgnoreCase) >= 0;
+                                if (billingProperty?.Properties?.BillingAccountAgreementType != null &&
+                                    billingProperty.Properties.BillingAccountAgreementType.Equals(agreementType, StringComparison.OrdinalIgnoreCase) &&
+                                    billingProperty.Properties.BillingAccountType != "Internal")
+                                {
+                                    lock (filteredSubscriptions)
+                                    {
+                                        filteredSubscriptions.Add(subscription);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Log but continue - subscription might not have billing property
+                            Debug.WriteLine($"Failed to fetch billing property for subscription {subscription.SubscriptionId}: {response.StatusCode}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log but don't fail - just skip this subscription
+                        Debug.WriteLine($"Error fetching billing property for subscription {subscription.SubscriptionId}: {ex.Message}");
+                    }
+                }));
+            }
+
+            await Task.WhenAll(tasks);
+            return filteredSubscriptions;
+        }
+
+        private sealed class BillingPropertyResponse
+        {
+            public BillingPropertyData Properties { get; set; }
+        }
+
+        private sealed class BillingPropertyData
+        {
+            public string BillingAccountAgreementType { get; set; }
+            public string BillingAccountType { get; set; }
         }
 
         private void LogProgramOfferError(string programKey, Exception ex)
@@ -519,8 +583,6 @@ namespace AzureMigrateExplore
                 Debug.WriteLine($"Program offer '{programKey}' subscription load failed: {ex}");
             }
         }
-
-        private const string EnterpriseAgreementQuotaPrefix = "MS-AZR-";
 
         private sealed class SubscriptionRecord
         {
