@@ -339,9 +339,18 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         {
             UserInputObj.LoggerObj.LogInformation("Creating excel model for Cash_Flows");
 
-            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY;
-            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY;
-            Cash_Flows_Data.TotalYOYCosts.SavingsYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[3].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[3].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[3].Cost;
 
             UserInputObj.LoggerObj.LogInformation("Updated excel model for Cash_Flows");
         }

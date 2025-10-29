@@ -275,22 +275,22 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
             do
             {
                 pageNumber++;
-                
+
                 // If we have a skipToken, modify the request body to include it
                 string currentBodyContent = bodyContent;
                 if (!string.IsNullOrEmpty(skipToken))
                 {
                     var bodyObj = JObject.Parse(bodyContent);
-                    
+
                     // Add or update the options with skipToken
                     if (bodyObj["options"] == null)
                     {
                         bodyObj["options"] = new JObject();
                     }
-                    
+
                     bodyObj["options"]["$skipToken"] = skipToken;
                     currentBodyContent = bodyObj.ToString();
-                    
+
                     userInputObj.LoggerObj?.LogInformation($"ARG Query - Fetching page {pageNumber} with skipToken");
                 }
                 else
@@ -300,27 +300,27 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
 
                 // Reset NumberOfTries for each page
                 NumberOfTries = 0;
-                
+
                 // Execute the query for this page
                 HttpResponseMessage response = await GetHttpResponseForARGQuery(userInputObj, currentBodyContent);
-                
+
                 if (!response.IsSuccessStatusCode)
                 {
                     string errorContent = await response.Content.ReadAsStringAsync();
                     userInputObj.LoggerObj?.LogError($"ARG query page {pageNumber} failed: {response.StatusCode}: {errorContent}");
                     throw new Exception($"ARG query page {pageNumber} failed: {response.StatusCode}: {errorContent}");
                 }
-                
+
                 // Parse the response
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 var responseObj = JObject.Parse(jsonResponse);
-                
+
                 // Store metadata from the first response
                 if (pageNumber == 1)
                 {
                     firstResponseMetadata = responseObj;
                 }
-                
+
                 // Extract the data rows
                 JArray pageRows = null;
                 if (responseObj["data"] is JObject dataObj && dataObj["rows"] is JArray rowsArray)
@@ -331,7 +331,7 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     pageRows = directArray;
                 }
-                
+
                 if (pageRows != null && pageRows.Count > 0)
                 {
                     // Merge rows into the consolidated result
@@ -339,21 +339,21 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                     {
                         allRows.Add(row);
                     }
-                    
+
                     userInputObj.LoggerObj?.LogInformation($"ARG Query - Page {pageNumber} returned {pageRows.Count} rows. Total accumulated: {allRows.Count}");
                 }
                 else
                 {
                     userInputObj.LoggerObj?.LogInformation($"ARG Query - Page {pageNumber} returned 0 rows");
                 }
-                
+
                 // Extract skipToken for next iteration
                 skipToken = responseObj["$skipToken"]?.ToString();
-                
+
             } while (!string.IsNullOrEmpty(skipToken));
-            
+
             userInputObj.LoggerObj?.LogInformation($"ARG Query - Completed pagination. Total rows: {allRows.Count} across {pageNumber} page(s)");
-            
+
             // Reconstruct the final response with all rows
             if (firstResponseMetadata != null)
             {
@@ -366,17 +366,17 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     firstResponseMetadata["data"] = allRows;
                 }
-                
+
                 // Update count and totalRecords if present
                 firstResponseMetadata["count"] = allRows.Count;
                 firstResponseMetadata["totalRecords"] = allRows.Count;
-                
+
                 // Remove skipToken from final response as we've fetched everything
                 firstResponseMetadata.Remove("$skipToken");
-                
+
                 return firstResponseMetadata.ToString();
             }
-            
+
             // Fallback: return a simple structure if no metadata was captured
             return new JObject
             {
@@ -601,6 +601,22 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
 
                 userInputObj.LoggerObj.LogInformation($"Setting ARM parameter '{kvp.Key}' to '{parameterValue}'.");
                 baseParameters[kvp.Key] = new JObject { ["value"] = parameterValue };
+            }
+
+            // Add billing settings parameters
+            string licensingProgram = MapProgramOfferToLicensingProgram(userInputObj.ProgramOffer.Key);
+            baseParameters["billingLicensingProgram"] = new JObject { ["value"] = licensingProgram };
+            userInputObj.LoggerObj.LogInformation($"Setting ARM parameter 'billingLicensingProgram' to '{licensingProgram}'");
+
+            string billingSubscriptionId = userInputObj.EamcaSubscription.Key ?? string.Empty;
+            baseParameters["billingSubscriptionId"] = new JObject { ["value"] = billingSubscriptionId };
+            if (!string.IsNullOrEmpty(billingSubscriptionId))
+            {
+                userInputObj.LoggerObj.LogInformation($"Setting ARM parameter 'billingSubscriptionId' to '{billingSubscriptionId}'");
+            }
+            else
+            {
+                userInputObj.LoggerObj.LogInformation("Setting ARM parameter 'billingSubscriptionId' to empty (will use null in template)");
             }
 
             // Construct deployment payload
