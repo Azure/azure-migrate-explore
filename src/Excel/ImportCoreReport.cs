@@ -199,57 +199,21 @@ namespace Azure.Migrate.Explore.Excel
 
             Business_Case obj = new Business_Case();
 
-            obj.TotalOnPremisesCost.ComputeLicenseCost = coreReportDataSheet.Cell(2,5).GetValue<double>();
-            obj.TotalOnPremisesCost.EsuLicenseCost = coreReportDataSheet.Cell(3,5).GetValue<double>();
-            obj.TotalOnPremisesCost.StorageCost = coreReportDataSheet.Cell(4, 5).GetValue<double>();
-            obj.TotalOnPremisesCost.NetworkCost = coreReportDataSheet.Cell(5, 5).GetValue<double>();
-            obj.TotalOnPremisesCost.SecurityCost = coreReportDataSheet.Cell(6, 5).GetValue<double>();
-            obj.TotalOnPremisesCost.ITStaffCost = coreReportDataSheet.Cell(7, 5).GetValue<double>();
-            obj.TotalOnPremisesCost.FacilitiesCost = coreReportDataSheet.Cell(8, 5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.ComputeCost = coreReportDataSheet.Cell(2,5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.LicenseCost = coreReportDataSheet.Cell(3,5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.StorageCost = coreReportDataSheet.Cell(4, 5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.NetworkCost = coreReportDataSheet.Cell(5, 5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.SecurityCost = coreReportDataSheet.Cell(6, 5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.ITLaborCost = coreReportDataSheet.Cell(7, 5).GetValue<double>();
+            obj.TotalOnPremisesCostDetails.FacilitiesCost = coreReportDataSheet.Cell(8, 5).GetValue<double>();
 
-            obj.AzureIaaSCost.ComputeLicenseCost = coreReportDataSheet.Cell(2, 6).GetValue<double>();
-            obj.AzureIaaSCost.EsuLicenseCost = coreReportDataSheet.Cell(3, 6).GetValue<double>();
-            obj.AzureIaaSCost.StorageCost = coreReportDataSheet.Cell(4, 6).GetValue<double>();
-            obj.AzureIaaSCost.NetworkCost = coreReportDataSheet.Cell(5, 6).GetValue<double>();
-            obj.AzureIaaSCost.SecurityCost = coreReportDataSheet.Cell(6, 6).GetValue<double>();
-            obj.AzureIaaSCost.ITStaffCost = coreReportDataSheet.Cell(7, 6).GetValue<double>();
-            obj.AzureIaaSCost.FacilitiesCost = coreReportDataSheet.Cell(8, 6).GetValue<double>();
-
-            obj.AzurePaaSCost.ComputeLicenseCost = coreReportDataSheet.Cell(2, 7).GetValue<double>();
-            obj.AzurePaaSCost.EsuLicenseCost = coreReportDataSheet.Cell(3, 7).GetValue<double>();
-            obj.AzurePaaSCost.StorageCost = coreReportDataSheet.Cell(4, 7).GetValue<double>();
-            obj.AzurePaaSCost.NetworkCost = coreReportDataSheet.Cell(5, 7).GetValue<double>();
-            obj.AzurePaaSCost.SecurityCost = coreReportDataSheet.Cell(6, 7).GetValue<double>();
-            obj.AzurePaaSCost.ITStaffCost = coreReportDataSheet.Cell(7, 7).GetValue<double>();
-            obj.AzurePaaSCost.FacilitiesCost = coreReportDataSheet.Cell(8, 7).GetValue<double>();
-
-            obj.OnPremisesAvsCost.ComputeLicenseCost = coreReportDataSheet.Cell(2, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.EsuLicenseCost = coreReportDataSheet.Cell(3, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.StorageCost = coreReportDataSheet.Cell(4, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.NetworkCost = coreReportDataSheet.Cell(5, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.SecurityCost = coreReportDataSheet.Cell(6, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.ITStaffCost = coreReportDataSheet.Cell(7, 4).GetValue<double>();
-            obj.OnPremisesAvsCost.FacilitiesCost = coreReportDataSheet.Cell(8, 4).GetValue<double>();
-
-            obj.AzureAvsCost.ComputeLicenseCost = coreReportDataSheet.Cell(2, 8).GetValue<double>();
-            obj.AzureAvsCost.EsuLicenseCost = coreReportDataSheet.Cell(3, 8).GetValue<double>();
-            obj.AzureAvsCost.StorageCost = coreReportDataSheet.Cell(4, 8).GetValue<double>();
-            obj.AzureAvsCost.NetworkCost = coreReportDataSheet.Cell(5, 8).GetValue<double>();
-            obj.AzureAvsCost.SecurityCost = coreReportDataSheet.Cell(6, 8).GetValue<double>();
-            obj.AzureAvsCost.ITStaffCost = coreReportDataSheet.Cell(7, 8).GetValue<double>();
-            obj.AzureAvsCost.FacilitiesCost = coreReportDataSheet.Cell(8, 8).GetValue<double>();
-
-            obj.TotalAzureCost.ComputeLicenseCost = coreReportDataSheet.Cell(2, 9).GetValue<double>();
-            obj.TotalAzureCost.EsuLicenseCost = coreReportDataSheet.Cell(3, 9).GetValue<double>();
-            obj.TotalAzureCost.StorageCost = coreReportDataSheet.Cell(4, 9).GetValue<double>();
-            obj.TotalAzureCost.NetworkCost = coreReportDataSheet.Cell(5, 9).GetValue<double>();
-            obj.TotalAzureCost.ITStaffCost = coreReportDataSheet.Cell(6, 9).GetValue<double>();
-            obj.TotalAzureCost.SecurityCost = coreReportDataSheet.Cell(7, 9).GetValue<double>();
-            obj.TotalAzureCost.FacilitiesCost = coreReportDataSheet.Cell(8, 9).GetValue<double>();
-
-            obj.WindowsServerLicense.ComputeLicenseCost = coreReportDataSheet.Cell(2, 10).GetValue<double?>() ?? 0.00;
-            obj.SqlServerLicense.ComputeLicenseCost = coreReportDataSheet.Cell(2, 11).GetValue<double?>() ?? 0.00;
-            obj.EsuSavings.ComputeLicenseCost = coreReportDataSheet.Cell(2, 12).GetValue<double?>() ?? 0.00;
+            obj.TotalAzureCostDetails.ComputeCost = coreReportDataSheet.Cell(2, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.LicenseCost = coreReportDataSheet.Cell(3, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.StorageCost = coreReportDataSheet.Cell(4, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.NetworkCost = coreReportDataSheet.Cell(5, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.ITLaborCost = coreReportDataSheet.Cell(6, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.SecurityCost = coreReportDataSheet.Cell(7, 9).GetValue<double>();
+            obj.TotalAzureCostDetails.FacilitiesCost = coreReportDataSheet.Cell(8, 9).GetValue<double>();
 
             BusinessCaseObj = obj;
 

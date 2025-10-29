@@ -109,50 +109,18 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
 
             Business_Case business_CaseObj = coreReportData.BusinessCaseObj;
 
-            onpremComputeLicenseCost = business_CaseObj.TotalOnPremisesCost.ComputeLicenseCost;
-            onpremEsuLicenseCost = business_CaseObj.TotalOnPremisesCost.EsuLicenseCost;
-            onpremStorageCost = business_CaseObj.TotalOnPremisesCost.StorageCost;
-            onpremNetworkCost = business_CaseObj.TotalOnPremisesCost.NetworkCost;
-            onpremSecurityCost = business_CaseObj.TotalOnPremisesCost.SecurityCost;
-            onpremITStaffCost = business_CaseObj.TotalOnPremisesCost.ITStaffCost;
-            onpremFacilitiesCost = business_CaseObj.TotalOnPremisesCost.FacilitiesCost;
+            onpremComputeLicenseCost = business_CaseObj.TotalOnPremisesCostDetails.ComputeCost;
+            onpremEsuLicenseCost = business_CaseObj.TotalOnPremisesCostDetails.LicenseCost;
+            onpremStorageCost = business_CaseObj.TotalOnPremisesCostDetails.StorageCost;
+            onpremNetworkCost = business_CaseObj.TotalOnPremisesCostDetails.NetworkCost;
+            onpremSecurityCost = business_CaseObj.TotalOnPremisesCostDetails.SecurityCost;
+            onpremITStaffCost = business_CaseObj.TotalOnPremisesCostDetails.ITLaborCost;
+            onpremFacilitiesCost = business_CaseObj.TotalOnPremisesCostDetails.FacilitiesCost;
             estimatedTotalOnpremCost = onpremComputeLicenseCost + onpremEsuLicenseCost + onpremStorageCost +
                                        onpremNetworkCost + onpremSecurityCost + onpremITStaffCost +
                                        onpremFacilitiesCost;
 
-            double azureIaasComputeLicenseCost = business_CaseObj.AzureIaaSCost.ComputeLicenseCost;
-            double azureIaasEsuLicenseCost = business_CaseObj.AzureIaaSCost.EsuLicenseCost;
-            double azureIaasStorageCost = business_CaseObj.AzureIaaSCost.StorageCost;
-            double azureIaasNetworkCost = business_CaseObj.AzureIaaSCost.NetworkCost;
-            double azureIaasSecurityCost = business_CaseObj.AzureIaaSCost.SecurityCost;
-            double azureIaasITStaffCost = business_CaseObj.AzureIaaSCost.ITStaffCost;
-            double azureIaasFacilitiesCost = business_CaseObj.AzureIaaSCost.FacilitiesCost;
-            estimatedTotalAzureIaasCost = azureIaasComputeLicenseCost + azureIaasEsuLicenseCost + azureIaasStorageCost +
-                                          azureIaasNetworkCost + azureIaasSecurityCost + azureIaasITStaffCost +
-                                          azureIaasFacilitiesCost;
-
-            double azurePaasComputeLicenseCost = business_CaseObj.AzurePaaSCost.ComputeLicenseCost;
-            double azurePaasEsuLicenseCost = business_CaseObj.AzurePaaSCost.EsuLicenseCost;
-            double azurePaasStorageCost = business_CaseObj.AzurePaaSCost.StorageCost;
-            double azurePaasNetworkCost = business_CaseObj.AzurePaaSCost.NetworkCost;
-            double azurePaasSecurityCost = business_CaseObj.AzurePaaSCost.SecurityCost;
-            double azurePaasITStaffCost = business_CaseObj.AzurePaaSCost.ITStaffCost;
-            double azurePaasFacilitiesCost = business_CaseObj.AzurePaaSCost.FacilitiesCost;
-            estimatedTotalAzurePaasCost = azurePaasComputeLicenseCost + azurePaasEsuLicenseCost + azurePaasStorageCost +
-                                          azurePaasNetworkCost + azurePaasSecurityCost + azurePaasITStaffCost +
-                                          azurePaasFacilitiesCost;
-
-            totalAzureComputeLicenseCost = azureIaasComputeLicenseCost + azurePaasComputeLicenseCost;
-            totalAzureEsuLicenseCost = azureIaasEsuLicenseCost + azurePaasEsuLicenseCost;
-            totalAzureStorageCost = azureIaasStorageCost + azurePaasStorageCost;
-            totalAzureNetworkCost = azureIaasNetworkCost + azurePaasNetworkCost;
-            totalAzureSecurityCost = azureIaasSecurityCost + azurePaasSecurityCost;
-            totalAzureITStaffCost = azureIaasITStaffCost + azurePaasITStaffCost;
-            totalAzureFacilitiesCost = azureIaasFacilitiesCost + azurePaasFacilitiesCost;
-            estimatedTotalAzureCost = totalAzureComputeLicenseCost + totalAzureEsuLicenseCost + totalAzureStorageCost +
-                                      totalAzureNetworkCost + totalAzureSecurityCost + totalAzureITStaffCost +
-                                      totalAzureFacilitiesCost;
-
+           
             computeLicenseSavings = onpremComputeLicenseCost - totalAzureComputeLicenseCost;
             esuLicenseSavings = onpremEsuLicenseCost - totalAzureEsuLicenseCost;
             storageCostSavings = onpremStorageCost - totalAzureStorageCost;
