@@ -28,7 +28,7 @@ namespace Azure.Migrate.Explore.Factory
             obj.Name = "bizcase-ame-" + sessionId;
             obj.Properties.Settings.CommonSettings.TargetLocation = userInputObj.TargetRegion.Key;
             obj.Properties.Settings.CommonSettings.Currency = userInputObj.Currency.Key;
-            obj.Properties.Settings.BillingSettings.LicensingProgram = userInputObj.ProgramOffer.Key;
+            obj.Properties.Settings.BillingSettings.LicensingProgram = MapProgramOfferToLicensingProgram(userInputObj.ProgramOffer.Key);
             obj.Properties.Settings.BillingSettings.SubscriptionId = userInputObj.EamcaSubscription.Key;
 
             BusinessCaseTypes type = BusinessCaseTypes.OptimizeForPaas;
@@ -145,6 +145,20 @@ namespace Azure.Migrate.Explore.Factory
             }
 
             return sources.Any() ? string.Join(", ", sources) : "\"Appliance\"";
+        }
+
+        private static string MapProgramOfferToLicensingProgram(string programOfferKey)
+        {
+            if (string.IsNullOrWhiteSpace(programOfferKey))
+                return "Retail";
+
+            return programOfferKey.ToLowerInvariant() switch
+            {
+                "payasyougo" => "Retail",
+                "enterpriseagreementsupport" => "EA",
+                "microsoftcustomeragreement" => "MCA",
+                _ => "Retail"
+            };
         }
     }
 }
