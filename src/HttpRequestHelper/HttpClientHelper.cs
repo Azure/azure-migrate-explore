@@ -603,6 +603,22 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 baseParameters[kvp.Key] = new JObject { ["value"] = parameterValue };
             }
 
+            // Add billing settings parameters
+            string licensingProgram = MapProgramOfferToLicensingProgram(userInputObj.ProgramOffer.Key);
+            baseParameters["billingLicensingProgram"] = new JObject { ["value"] = licensingProgram };
+            userInputObj.LoggerObj.LogInformation($"Setting ARM parameter 'billingLicensingProgram' to '{licensingProgram}'");
+
+            string billingSubscriptionId = userInputObj.EamcaSubscription.Key ?? string.Empty;
+            baseParameters["billingSubscriptionId"] = new JObject { ["value"] = billingSubscriptionId };
+            if (!string.IsNullOrEmpty(billingSubscriptionId))
+            {
+                userInputObj.LoggerObj.LogInformation($"Setting ARM parameter 'billingSubscriptionId' to '{billingSubscriptionId}'");
+            }
+            else
+            {
+                userInputObj.LoggerObj.LogInformation("Setting ARM parameter 'billingSubscriptionId' to empty (will use null in template)");
+            }
+
             // Construct deployment payload
             JObject deploymentPayload = new JObject
             {
@@ -1091,6 +1107,20 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
             return AssessmentPollResponse.NotCompleted;
         }
         #endregion
+
+        private static string MapProgramOfferToLicensingProgram(string programOfferKey)
+        {
+            if (string.IsNullOrWhiteSpace(programOfferKey))
+                return "Retail";
+
+            return programOfferKey.ToLowerInvariant() switch
+            {
+                "payasyougo" => "Retail",
+                "enterpriseagreementsupport" => "EA",
+                "microsoftcustomeragreement" => "MCA",
+                _ => "Retail"
+            };
+        }
 
         private static string GetAssessmentTemplatePath([CallerFilePath] string callerFilePath = "")
         {

@@ -102,6 +102,8 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -130,8 +132,14 @@
                                     <ComboBoxItem Content="Modernize"/>
                                     <ComboBoxItem Content="Minimize time with Azure VM"/>
                                 </ComboBox>
-                                <!-- Assess SQL Services Separately GroupBox -->
-                                <Grid Grid.Row="5" Grid.ColumnSpan="2" Margin="10,20,0,0">
+
+                                <TextBlock Text="Program / Offer:" FontWeight="Bold" Margin="0,20,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0"/>
+                                <ComboBox x:Name="ProgramOfferPicker" PlaceholderText="Select Program / Offer" Width="360" Grid.Row="4" Grid.Column="1" Margin="10,20,0,0" Background="White" Foreground="{StaticResource TextColor}" SelectionChanged="ProgramOfferPicker_SelectionChanged"/>
+
+                                <TextBlock Text="Subscription:" FontWeight="Bold" Margin="0,20,10,0" Foreground="{StaticResource TextColor}" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0"/>
+                                <ComboBox x:Name="SubscriptionPicker" PlaceholderText="Select Subscription" Width="360" Grid.Row="5" Grid.Column="1" Margin="10,20,0,0" Background="White" Foreground="{StaticResource TextColor}" IsEnabled="False" SelectionChanged="SubscriptionPicker_SelectionChanged"/>
+
+                                <Grid Grid.Row="6" Grid.ColumnSpan="2" Margin="10,20,0,0">
                                     <Border x:Name="AssessSqlServicesSeparatelyGroupBox" Visibility="Collapsed" Background="{StaticResource CardBackgroundColor}" Padding="10">
                                         <Border.Shadow>
                                             <ThemeShadow/>

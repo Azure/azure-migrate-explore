@@ -68,7 +68,7 @@ namespace Azure.Migrate.Explore.Factory
                 // Create the machine IDs filter (using discovery machine ARM IDs)
                 var machineIdsList = scopedMachineIds.Select(id => $"\"{id}\"").ToArray();
                 string machineIdsFilter = string.Join(", ", machineIdsList);
-
+                
                 // Construct the ARG query
                 var argQuery = new StringBuilder();
                 argQuery.AppendLine("(migrateresources");
