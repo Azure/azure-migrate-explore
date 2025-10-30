@@ -31,10 +31,11 @@ namespace AzureMigrateExplore.Discovery
                     | where {1}
                     | extend memberResourceId = tolower(properties.memberResourceId)
                     | parse kind=regex id with applicationId '/members/'
-                    | project memberResourceId, applicationId
+                    | parse id with * ""/applications/"" applicationName  ""/members/"" *
+                    | project memberResourceId, applicationId, applicationName
                     )
                 on $left.id == $right.memberResourceId
-                | summarize applicationId = strcat_array(make_set(applicationId), "", ""), properties = take_any(properties), type = take_any(type), take_any(properties_webServerId) by id
+                | summarize applicationId = strcat_array(make_set_if(applicationId, isnotempty(applicationId)), "", ""), properties = take_any(properties), type = take_any(type), take_any(properties_webServerId), applicationIdSet = make_set_if(applicationId, isnotempty(applicationId)), applicationNameSet = make_set_if(applicationName, isnotempty(applicationName)) by id
                 | extend properties_machineArmIds = iif(array_length(properties.machineArmIds) == 0, pack_array(id), properties.machineArmIds)
                 | mv-expand properties_machineArmIds
                 | extend machineArmIds=tostring(properties_machineArmIds)
@@ -74,9 +75,10 @@ namespace AzureMigrateExplore.Discovery
                     source = case(['type'] contains ""vmwaresites"", properties.vCenterFQDN, ['type'] contains ""hypervsites"", coalesce(properties.clusterFqdn, properties.hostFqdn), """"),
                     numberOfSecurityRisks = properties.numberOfSecurityRisks,
                     numberOfApplications = properties.numberOfApplications,
-                    arcStatus = tostring(properties.arcDiscovery.status)
+                    arcStatus = tostring(properties.arcDiscovery.status),
+                    numberOfSoftware = properties.numberOfSoftware
                 | order by tolower(resourceName) asc
-                | project id, parentId, resourceName, resourceType, edition, version, properties.dependencyMapping, properties.productSupportStatus.supportStatus, discoverySource, source, properties.tags, properties, dbProperties, properties.numberOfProcessorCore, memoryInMB, diskCount, totalSizeInGB, osType, supportEndsIn, powerOnStatus, siteId, dbProperties.status, dbProperties.numberOfUserDatabases, dbhadrConfiguration, depmapErrorCount, properties.dependencyMapDiscovery.discoveryScopeStatus, properties.autoEnableDependencyMapping, ipAddressList, totalDatabaseInstances, totalWebAppCount, webServerId, webServerVersion, webServerType, arcStatus
+                | project id, parentId, resourceName, resourceType, edition, version, properties.dependencyMapping, properties.productSupportStatus.supportStatus, numberOfSoftware, discoverySource, numberOfSecurityRisks, source, properties.tags, properties, dbProperties, properties.numberOfProcessorCore, memoryInMB, diskCount, totalSizeInGB, osType, supportEndsIn, powerOnStatus, siteId, dbProperties.status, dbProperties.numberOfUserDatabases, dbhadrConfiguration, depmapErrorCount, properties.dependencyMapDiscovery.discoveryScopeStatus, properties.autoEnableDependencyMapping, ipAddressList, totalDatabaseInstances, totalWebAppCount, webServerId, webServerVersion, webServerType, arcStatus, hasApplications = iif(array_length(applicationNameSet)==0, ""false"", ""true""), applicationIdSet, countOfApplications = array_length(applicationNameSet), applicationNameSet
                 | project-rename armId=id, dependencyMapping=properties_dependencyMapping, supportStatus=properties_productSupportStatus_supportStatus, resourceTags=properties_tags, cores=properties_numberOfProcessorCore, dbEngineStatus=dbProperties_status, userdatabases=dbProperties_numberOfUserDatabases, depMapDiscoveryScopeStatus=properties_dependencyMapDiscovery_discoveryScopeStatus, autoEnableDependencyMapping=properties_autoEnableDependencyMapping
                 | extend osType = iif(osType contains ""linux"", ""Linux"", iif(osType contains ""windows"", ""Windows"", osType))
                 | extend supportStatus = iif(isempty(supportStatus), ""Unknown"", supportStatus)";
