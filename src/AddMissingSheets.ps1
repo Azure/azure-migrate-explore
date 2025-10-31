@@ -143,9 +143,9 @@ foreach ($wb in $workbooks) {
 
                 $headerRange = $newSheet.Range("A1", $newSheet.Cells.Item(1, $columns.Count))
                 $headerRange.Font.Bold = $true
-                $newSheet.Columns.AutoFit()
+                $newSheet.Columns.AutoFit() | Out-Null
 
-                Write-Host "Added sheet '$sheetName' with $($columns.Count) columns."
+                Write-Host "🆕 Added sheet '$sheetName' with $($columns.Count) columns."
             }
             else {
                 $sheet = $workbook.Sheets.Item($sheetName)
@@ -167,20 +167,20 @@ foreach ($wb in $workbooks) {
                     }
                     $headerRange = $sheet.Range("A1", $sheet.Cells.Item(1, $existingHeaders.Count + $missing.Count))
                     $headerRange.Font.Bold = $true
-                    $sheet.Columns.AutoFit()
-                    Write-Host "Sheet '$sheetName' already exists - added missing columns: $($missing -join ', ')"
+                    $sheet.Columns.AutoFit() | Out-Null
+                    Write-Host "✏️ Sheet '$sheetName' exists - added missing columns: $($missing -join ', ')"
                 } else {
-                    Write-Host "Sheet '$sheetName' already exists and has all columns."
+                    Write-Host "✅ Sheet '$sheetName' already exists and has all columns."
                 }
             }
         }
 
         $workbook.Save()
-        Write-Host "Workbook saved: $xlsxPath"
+        Write-Host "💾 Workbook saved: $xlsxPath"
     }
     catch {
-    $errMsg = $_.Exception.Message
-    Write-Error ($xlsxPath + ': ' + $errMsg)
+        $errMsg = $_.Exception.Message
+        Write-Error "❌ ${xlsxPath}: $errMsg"
     }
     finally {
         if ($workbook) { $workbook.Close($true) }
