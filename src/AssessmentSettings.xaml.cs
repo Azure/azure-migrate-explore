@@ -45,10 +45,12 @@ namespace AzureMigrateExplore
     /// </summary>
     public sealed partial class AssessmentSettings : Page
     {
-    private readonly MainWindow mainObj;
-    private BackgroundWorker azureMigrateExploreBackgroundWorker;
-    private UserInput UserInputObj;
-    private List<SubscriptionRecord>? cachedSubscriptions;
+        private readonly MainWindow mainObj;
+        private BackgroundWorker azureMigrateExploreBackgroundWorker;
+        private UserInput UserInputObj;
+        private List<SubscriptionRecord>? cachedSubscriptions;
+        private KeyValuePair<string, string> ProgramOffer  = new KeyValuePair<string, string>(string.Empty, string.Empty);
+        private KeyValuePair<string, string> EamcaSubscription  = new KeyValuePair<string, string>(string.Empty, string.Empty);
 
         public AssessmentSettings(MainWindow obj)
         {
@@ -349,11 +351,7 @@ namespace AzureMigrateExplore
             {
                 await PrepareSubscriptionPickerForSelectedProgram(selection.Key);
             }
-
-            if (UserInputObj != null)
-            {
-                UserInputObj.ProgramOffer = selection;
-            }
+            ProgramOffer = selection;
 
             mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
             mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
@@ -363,10 +361,8 @@ namespace AzureMigrateExplore
         {
             mainObj.MakeAssessmentSettingsActionButtonsEnabledDecision();
             mainObj.MakeAssessmentSettingsTabButtonEnableDecisions();
-            if (UserInputObj != null)
-            {
-                UserInputObj.EamcaSubscription = GetSelectedSubscription();
-            }
+
+            EamcaSubscription = GetSelectedSubscription();
         }
 
         private async Task PrepareSubscriptionPickerForSelectedProgram(string programKey)
@@ -928,6 +924,9 @@ namespace AzureMigrateExplore
 
             UserInputObj = userInputObj;
             UserInputObj.LoggerObj.ReportProgress += new EventHandler<LogEventHandler>(TrackProgress_ProgressHandler);
+
+            UserInputObj.ProgramOffer = ProgramOffer;
+            UserInputObj.EamcaSubscription = EamcaSubscription;
 
             try
             {
