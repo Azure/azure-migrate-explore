@@ -30,22 +30,21 @@ namespace Azure.Migrate.Explore.Models
     {
         public BusinessCaseYOYJSON()
         {
-            OnPremisesCostYOY = new BusinessCaseYOYCostBreakdown();
-            AzureCostYOY = new BusinessCaseYOYCostBreakdown();
-            SavingsYOY = new BusinessCaseYOYCostBreakdown();
+            OnPremisesCostYOY = new List<YearOnYearCost>();
+            AzureCostYOY = new List<YearOnYearCost>();
+            SavingsYOY = new List<YearOnYearCost>();
             AzureEmissionsEstimates = new List<YearOnYearEmission>();
-
             OnPremisesEmissionsEstimates = new List<YearOnYearEmission>();
         }
 
         [JsonProperty("onPremisesCost")]
-        public BusinessCaseYOYCostBreakdown OnPremisesCostYOY { get; set; }
+        public List<YearOnYearCost> OnPremisesCostYOY { get; set; }
 
         [JsonProperty("azureCost")]
-        public BusinessCaseYOYCostBreakdown AzureCostYOY { get; set; }
+        public List<YearOnYearCost> AzureCostYOY { get; set; }
 
         [JsonProperty("savings")]
-        public BusinessCaseYOYCostBreakdown SavingsYOY { get; set; }
+        public List<YearOnYearCost> SavingsYOY { get; set; }
 
         [JsonProperty("azureEmissionsEstimates")]
         public List<YearOnYearEmission> AzureEmissionsEstimates { get; set; }
@@ -84,6 +83,15 @@ namespace Azure.Migrate.Explore.Models
 
         [EnumMember(Value = "Year3")]
         Year3
+    }
+
+    public class YearOnYearCost
+    {
+        [JsonProperty("year")]
+        public string Year { get; set; }
+
+        [JsonProperty("cost")]
+        public double Cost { get; set; }
     }
 
     public class YearOnYearEmission

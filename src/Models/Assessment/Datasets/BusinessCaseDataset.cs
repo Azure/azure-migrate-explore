@@ -6,35 +6,42 @@ namespace Azure.Migrate.Explore.Models
     {
         public BusinessCaseDataset()
         {
-            OnPremIaaSCostDetails = new BusinessCaseDatasetCostDetails();
-            OnPremPaaSCostDetails = new BusinessCaseDatasetCostDetails();
-            OnPremAvsCostDetails = new BusinessCaseDatasetCostDetails();
-            AzureIaaSCostDetails = new BusinessCaseDatasetCostDetails();
-            AzurePaaSCostDetails = new BusinessCaseDatasetCostDetails();
-            AzureAvsCostDetails = new BusinessCaseDatasetCostDetails();
-            AzureArcEnabledOnPremisesCostDetails = new BusinessCaseDatasetCostDetails();
-            WindowsServerLicense = new BusinessCaseDatasetCostDetails();
-            SqlServerLicense = new BusinessCaseDatasetCostDetails();
-            EsuSavings = new BusinessCaseDatasetCostDetails();
+            ApplicationSummaryCostDetails = new BusinessCaseDatasetCostDetails();
+            CotsApplicationSummaryCostDetails = new BusinessCaseDatasetCostDetails();
+            CustomApplicationSummaryCostDetails = new BusinessCaseDatasetCostDetails();
+            IndependentWorkloadsSummaryCostDetails = new BusinessCaseDatasetCostDetails();
+            TotalAzureCostDetails = new BusinessCaseDatasetCostDetailsBreakup();
+            TotalOnPremisesCostDetails = new BusinessCaseDatasetCostDetailsBreakup();
+            azureArcEnabledOnPremisesCostDetails = new BusinessCaseDatasetCostDetailsBreakup();
+            futureAzureArcEnabledOnPremisesCostDetails = new BusinessCaseDatasetCostDetailsBreakup();
+            futureCostDetails = new BusinessCaseDatasetCostDetailsBreakup();
             TotalYOYCashFlowsAndEmissions = new BusinessCaseYOYJSON();
-            IaaSYOYCashFlows = new BusinessCaseYOYCostDetailsJSON();
-            AvsYOYCashFlows = new BusinessCaseYOYCostDetailsJSON();
         }
 
-        public BusinessCaseDatasetCostDetails OnPremIaaSCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails OnPremPaaSCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails OnPremAvsCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails AzureIaaSCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails AzurePaaSCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails AzureAvsCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails AzureArcEnabledOnPremisesCostDetails { get; set; } = null;
-        public BusinessCaseDatasetCostDetails WindowsServerLicense { get; set; }
-        public BusinessCaseDatasetCostDetails SqlServerLicense { get; set; }
-        public BusinessCaseDatasetCostDetails EsuSavings { get; set; }
-        public BusinessCaseYOYJSON TotalYOYCashFlowsAndEmissions { get; set; } = null;
-        public BusinessCaseYOYCostDetailsJSON IaaSYOYCashFlows { get; set; } = null;
-        public BusinessCaseYOYCostDetailsJSON AvsYOYCashFlows { get; set; } = null;
-        public CarbonEmissionsDetails TotalAzureSustainabilityDetails { get; set; } = null;
+        public BusinessCaseDatasetCostDetails ApplicationSummaryCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetails CotsApplicationSummaryCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetails CustomApplicationSummaryCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetails IndependentWorkloadsSummaryCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetailsBreakup TotalAzureCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetailsBreakup TotalOnPremisesCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetailsBreakup azureArcEnabledOnPremisesCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetailsBreakup futureAzureArcEnabledOnPremisesCostDetails { get; set; }
+        public BusinessCaseDatasetCostDetailsBreakup futureCostDetails { get; set; }
+        public BusinessCaseYOYJSON TotalYOYCashFlowsAndEmissions { get; set; }
+        public double WindowsAhubSavings { get; set; }
+        public double LinuxAhubSavings { get; set; }
+        public double SqlAhubSavings { get; set; }
+        public double SqlAzureCost { get; set; }
+        public double MachineAzureCost { get; set; }
+        public double AzureArcEnabledOnPremisesCost { get; set; }
+        public double FutureCostIncludingAzureArc { get; set; }
+        public double FutureEsuSavingsFor4YearsIncludingAzureArc { get; set; }
+        public double FutureManagementCostSavingsIncludingAzureArc { get; set; }
+        public double FutureSecurityCostSavingsIncludingAzureArc { get; set; }
+        public double AzureArcServicesCost { get; set; }
+        public double FutureAzureArcEnabledOnPremisesCost { get; set; }
+        public double FutureAzureArcServicesCost { get; set; }
+       public CarbonEmissionsDetails TotalAzureSustainabilityDetails { get; set; } = null;
         public CarbonEmissionsDetails TotalOnPremisesSustainabilityDetails { get; set; } = null;
     }
 }

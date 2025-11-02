@@ -29,14 +29,14 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
             int totalvCenters = vCenterHostData.FirstOrDefault()?.vCenters ?? 0;
             int totalHosts = vCenterHostData.FirstOrDefault()?.Hosts ?? 0;
 
-            double totalStorageCost = coreReportData.BusinessCaseObj.AzureAvsCost.StorageCost;
-            double totalNetworkCost = coreReportData.BusinessCaseObj.AzureAvsCost.NetworkCost;
-            double totalITStaffCost = coreReportData.BusinessCaseObj.AzureAvsCost.ITStaffCost;
-            double totalFacilitiesCost = coreReportData.BusinessCaseObj.AzureAvsCost.FacilitiesCost;
-            double computeAndLicenseCost = coreReportData.BusinessCaseObj.AzureAvsCost.ComputeLicenseCost;
+            double totalStorageCost = coreReportData.BusinessCaseObj.TotalAzureCostDetails.StorageCost;
+            double totalNetworkCost = coreReportData.BusinessCaseObj.TotalAzureCostDetails.NetworkCost;
+            double totalITStaffCost = coreReportData.BusinessCaseObj.TotalAzureCostDetails.ITLaborCost;
+            double totalFacilitiesCost = coreReportData.BusinessCaseObj.TotalAzureCostDetails.FacilitiesCost;
+            double computeAndLicenseCost = coreReportData.BusinessCaseObj.TotalAzureCostDetails.ComputeCost;
             double estimatedTotalCost = totalStorageCost + totalNetworkCost + totalITStaffCost + totalFacilitiesCost + computeAndLicenseCost;
 
-            double estimatedOnPremAvsCost = coreReportData.BusinessCaseObj.OnPremisesAvsCost.ComputeLicenseCost + coreReportData.BusinessCaseObj.OnPremisesAvsCost.EsuLicenseCost + coreReportData.BusinessCaseObj.OnPremisesAvsCost.StorageCost + coreReportData.BusinessCaseObj.OnPremisesAvsCost.NetworkCost + coreReportData.BusinessCaseObj.OnPremisesAvsCost.ITStaffCost + coreReportData.BusinessCaseObj.OnPremisesAvsCost.FacilitiesCost;
+            double estimatedOnPremAvsCost = coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.ComputeCost + coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.LicenseCost + coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.StorageCost + coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.NetworkCost + coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.ITLaborCost + coreReportData.BusinessCaseObj.TotalOnPremisesCostDetails.FacilitiesCost;
 
             double estimatedTotalSavings = estimatedOnPremAvsCost - estimatedTotalCost;
             double tco = estimatedTotalCost;
@@ -44,12 +44,11 @@ namespace Azure.Migrate.Explore.CopilotSummary.FilterExcelData
             double price = estimatedTotalSavings / estimatedOnPremAvsCost;
             string savingsPercentage = price <= 0 ? "" : price.ToString("0.00%");
 
-            double windowsServerLicensing = coreReportData.BusinessCaseObj.WindowsServerLicense.ComputeLicenseCost;
+            double windowsServerLicensing = 0;
 
-            double sqlServerLicensing = coreReportData.BusinessCaseObj.SqlServerLicense.ComputeLicenseCost;
+            double sqlServerLicensing = 0;
 
-
-            double esuLicensing = coreReportData.BusinessCaseObj.EsuSavings.ComputeLicenseCost;
+            double esuLicensing = 0;
 
             double totalAhubSavings = windowsServerLicensing + sqlServerLicensing;
 

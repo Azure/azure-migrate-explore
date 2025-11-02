@@ -293,24 +293,6 @@ namespace Azure.Migrate.Explore.Common
             return value;
         }
 
-        public static double GetBusinessCaseTotalOsLicensingCost(List<BusinessCaseOsLicensingDetail> details)
-        {
-            double total = 0;
-            foreach (var detail in details)
-                total += detail.TotalCost;
-
-            return total;
-        }
-
-        public static double GetBusinessCaseTotalPaaSLicensingCost(List<BusinessCaseOnPremisesPaaSLicensingCost> details)
-        {
-            double total = 0;
-            foreach (var detail in details)
-                total += detail.TotalCost;
-
-            return total;
-        }
-
         public static string GetSQLMIConfiguration(AzureSQLInstanceDataset azureSqlInstance)
         {
             string value = "";

@@ -27,10 +27,15 @@ namespace Azure.Migrate.Explore.Models
     {
         [JsonProperty("azureSettings")]
         public BusinessCaseAzureSettings AzureSettings { get; set; } = new BusinessCaseAzureSettings();
+
+        [JsonProperty("commonSettings")]
+        public BusinessCaseCommonSettings CommonSettings { get; set; } = new BusinessCaseCommonSettings();
+
+        [JsonProperty("billingSettings")]
+        public BillingSettings BillingSettings { get; set; } = new BillingSettings();
     }
 
-
-    public class BusinessCaseAzureSettings
+    public class BusinessCaseCommonSettings
     {
         [JsonProperty("targetLocation")]
         public string TargetLocation { get; set; }
@@ -46,7 +51,10 @@ namespace Azure.Migrate.Explore.Models
 
         [JsonProperty("businessCaseType")]
         public string BusinessCaseType { get; set; }
+    }
 
+    public class BusinessCaseAzureSettings
+    {
         [JsonProperty("savingsOption")]
         public string SavingsOption { get; set; }
 

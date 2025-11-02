@@ -120,11 +120,6 @@ namespace Azure.Migrate.Explore.Assessment.Processor
                     YOY_Emissions_List
                 );
             exportCoreReportObj.GenerateCoreReportExcel();
-            UserInputObj.LoggerObj.LogInformation(93 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated core report excel sheet");
-            
-            UserInputObj.LoggerObj.LogInformation(96 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated opportunity report excel sheet");
-
-            UserInputObj.LoggerObj.LogInformation(100 - UserInputObj.LoggerObj.GetCurrentProgress(), "Generated clash report excel sheet");
 
             UserInputObj.LoggerObj.LogInformation("Generating security and software insights report excel sheet");
             ExportSecurityAndSoftwareInsightReport exportSecurityAndSoftwareInsightReportObj = new ExportSecurityAndSoftwareInsightReport
@@ -319,174 +314,28 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         {
             UserInputObj.LoggerObj.LogInformation("Creating excel model for Business_Case");
 
-            Business_Case_Data.OnPremisesIaaSCost.ComputeLicenseCost =
-                BusinessCaseData.OnPremIaaSCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremIaaSCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesIaaSCost.EsuLicenseCost = BusinessCaseData.OnPremIaaSCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesIaaSCost.StorageCost = BusinessCaseData.OnPremIaaSCostDetails.StorageCost;
-            Business_Case_Data.OnPremisesIaaSCost.NetworkCost = BusinessCaseData.OnPremIaaSCostDetails.NetworkCost;
-            Business_Case_Data.OnPremisesIaaSCost.SecurityCost = BusinessCaseData.OnPremIaaSCostDetails.SecurityCost;
-            Business_Case_Data.OnPremisesIaaSCost.ITStaffCost = BusinessCaseData.OnPremIaaSCostDetails.ITStaffCost;
-            Business_Case_Data.OnPremisesIaaSCost.FacilitiesCost = BusinessCaseData.OnPremIaaSCostDetails.FacilitiesCost;
-            Business_Case_Data.OnPremisesIaaSCost.ManagementCost = BusinessCaseData.OnPremIaaSCostDetails.ManagementCost;
-
-            Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost = 
-                BusinessCaseData.OnPremPaaSCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesPaaSCost.EsuLicenseCost = BusinessCaseData.OnPremPaaSCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesPaaSCost.StorageCost = BusinessCaseData.OnPremPaaSCostDetails.StorageCost;
-            Business_Case_Data.OnPremisesPaaSCost.NetworkCost = BusinessCaseData.OnPremPaaSCostDetails.NetworkCost;
-            Business_Case_Data.OnPremisesPaaSCost.SecurityCost = BusinessCaseData.OnPremPaaSCostDetails.SecurityCost;
-            Business_Case_Data.OnPremisesPaaSCost.ITStaffCost = BusinessCaseData.OnPremPaaSCostDetails.ITStaffCost;
-            Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost = BusinessCaseData.OnPremPaaSCostDetails.FacilitiesCost;
-            Business_Case_Data.OnPremisesPaaSCost.ManagementCost = BusinessCaseData.OnPremPaaSCostDetails.ManagementCost;
-
-            Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost = 
-                BusinessCaseData.OnPremAvsCostDetails.ComputeLicenseCost - BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesAvsCost.EsuLicenseCost = BusinessCaseData.OnPremAvsCostDetails.EsuLicenseCost;
-            Business_Case_Data.OnPremisesAvsCost.StorageCost = BusinessCaseData.OnPremAvsCostDetails.StorageCost;
-            Business_Case_Data.OnPremisesAvsCost.NetworkCost = BusinessCaseData.OnPremAvsCostDetails.NetworkCost;
-            Business_Case_Data.OnPremisesAvsCost.SecurityCost = BusinessCaseData.OnPremAvsCostDetails.SecurityCost;
-            Business_Case_Data.OnPremisesAvsCost.ITStaffCost = BusinessCaseData.OnPremAvsCostDetails.ITStaffCost;
-            Business_Case_Data.OnPremisesAvsCost.FacilitiesCost = BusinessCaseData.OnPremAvsCostDetails.FacilitiesCost;
-            Business_Case_Data.OnPremisesAvsCost.ManagementCost = BusinessCaseData.OnPremAvsCostDetails.ManagementCost;
-
-            Business_Case_Data.TotalOnPremisesCost.ComputeLicenseCost =
-                Business_Case_Data.OnPremisesIaaSCost.ComputeLicenseCost +
-                Business_Case_Data.OnPremisesPaaSCost.ComputeLicenseCost +
-                Business_Case_Data.OnPremisesAvsCost.ComputeLicenseCost;
-
-            Business_Case_Data.TotalOnPremisesCost.EsuLicenseCost =
-                Business_Case_Data.OnPremisesIaaSCost.EsuLicenseCost +
-                Business_Case_Data.OnPremisesPaaSCost.EsuLicenseCost +
-                Business_Case_Data.OnPremisesAvsCost.EsuLicenseCost;
-
-            Business_Case_Data.TotalOnPremisesCost.StorageCost =
-                Business_Case_Data.OnPremisesIaaSCost.StorageCost +
-                Business_Case_Data.OnPremisesPaaSCost.StorageCost +
-                Business_Case_Data.OnPremisesAvsCost.StorageCost;
-
-            Business_Case_Data.TotalOnPremisesCost.NetworkCost =
-                Business_Case_Data.OnPremisesIaaSCost.NetworkCost +
-                Business_Case_Data.OnPremisesPaaSCost.NetworkCost +
-                Business_Case_Data.OnPremisesAvsCost.NetworkCost;
-
-            Business_Case_Data.TotalOnPremisesCost.SecurityCost =
-                Business_Case_Data.OnPremisesIaaSCost.SecurityCost +
-                Business_Case_Data.OnPremisesPaaSCost.SecurityCost +
-                Business_Case_Data.OnPremisesAvsCost.SecurityCost;
-
-            Business_Case_Data.TotalOnPremisesCost.ITStaffCost =
-                Business_Case_Data.OnPremisesIaaSCost.ITStaffCost +
-                Business_Case_Data.OnPremisesPaaSCost.ITStaffCost +
-                Business_Case_Data.OnPremisesAvsCost.ITStaffCost;
-
-            Business_Case_Data.TotalOnPremisesCost.FacilitiesCost =
-                Business_Case_Data.OnPremisesIaaSCost.FacilitiesCost +
-                Business_Case_Data.OnPremisesPaaSCost.FacilitiesCost +
-                Business_Case_Data.OnPremisesAvsCost.FacilitiesCost;
-
-            Business_Case_Data.TotalOnPremisesCost.ManagementCost =
-                Business_Case_Data.OnPremisesIaaSCost.ManagementCost +
-                Business_Case_Data.OnPremisesPaaSCost.ManagementCost +
-                Business_Case_Data.OnPremisesAvsCost.ManagementCost;
-
-            Business_Case_Data.AzureIaaSCost.ComputeLicenseCost = BusinessCaseData.AzureIaaSCostDetails.ComputeLicenseCost;
-            Business_Case_Data.AzureIaaSCost.EsuLicenseCost = 0;
-            Business_Case_Data.AzureIaaSCost.StorageCost = BusinessCaseData.AzureIaaSCostDetails.StorageCost;
-            Business_Case_Data.AzureIaaSCost.NetworkCost =
-                 0.05 * (Business_Case_Data.AzureIaaSCost.ComputeLicenseCost + Business_Case_Data.AzureIaaSCost.StorageCost);
-            Business_Case_Data.AzureIaaSCost.SecurityCost = BusinessCaseData.AzureIaaSCostDetails.SecurityCost;
-            Business_Case_Data.AzureIaaSCost.ITStaffCost = BusinessCaseData.AzureIaaSCostDetails.ITStaffCost;
-            Business_Case_Data.AzureIaaSCost.FacilitiesCost = BusinessCaseData.AzureIaaSCostDetails.FacilitiesCost;
-            Business_Case_Data.AzureIaaSCost.ManagementCost = BusinessCaseData.AzureIaaSCostDetails.ManagementCost;
-
-            Business_Case_Data.AzurePaaSCost.ComputeLicenseCost = BusinessCaseData.AzurePaaSCostDetails.ComputeLicenseCost;
-            Business_Case_Data.AzurePaaSCost.EsuLicenseCost = 0;
-            Business_Case_Data.AzurePaaSCost.StorageCost = BusinessCaseData.AzurePaaSCostDetails.StorageCost;
-            Business_Case_Data.AzurePaaSCost.NetworkCost = 
-                0.05 * (Business_Case_Data.AzurePaaSCost.ComputeLicenseCost + Business_Case_Data.AzurePaaSCost.StorageCost);
-            Business_Case_Data.AzurePaaSCost.SecurityCost = BusinessCaseData.AzurePaaSCostDetails.SecurityCost;
-            Business_Case_Data.AzurePaaSCost.ITStaffCost = BusinessCaseData.AzurePaaSCostDetails.ITStaffCost;
-            Business_Case_Data.AzurePaaSCost.FacilitiesCost = BusinessCaseData.AzurePaaSCostDetails.FacilitiesCost;
-            Business_Case_Data.AzurePaaSCost.ManagementCost = BusinessCaseData.AzurePaaSCostDetails.ManagementCost;
-
-            if (UserInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && !AzureAvsCalculator.IsCalculationComplete())
-            {
-                AzureAvsCalculator.SetParameters(AVSAssessmentsData);
-                AzureAvsCalculator.Calculate();
-            }
-
-            Business_Case_Data.AzureAvsCost.ComputeLicenseCost = AzureAvsCalculator.GetTotalAvsComputeCost() * 12.0;
-            Business_Case_Data.AzureAvsCost.EsuLicenseCost = BusinessCaseData.AzureAvsCostDetails.EsuLicenseCost;
-            Business_Case_Data.AzureAvsCost.StorageCost = BusinessCaseData.AzureAvsCostDetails.StorageCost;
-            Business_Case_Data.AzureAvsCost.NetworkCost = 
-                BusinessCaseData.AzureAvsCostDetails.NetworkCost + 
-                0.05 * (Business_Case_Data.AzureAvsCost.ComputeLicenseCost - BusinessCaseData.AzureAvsCostDetails.ComputeLicenseCost);
-            Business_Case_Data.AzureAvsCost.ITStaffCost = BusinessCaseData.AzureAvsCostDetails.ITStaffCost;
-            Business_Case_Data.AzureAvsCost.SecurityCost = BusinessCaseData.AzureAvsCostDetails.SecurityCost;
-            Business_Case_Data.AzureAvsCost.FacilitiesCost = BusinessCaseData.AzureAvsCostDetails.FacilitiesCost;
-            Business_Case_Data.AzureAvsCost.ManagementCost = BusinessCaseData.AzureAvsCostDetails.ManagementCost;
-
-            // Populate AzureArcEnabledOnPremisesCost from BusinessCaseData
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.ComputeLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ComputeLicenseCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.EsuLicenseCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.EsuLicenseCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.StorageCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.StorageCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.NetworkCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.NetworkCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.SecurityCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.SecurityCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.ITStaffCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ITStaffCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.FacilitiesCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.FacilitiesCost;
-            Business_Case_Data.AzureArcEnabledOnPremisesCost.ManagementCost = BusinessCaseData.AzureArcEnabledOnPremisesCostDetails.ManagementCost;
-
-            if (UserInputObj.BusinessProposal == BusinessProposal.AVS.ToString() && UserInputObj.WorkflowObj.IsExpressWorkflow)
-            {
-                Business_Case_Data.AzureAvsCost.ComputeLicenseCost = BusinessCaseData.AzureAvsCostDetails.ComputeLicenseCost -
-                    BusinessCaseData.AzureAvsCostDetails.EsuLicenseCost;
-
-                Business_Case_Data.AzureAvsCost.NetworkCost = BusinessCaseData.AzureAvsCostDetails.NetworkCost;
-            }
-
-            Business_Case_Data.TotalAzureCost.ComputeLicenseCost =
-                Business_Case_Data.AzureIaaSCost.ComputeLicenseCost +
-                Business_Case_Data.AzurePaaSCost.ComputeLicenseCost +
-                Business_Case_Data.AzureAvsCost.ComputeLicenseCost;
-
-            Business_Case_Data.TotalAzureCost.EsuLicenseCost =
-                Business_Case_Data.AzureIaaSCost.EsuLicenseCost +
-                Business_Case_Data.AzurePaaSCost.EsuLicenseCost +
-                Business_Case_Data.AzureAvsCost.EsuLicenseCost;
-
-            Business_Case_Data.TotalAzureCost.StorageCost =
-                Business_Case_Data.AzureIaaSCost.StorageCost +
-                Business_Case_Data.AzurePaaSCost.StorageCost +
-                Business_Case_Data.AzureAvsCost.StorageCost;
-
-            Business_Case_Data.TotalAzureCost.NetworkCost =
-                Business_Case_Data.AzureIaaSCost.NetworkCost +
-                Business_Case_Data.AzurePaaSCost.NetworkCost +
-                Business_Case_Data.AzureAvsCost.NetworkCost;
-
-            Business_Case_Data.TotalAzureCost.ITStaffCost =
-                Business_Case_Data.AzureIaaSCost.ITStaffCost +
-                Business_Case_Data.AzurePaaSCost.ITStaffCost +
-                Business_Case_Data.AzureAvsCost.ITStaffCost;
-
-            Business_Case_Data.TotalAzureCost.SecurityCost =
-                Business_Case_Data.AzureIaaSCost.SecurityCost +
-                Business_Case_Data.AzurePaaSCost.SecurityCost +
-                Business_Case_Data.AzureAvsCost.SecurityCost;
-
-            Business_Case_Data.TotalAzureCost.FacilitiesCost =
-                Business_Case_Data.AzureIaaSCost.FacilitiesCost +
-                Business_Case_Data.AzurePaaSCost.FacilitiesCost +
-                Business_Case_Data.AzureAvsCost.FacilitiesCost;
-
-            Business_Case_Data.TotalAzureCost.ManagementCost =
-                Business_Case_Data.AzureIaaSCost.ManagementCost +
-                Business_Case_Data.AzurePaaSCost.ManagementCost +
-                Business_Case_Data.AzureAvsCost.ManagementCost;
-
-            Business_Case_Data.WindowsServerLicense.ComputeLicenseCost = BusinessCaseData.WindowsServerLicense.ComputeLicenseCost;
-            Business_Case_Data.SqlServerLicense.ComputeLicenseCost = BusinessCaseData.SqlServerLicense.ComputeLicenseCost;
-            Business_Case_Data.EsuSavings.ComputeLicenseCost = BusinessCaseData.EsuSavings.ComputeLicenseCost;
+            Business_Case_Data.ApplicationSummaryCostDetails = BusinessCaseData.ApplicationSummaryCostDetails;
+            Business_Case_Data.CotsApplicationSummaryCostDetails = BusinessCaseData.CotsApplicationSummaryCostDetails;
+            Business_Case_Data.CustomApplicationSummaryCostDetails = BusinessCaseData.CustomApplicationSummaryCostDetails;
+            Business_Case_Data.IndependentWorkloadsSummaryCostDetails = BusinessCaseData.IndependentWorkloadsSummaryCostDetails;
+            Business_Case_Data.TotalAzureCostDetails = BusinessCaseData.TotalAzureCostDetails;
+            Business_Case_Data.TotalOnPremisesCostDetails = BusinessCaseData.TotalOnPremisesCostDetails;
+            Business_Case_Data.azureArcEnabledOnPremisesCostDetails = BusinessCaseData.azureArcEnabledOnPremisesCostDetails;
+            Business_Case_Data.futureAzureArcEnabledOnPremisesCostDetails = BusinessCaseData.futureAzureArcEnabledOnPremisesCostDetails;
+            Business_Case_Data.futureCostDetails = BusinessCaseData.futureCostDetails;
+            Business_Case_Data.WindowsAhubSavings = BusinessCaseData.WindowsAhubSavings;
+            Business_Case_Data.LinuxAhubSavings = BusinessCaseData.LinuxAhubSavings;
+            Business_Case_Data.SqlAhubSavings = BusinessCaseData.SqlAhubSavings;
+            Business_Case_Data.SqlAzureCost = BusinessCaseData.SqlAzureCost;
+            Business_Case_Data.MachineAzureCost = BusinessCaseData.MachineAzureCost;
+            Business_Case_Data.AzureArcEnabledOnPremisesCost = BusinessCaseData.AzureArcEnabledOnPremisesCost;
+            Business_Case_Data.FutureCostIncludingAzureArc = BusinessCaseData.FutureCostIncludingAzureArc;
+            Business_Case_Data.FutureEsuSavingsFor4YearsIncludingAzureArc = BusinessCaseData.FutureEsuSavingsFor4YearsIncludingAzureArc;
+            Business_Case_Data.FutureManagementCostSavingsIncludingAzureArc = BusinessCaseData.FutureManagementCostSavingsIncludingAzureArc;
+            Business_Case_Data.FutureSecurityCostSavingsIncludingAzureArc = BusinessCaseData.FutureSecurityCostSavingsIncludingAzureArc;
+            Business_Case_Data.AzureArcServicesCost = BusinessCaseData.AzureArcServicesCost;
+            Business_Case_Data.FutureAzureArcEnabledOnPremisesCost = BusinessCaseData.FutureAzureArcEnabledOnPremisesCost;
+            Business_Case_Data.FutureAzureArcServicesCost = BusinessCaseData.FutureAzureArcServicesCost;
 
             UserInputObj.LoggerObj.LogInformation("Updated Business_Case excel model");
         }
@@ -494,29 +343,18 @@ namespace Azure.Migrate.Explore.Assessment.Processor
         {
             UserInputObj.LoggerObj.LogInformation("Creating excel model for Cash_Flows");
 
-            Cash_Flows_Data.IaaSYOYCosts = BusinessCaseData.IaaSYOYCashFlows;
-            Cash_Flows_Data.AvsYOYCosts = BusinessCaseData.AvsYOYCashFlows;
-            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY;
-            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY;
-            Cash_Flows_Data.TotalYOYCosts.SavingsYOY = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY;
-
-            if (UserInputObj.BusinessProposal == BusinessProposal.Comprehensive.ToString())
-            {
-                Cash_Flows_Data.PaaSYOYCosts.OnPremisesCostYOY.Year0 = Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year0 - Cash_Flows_Data.IaaSYOYCosts.OnPremisesCostYOY.Year0;
-                Cash_Flows_Data.PaaSYOYCosts.OnPremisesCostYOY.Year1 = Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year1 - Cash_Flows_Data.IaaSYOYCosts.OnPremisesCostYOY.Year1;
-                Cash_Flows_Data.PaaSYOYCosts.OnPremisesCostYOY.Year2 = Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year2 - Cash_Flows_Data.IaaSYOYCosts.OnPremisesCostYOY.Year2;
-                Cash_Flows_Data.PaaSYOYCosts.OnPremisesCostYOY.Year3 = Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year3 - Cash_Flows_Data.IaaSYOYCosts.OnPremisesCostYOY.Year3;
-
-                Cash_Flows_Data.PaaSYOYCosts.AzureCostYOY.Year0 = Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year0 - Cash_Flows_Data.IaaSYOYCosts.AzureCostYOY.Year0;
-                Cash_Flows_Data.PaaSYOYCosts.AzureCostYOY.Year1 = Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year1 - Cash_Flows_Data.IaaSYOYCosts.AzureCostYOY.Year1;
-                Cash_Flows_Data.PaaSYOYCosts.AzureCostYOY.Year2 = Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year2 - Cash_Flows_Data.IaaSYOYCosts.AzureCostYOY.Year2;
-                Cash_Flows_Data.PaaSYOYCosts.AzureCostYOY.Year3 = Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year3 - Cash_Flows_Data.IaaSYOYCosts.AzureCostYOY.Year3;
-
-                Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year0 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year0 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year0;
-                Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year1 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year1 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year1;
-                Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year2 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year2 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year2;
-                Cash_Flows_Data.PaaSYOYCosts.SavingsYOY.Year3 = Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year3 - Cash_Flows_Data.IaaSYOYCosts.SavingsYOY.Year3;
-            }
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.AzureCostYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.AzureCostYOY[3].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.OnPremisesCostYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.OnPremisesCostYOY[3].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year0 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[0].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year1 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[1].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year2 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[2].Cost;
+            Cash_Flows_Data.TotalYOYCosts.SavingsYOY.Year3 = BusinessCaseData.TotalYOYCashFlowsAndEmissions.SavingsYOY[3].Cost;
 
             UserInputObj.LoggerObj.LogInformation("Updated excel model for Cash_Flows");
         }
