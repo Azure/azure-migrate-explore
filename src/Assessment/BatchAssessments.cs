@@ -164,7 +164,9 @@ namespace Azure.Migrate.Explore.Assessment
 
                 if (AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.Completed ||
                     AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.OutDated ||
-                    AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.Invalid)
+                    AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.Invalid ||
+                    AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.OutOfSync ||
+                    AssessmentStatusMap[assessmentInfo] == AssessmentPollResponse.Finished)
                     break;
             }
 

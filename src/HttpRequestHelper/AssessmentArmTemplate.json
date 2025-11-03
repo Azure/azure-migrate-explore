@@ -366,16 +366,52 @@
       "properties": {
         "assessmentArmIds": [
           "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+          "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]",
           "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+          "[concat(parameters('assessmentProjectId'), '/avsAssessments/', parameters('assessmentName'), '-avs')]",
+          "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]"
+        ],
+        "settings": {
+          "recommendRehostForCots": true
+        },
+        "details": {
+          "status": "Created"
+        },
+        "scope": {
+          "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+          "scopeType": "AzureResourceGraphQuery"
+        }
+      },
+      "dependsOn": [
+        "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+        "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]",
+        "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+        "[concat(parameters('assessmentProjectId'), '/avsAssessments/', parameters('assessmentName'), '-avs')]",
+        "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]"
+      ],
+      "id": "[concat(parameters('assessmentProjectId'), '/applicationAssessments/', parameters('assessmentName'), '-application')]",
+      "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-application')]",
+      "type": "Microsoft.Migrate/assessmentprojects/applicationAssessments"
+    },
+    {
+      "apiVersion": "2025-09-09-preview",
+      "properties": {
+        "assessmentArmIds": [
+          "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+          "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]",
+          "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+          "[concat(parameters('assessmentProjectId'), '/avsAssessments/', parameters('assessmentName'), '-avs')]",
           "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]",
-          "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]"
+          "[concat(parameters('assessmentProjectId'), '/applicationAssessments/', parameters('assessmentName'), '-application')]"
         ]
       },
       "dependsOn": [
         "[concat(parameters('assessmentProjectId'), '/sqlAssessments/', parameters('assessmentName'), '-sql')]",
+        "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]",
         "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]",
+        "[concat(parameters('assessmentProjectId'), '/avsAssessments/', parameters('assessmentName'), '-avs')]",
         "[concat(parameters('assessmentProjectId'), '/webAppCompoundAssessments/', parameters('assessmentName'), '-webapp')]",
-        "[concat(parameters('assessmentProjectId'), '/pgSqlAssessments/', parameters('assessmentName'), '-pgsql')]"
+        "[concat(parameters('assessmentProjectId'), '/applicationAssessments/', parameters('assessmentName'), '-application')]"
       ],
       "id": "[concat(parameters('assessmentProjectId'), '/heterogeneousAssessments/', parameters('assessmentName'))]",
       "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'))]",

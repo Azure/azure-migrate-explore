@@ -31,7 +31,15 @@ namespace Azure.Migrate.Explore.Common
         Invalid,
 
         [Description("Error")]
-        Error
+        Error,
+
+        // finished 
+        [Description("Finished")]
+        Finished,
+
+        //out of sync
+        [Description("Out of Sync")]
+        OutOfSync
     }
 
     public enum EnvironmentType
