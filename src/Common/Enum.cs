@@ -31,7 +31,10 @@ namespace Azure.Migrate.Explore.Common
         Invalid,
 
         [Description("Error")]
-        Error
+        Error,
+
+        [Description("Failed")]
+        Failed
     }
 
     public enum EnvironmentType
