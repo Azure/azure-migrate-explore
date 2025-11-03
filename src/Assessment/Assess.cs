@@ -324,6 +324,12 @@ namespace Azure.Migrate.Explore.Assessment
                 throw;
             }
 
+            if (bizCaseCompletionResultKvp.Value !=  AssessmentPollResponse.Completed)
+            {
+                UserInputObj.LoggerObj.LogError("Business case creation did not complete successfully. Assessment process terminating.");
+                return false;
+            }
+
             UserInputObj.LoggerObj.LogInformation($"Business case {bizCaseCompletionResultKvp.Key.BusinessCaseName} is in {bizCaseCompletionResultKvp.Value.ToString()} state");
 
             UserInputObj.LoggerObj.LogInformation($"General VM count: {GeneralVM.Count}");

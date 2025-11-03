@@ -111,7 +111,8 @@ namespace Azure.Migrate.Explore.Assessment
 
                 if (pollResult == AssessmentPollResponse.Completed ||
                     pollResult == AssessmentPollResponse.OutDated ||
-                    pollResult == AssessmentPollResponse.Invalid)
+                    pollResult == AssessmentPollResponse.Invalid ||
+                    pollResult == AssessmentPollResponse.Failed )
                     break;
             }
 

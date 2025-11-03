@@ -49,7 +49,15 @@ namespace Azure.Migrate.Explore.Assessment
 
                     if (response.IsSuccessStatusCode && IsAssessmentCompleted(content))
                     {
-                        userInputObj.LoggerObj.LogInformation("Heterogeneous assessment completed successfully.");
+                        if(IsAssessmentInvalid(content))
+                        {
+                            userInputObj.LoggerObj.LogError($"Heterogeneous assessment '{assessmentInfo.AssessmentName}' is in an invalid state.");
+                            return false;
+                        }
+                        else
+                        {
+                            userInputObj.LoggerObj.LogInformation($"Heterogeneous assessment '{assessmentInfo.AssessmentName}' completed successfully.");
+                        }
                         return true;
                     }
 
@@ -77,7 +85,30 @@ namespace Azure.Migrate.Explore.Assessment
                         if (props.TryGetProperty("status", out var statusProp))
                         {
                             string? status = statusProp.GetString()?.ToLowerInvariant();
-                            return status == "completed" || status == "succeeded";
+                            return status == "completed" || status == "invalid" || status == "outdated" || status == "outofsync";
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // ignore malformed JSON
+            }
+            return false;
+        }
+
+        private bool IsAssessmentInvalid(string jsonResponse)
+        {
+            try
+            {
+                using (var doc = JsonDocument.Parse(jsonResponse))
+                {
+                    if (doc.RootElement.TryGetProperty("properties", out var props))
+                    {
+                        if (props.TryGetProperty("status", out var statusProp))
+                        {
+                            string? status = statusProp.GetString()?.ToLowerInvariant();
+                            return status == "invalid";
                         }
                     }
                 }
