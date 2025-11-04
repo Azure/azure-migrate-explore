@@ -33,6 +33,9 @@ namespace Azure.Migrate.Explore.Common
         [Description("Error")]
         Error,
 
+        [Description("Failed")]
+        Failed,
+
         // finished 
         [Description("Finished")]
         Finished,

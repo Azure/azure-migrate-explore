@@ -1109,6 +1109,10 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     userInputObj.LoggerObj.LogError($"Business case {businessCaseInfo.BusinessCaseName} is invalid, corresponding datapoints will contain default values");
                     return AssessmentPollResponse.Invalid;
+                }else if (businessCaseInformationObj.Properties.State.Equals("Failed"))
+                {
+                    userInputObj.LoggerObj.LogError($"Business case {businessCaseInfo.BusinessCaseName} is failed");
+                    return AssessmentPollResponse.Failed;
                 }
                 else if (businessCaseInformationObj.Properties.State.Equals("OutOfSync"))
                 {
@@ -1121,7 +1125,7 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                     return AssessmentPollResponse.Finished;
                 }
 
-                userInputObj.LoggerObj.LogInformation($"Business case {businessCaseInfo.BusinessCaseName} status is {businessCaseInformationObj.Properties.State}");
+                    userInputObj.LoggerObj.LogInformation($"Business case {businessCaseInfo.BusinessCaseName} status is {businessCaseInformationObj.Properties.State}");
 
                 return AssessmentPollResponse.NotCompleted;
             }
