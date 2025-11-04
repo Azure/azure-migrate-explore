@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-using DocumentFormat.OpenXml.Office2010.Ink;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
