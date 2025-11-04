@@ -85,7 +85,10 @@ namespace Azure.Migrate.Explore.Assessment
                         if (props.TryGetProperty("status", out var statusProp))
                         {
                             string? status = statusProp.GetString()?.ToLowerInvariant();
-                            return status == "completed" || status == "invalid" || status == "outdated" || status == "outofsync";
+                            // reference AzureMigrate-MigrationService\src\Common\Enumerations\AssessmentStatus.cs
+                            return status == "completed" || status == "succeeded" || status == "finished" ||
+                                   status == "invalid" || status == "outofsync" ||
+                                   status == "outdated";
                         }
                     }
                 }

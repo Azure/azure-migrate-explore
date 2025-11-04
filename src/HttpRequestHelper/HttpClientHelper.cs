@@ -1,24 +1,23 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+using Azure.Migrate.Explore.Authentication;
+using Azure.Migrate.Explore.Common;
+using Azure.Migrate.Explore.Models;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Azure.Migrate.Explore.Authentication;
-using Azure.Migrate.Explore.Common;
-using Azure.Migrate.Explore.Models;
 
 namespace Azure.Migrate.Explore.HttpRequestHelper
 {
@@ -888,7 +887,16 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                         userInputObj.LoggerObj.LogError($"Assessment {assessmentInfo.AssessmentName} is invalid, corresponding datapoints will contain default values");
                         return AssessmentPollResponse.Invalid;
                     }
-                    userInputObj.LoggerObj.LogInformation($"Assessment {assessmentInfo.AssessmentName} status is {avsAssessmentInformationObj.Properties.Details.Status}");
+                    else if (avsAssessmentInformationObj.Properties.Details.Status.Equals("OutOfSync"))
+                    {
+                        userInputObj.LoggerObj.LogWarning($"Assessment {assessmentInfo.AssessmentName} is out of sync");
+                        return AssessmentPollResponse.OutOfSync;
+                    }
+                    else if (avsAssessmentInformationObj.Properties.Details.Status.Equals("Finished"))
+                    {
+                        userInputObj.LoggerObj.LogWarning($"Assessment {assessmentInfo.AssessmentName} is finished");
+                        return AssessmentPollResponse.Finished;
+                    }
                 }
                 else
                 {
@@ -907,6 +915,16 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                     {
                         userInputObj.LoggerObj.LogError($"Assessment {assessmentInfo.AssessmentName} is invalid, corresponding datapoints will contain default values");
                         return AssessmentPollResponse.Invalid;
+                    }
+                    else if (assessmentInformationObj.Properties.Status.Equals("OutOfSync"))
+                    {
+                        userInputObj.LoggerObj.LogWarning($"Assessment {assessmentInfo.AssessmentName} is out of sync");
+                        return AssessmentPollResponse.OutOfSync;
+                    }
+                    else if (assessmentInformationObj.Properties.Status.Equals("Finished"))
+                    {
+                        userInputObj.LoggerObj.LogWarning($"Assessment {assessmentInfo.AssessmentName} is finished");
+                        return AssessmentPollResponse.Finished;
                     }
 
                     userInputObj.LoggerObj.LogInformation($"Assessment {assessmentInfo.AssessmentName} status is {assessmentInformationObj.Properties.Status}");
@@ -1094,6 +1112,16 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                 {
                     userInputObj.LoggerObj.LogError($"Business case {businessCaseInfo.BusinessCaseName} is failed");
                     return AssessmentPollResponse.Failed;
+                }
+                else if (businessCaseInformationObj.Properties.State.Equals("OutOfSync"))
+                {
+                    userInputObj.LoggerObj.LogWarning($"Business case {businessCaseInfo.BusinessCaseName} is out of sync");
+                    return AssessmentPollResponse.OutOfSync;
+                }
+                else if (businessCaseInformationObj.Properties.State.Equals("Finished"))
+                {
+                    userInputObj.LoggerObj.LogWarning($"Business case {businessCaseInfo.BusinessCaseName} is finished");
+                    return AssessmentPollResponse.Finished;
                 }
 
                     userInputObj.LoggerObj.LogInformation($"Business case {businessCaseInfo.BusinessCaseName} status is {businessCaseInformationObj.Properties.State}");

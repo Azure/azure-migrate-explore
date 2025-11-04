@@ -28,4 +28,39 @@ namespace Azure.Migrate.Explore.Models
         [JsonProperty("Name")]
         public string Name { get; set; }
     }
+
+    #region Resource Links Models
+    public class ResourceLinksDirectResponse
+    {
+        [JsonProperty("value")]
+        public List<ResourceLink> Value { get; set; }
+    }
+
+    public class ResourceLink
+    {
+        [JsonProperty("properties")]
+        public ResourceLinkProperties Properties { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
+    public class ResourceLinkProperties
+    {
+        [JsonProperty("sourceId")]
+        public string SourceId { get; set; }
+
+        [JsonProperty("targetId")]
+        public string TargetId { get; set; }
+
+        [JsonProperty("notes")]
+        public string Notes { get; set; }
+    }
+    #endregion
 }

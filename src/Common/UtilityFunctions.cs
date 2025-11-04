@@ -88,7 +88,10 @@ namespace Azure.Migrate.Explore.Common
         public static bool IsAssessmentCompleted(KeyValuePair<AssessmentInformation, AssessmentPollResponse> assessmentInfo)
         {
             return (assessmentInfo.Value == AssessmentPollResponse.Completed ||
-                    assessmentInfo.Value == AssessmentPollResponse.OutDated);
+                    assessmentInfo.Value == AssessmentPollResponse.OutDated ||
+                    assessmentInfo.Value == AssessmentPollResponse.OutOfSync ||
+                    assessmentInfo.Value == AssessmentPollResponse.Finished ||
+                    assessmentInfo.Value == AssessmentPollResponse.Invalid);
         }
 
         public static double GetAzureBackupMonthlyCostEstimate(List<AssessedDisk> disks, string currencySymbol)

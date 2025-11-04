@@ -338,14 +338,54 @@ namespace Azure.Migrate.Explore.Assessment
 
             HttpClientHelper clientHelper = new HttpClientHelper();
 
-            var siteConditions = ListOfSites != null && ListOfSites.Count > 0
-                ? string.Join(" or ", ListOfSites.Select(site =>
-                    $"id contains '{site.Replace("'", "''")}'"))
-                : null;
+            // Fetch discovery hub IDs from resource links
+            List<string> discoveryHubIds = GetDiscoveryHubTargetIds().GetAwaiter().GetResult();
 
-            var argQuery = siteConditions != null
-                ? $"migrateresources | where {siteConditions}"
-                : $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";            
+            // Build combined ARG query with both site conditions and discovery hub application members
+            string argQuery;
+            string baseQuery = "";
+            string discoveryHubQuery = "";
+
+            // Add regular site conditions
+            if (ListOfSites != null && ListOfSites.Count > 0)
+            {
+                var siteConditions = string.Join(" or ", ListOfSites.Select(site =>
+                    $"id has '{site.Replace("'", "''")}'"));
+                baseQuery = $"migrateresources | where {siteConditions}";
+
+                UserInputObj.LoggerObj.LogInformation($"Including {ListOfSites.Count} site(s) in ARG query");
+            }
+
+            // Add discovery hub application query
+            if (discoveryHubIds != null && discoveryHubIds.Count > 0)
+            {
+                var hubConditions = string.Join(" or ", discoveryHubIds.Select(hub =>
+                    $"['id'] has '{hub.Replace("'", "''")}'"));
+
+                discoveryHubQuery = $"migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications' | where {hubConditions} | where properties.applicationType has '' | extend appId = tolower(id) | where true | join kind = leftouter (migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications/members' | where {hubConditions} | extend appId = tolower(tostring(split(id,'/members/')[0])) | summarize memberCount = count(), memberResourceIds = make_set(properties.memberResourceId) by appId) on $left.appId == $right.appId | project armId = tolower(id), id = tolower(id), type, appId, memberCount, memberResourceIds, properties, name, systemData.CreatedAt";
+
+                UserInputObj.LoggerObj.LogInformation($"Including {discoveryHubIds.Count} discovery hub(s) for applications in ARG query");
+            }
+
+            // Combine base query with discovery hub query
+            if (!string.IsNullOrEmpty(baseQuery) && !string.IsNullOrEmpty(discoveryHubQuery))
+            {
+                argQuery = baseQuery + " | union (" + discoveryHubQuery + ")";
+            }
+            else if (!string.IsNullOrEmpty(baseQuery))
+            {
+                argQuery = baseQuery;
+            }
+            else
+            {
+                // Fallback to subscription/resource group filter
+                argQuery = $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";
+                UserInputObj.LoggerObj.LogInformation("No sites or discovery hubs found, using subscription/resource group filter");
+            }
+
+
+            UserInputObj.LoggerObj.LogDebug($"Final ARG query: {argQuery}");
+
             List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
             string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
 
@@ -448,7 +488,9 @@ namespace Azure.Migrate.Explore.Assessment
 
                         if (currentStatus == AssessmentPollResponse.OutDated ||
                             currentStatus == AssessmentPollResponse.Invalid ||
-                            currentStatus == AssessmentPollResponse.Error)
+                            currentStatus == AssessmentPollResponse.Error ||
+                            currentStatus == AssessmentPollResponse.OutOfSync ||
+                            currentStatus == AssessmentPollResponse.Finished)
                         {
                             UserInputObj.LoggerObj.LogWarning($"AVS assessment {assessment.AssessmentName} reached terminal state {currentStatus}.");
                             break;
@@ -828,5 +870,81 @@ namespace Azure.Migrate.Explore.Assessment
             return false;
         }
         #endregion
+
+        private async Task<List<string>> GetDiscoveryHubTargetIds()
+        {
+            var discoveryHubIds = new List<string>();
+            int numberOfTries = 0;
+            const int maxRetries = 3;
+
+            while (numberOfTries < maxRetries)
+            {
+                try
+                {
+                    UserInputObj.LoggerObj.LogInformation($"Fetching discovery hub links from migrate project (Attempt {numberOfTries + 1}/{maxRetries})");
+
+                    // Construct the resource links API URL
+                    string resourceLinksUrl = $"{Routes.ProtocolScheme}{Routes.AzureManagementApiHostname}{Routes.ForwardSlash}" +
+                                            $"{Routes.SubscriptionPath}{Routes.ForwardSlash}{UserInputObj.Subscription.Key}{Routes.ForwardSlash}" +
+                                            $"{Routes.ResourceGroupPath}{Routes.ForwardSlash}{UserInputObj.ResourceGroupName.Value}{Routes.ForwardSlash}" +
+                                            $"{Routes.ProvidersPath}{Routes.ForwardSlash}{Routes.MigrateProvidersPath}{Routes.ForwardSlash}" +
+                                            $"{Routes.MigrateProjectsPath}{Routes.ForwardSlash}{UserInputObj.AzureMigrateProjectName.Value}{Routes.ForwardSlash}" +
+                                            $"providers/Microsoft.Resources/links{Routes.QueryStringQuestionMark}" +
+                                            $"{Routes.QueryParameterApiVersion}{Routes.QueryStringEquals}2016-09-01";
+
+                    UserInputObj.LoggerObj.LogDebug($"Resource links URL: {resourceLinksUrl}");
+
+                    // Make the GET request
+                    HttpClientHelper clientHelper = new HttpClientHelper();
+                    string jsonResponse = await clientHelper.GetHttpRequestJsonStringResponse(resourceLinksUrl, UserInputObj);
+
+                    // Parse the direct response (not batch)
+                    var responseObj = JsonConvert.DeserializeObject<ResourceLinksDirectResponse>(jsonResponse);
+
+                    if (responseObj?.Value != null && responseObj.Value.Count > 0)
+                    {
+                        foreach (var link in responseObj.Value)
+                        {
+                            if (!string.IsNullOrEmpty(link.Properties?.TargetId) &&
+                                link.Properties.TargetId.Contains("Microsoft.ApplicationMigration/discoveryHubs", StringComparison.OrdinalIgnoreCase))
+                            {
+                                discoveryHubIds.Add(link.Properties.TargetId);
+                                UserInputObj.LoggerObj.LogInformation($"Found discovery hub: {link.Properties.TargetId}");
+                            }
+                        }
+                    }
+
+                    UserInputObj.LoggerObj.LogInformation($"Total discovery hubs found: {discoveryHubIds.Count}");
+
+                    // Success - break out of retry loop
+                    break;
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    numberOfTries++;
+
+                    // Check if we should retry
+                    if (numberOfTries < maxRetries && HttpUtilities.IsRetryNeeded(null, ex))
+                    {
+                        UserInputObj.LoggerObj.LogWarning($"Failed to retrieve discovery hub links (Attempt {numberOfTries}/{maxRetries}): {ex.Message}. Retrying in 60 seconds...");
+                        await Task.Delay(60000); // Wait 60 seconds before retry
+                    }
+                    else
+                    {
+                        // Max retries reached or non-retryable exception
+                        UserInputObj.LoggerObj.LogWarning($"Failed to retrieve discovery hub links after {numberOfTries} attempts: {ex.Message}");
+
+                        // Return empty list instead of failing the entire assessment
+                        break;
+                    }
+                }
+            }
+
+            return discoveryHubIds;
+        }
     }
 }
