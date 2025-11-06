@@ -47,7 +47,8 @@ $workbooks = @(
             "EFFORT_Hr_CODE_SCAN",
             "SECURITY_SCORE_CODE_SCAN",
             "CLOUD_MATURITY_SCORE_CODE_SCAN",
-            "GREEN_IMPACT_CODE_SCAN"
+            "GREEN_IMPACT_CODE_SCAN",
+	        "MIGRATION_READINESS"
         );
         "Code_Changes_Workloads" = @(
             "SERVER_NAME",
@@ -115,7 +116,8 @@ $workbooks = @(
             "EFFORT_Hr_CODE_SCAN",
             "SECURITY_SCORE_CODE_SCAN",
             "CLOUD_MATURITY_SCORE_CODE_SCAN",
-            "GREEN_IMPACT_CODE_SCAN"
+            "GREEN_IMPACT_CODE_SCAN",
+	        "MIGRATION_READINESS"
         );
         "Code_Changes_Workloads" = @(
             "SERVER_NAME",
