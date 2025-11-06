@@ -443,7 +443,7 @@ namespace AzureMigrateExplore
 
         private void EnableBusinessProposal()
         {
-            QuickAVSRadioButton.IsEnabled = true;
+            QuickAVSRadioButton.IsEnabled = false;
             ComprehensiveRadioButton.IsEnabled = true;
         }
 
@@ -460,7 +460,7 @@ namespace AzureMigrateExplore
         private void CheckOnlyQuickAvsProposal()
         {
             QuickAVSRadioButton.IsChecked = true;
-            QuickAVSRadioButton.IsEnabled = true;
+            QuickAVSRadioButton.IsEnabled = false;
             ComprehensiveRadioButton.IsEnabled = true;
         }
 
