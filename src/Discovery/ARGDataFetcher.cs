@@ -381,6 +381,136 @@ namespace AzureMigrateExplore.Discovery
             return string.Empty;
         }
 
+        public static async Task<List<string>> GetDiscoveryHubApplicationIdsAsync(
+            UserInput userInputObj,
+            string[] subscriptions,
+            List<string> discoveryHubIds)
+        {
+            var applicationIds = new List<string>();
+
+            if (discoveryHubIds == null || !discoveryHubIds.Any())
+            {
+                return applicationIds;
+            }
+
+            try
+            {
+                // Build the hub conditions for the query
+                var hubConditions = string.Join(" or ", discoveryHubIds.Select(hub =>
+                    $"id contains \"{hub.Replace("\"", "\\\"")}applications/\""));
+
+                var query = $@"migrateresources
+| where {hubConditions}
+| where type !contains ""members""
+| project id";
+
+                userInputObj.LoggerObj.LogInformation($"Fetching application IDs for {discoveryHubIds.Count} discovery hub(s)");
+                userInputObj.LoggerObj.LogDebug($"Application IDs ARG query: {query}");
+
+                var argPayload = CreateArgPayload(subscriptions, query);
+
+                // Execute query
+                var httpHelper = new HttpClientHelper();
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, argPayload);
+
+                if (!string.IsNullOrEmpty(jsonResponse))
+                {
+                    var response = JsonConvert.DeserializeObject<JObject>(jsonResponse);
+                    var data = response?["data"] as JArray;
+
+                    if (data != null)
+                    {
+                        foreach (var item in data)
+                        {
+                            var id = item["id"]?.ToString();
+                            if (!string.IsNullOrEmpty(id))
+                            {
+                                applicationIds.Add(id);
+                            }
+                        }
+                    }
+                }
+
+                userInputObj.LoggerObj.LogInformation($"Found {applicationIds.Count} application(s) in discovery hubs");
+            }
+            catch (Exception ex)
+            {
+                userInputObj.LoggerObj?.LogError($"Failed to fetch application IDs from discovery hubs: {ex.Message}");
+                userInputObj.LoggerObj?.LogDebug($"Full exception details: {ex}");
+            }
+
+            return applicationIds;
+        }
+
+        public static async Task<List<string>> GetWorkloadIdsAsync(
+            UserInput userInputObj,
+            string[] subscriptions,
+            List<string> sites)
+        {
+            var workloadIds = new List<string>();
+
+            if (sites == null || !sites.Any())
+            {
+                userInputObj.LoggerObj?.LogInformation("No sites provided for workload ID fetching");
+                return workloadIds;
+            }
+
+            try
+            {
+                // Build site conditions for the query
+                var siteConditions = string.Join(" or ", sites.Select(site =>
+                    $"id contains \"{site.Replace("\"", "\\\"")}\""));
+
+                // Build a unified query to fetch all workload types
+                var query = $@"migrateresources
+| where {siteConditions}
+| where type in~ (
+    ""microsoft.applicationmigration/pgsqlsites/pgsqlinstances"",
+    ""microsoft.offazure/mastersites/webappsites/iiswebapplications"",
+    ""microsoft.offazure/mastersites/webappsites/tomcatwebapplications"",
+    ""microsoft.offazure/mastersites/sqlsites/sqldatabases"",
+    ""microsoft.offazure/mastersites/sqlsites/sqlservers""
+)
+| project id";
+
+                userInputObj.LoggerObj.LogInformation($"Fetching workload IDs for {sites.Count} site(s)");
+                userInputObj.LoggerObj.LogDebug($"Workload IDs ARG query: {query}");
+
+                var argPayload = CreateArgPayload(subscriptions, query);
+
+                // Execute query
+                var httpHelper = new HttpClientHelper();
+                string jsonResponse = await httpHelper.GetHttpResponseForARGQueryWithPagination(userInputObj, argPayload);
+
+                if (!string.IsNullOrEmpty(jsonResponse))
+                {
+                    var response = JsonConvert.DeserializeObject<JObject>(jsonResponse);
+                    var data = response?["data"] as JArray;
+
+                    if (data != null)
+                    {
+                        foreach (var item in data)
+                        {
+                            var id = item["id"]?.ToString();
+                            if (!string.IsNullOrEmpty(id))
+                            {
+                                workloadIds.Add(id);
+                            }
+                        }
+                    }
+                }
+
+                userInputObj.LoggerObj.LogInformation($"Found {workloadIds.Count} workload(s) across all sites");
+            }
+            catch (Exception ex)
+            {
+                userInputObj.LoggerObj?.LogError($"Failed to fetch workload IDs: {ex.Message}");
+                userInputObj.LoggerObj?.LogDebug($"Full exception details: {ex}");
+            }
+
+            return workloadIds;
+        }
+
         private static string CreateArgPayload(string[] subscriptions, string query)
         {
             var payload = new

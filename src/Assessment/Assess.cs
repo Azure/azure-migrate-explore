@@ -294,8 +294,72 @@ namespace Azure.Migrate.Explore.Assessment
                 .ToList();
 
             UserInputObj.LoggerObj.LogInformation($"Creating scoped business case with {scopedMachineIds.Count} machines");
+            // Fetch discovery hub IDs from resource links
+            List<string> discoveryHubIds = GetDiscoveryHubTargetIds().GetAwaiter().GetResult();
 
-            BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId, scopedMachineIds);
+            // Fetch application IDs from discovery hubs
+            List<string> applicationIds = new List<string>();
+            if (discoveryHubIds != null && discoveryHubIds.Any())
+            {
+                string[] subscriptions = new[] { UserInputObj.Subscription.Key };
+                applicationIds = AzureMigrateExplore.Discovery.ARGDataFetcher.GetDiscoveryHubApplicationIdsAsync(
+                    UserInputObj, subscriptions, discoveryHubIds).GetAwaiter().GetResult();
+            }
+
+            // Fetch workload IDs from sites
+            List<string> workloadIds = new List<string>();
+            if (ListOfSites != null && ListOfSites.Any())
+            {
+                string[] subscriptions = new[] { UserInputObj.Subscription.Key };
+                workloadIds = AzureMigrateExplore.Discovery.ARGDataFetcher.GetWorkloadIdsAsync(
+                    UserInputObj, subscriptions, ListOfSites).GetAwaiter().GetResult();
+            }
+
+            // Build combined ARG query with both site conditions and discovery hub application members
+            string argQuery;
+            string baseQuery = "";
+            string discoveryHubQuery = "";
+            var siteConditions = "";
+            // Add regular site conditions
+            if (ListOfSites != null && ListOfSites.Count > 0)
+            {
+                siteConditions = string.Join(" or ", ListOfSites.Select(site =>
+                    $"id has '{site.Replace("'", "''")}'"));
+                baseQuery = $"migrateresources | where {siteConditions}";
+
+                UserInputObj.LoggerObj.LogInformation($"Including {ListOfSites.Count} site(s) in ARG query");
+            }
+
+            // Add discovery hub application query
+            if (discoveryHubIds != null && discoveryHubIds.Count > 0)
+            {
+                var hubConditions = string.Join(" or ", discoveryHubIds.Select(hub =>
+                    $"['id'] has '{hub.Replace("'", "''")}'"));
+
+                discoveryHubQuery = $"migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications' | where {hubConditions} | where properties.applicationType has '' | extend appId = tolower(id) | where true | join kind = leftouter (migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications/members' | where {hubConditions} | extend appId = tolower(tostring(split(id,'/members/')[0])) | summarize memberCount = count(), memberResourceIds = make_set(properties.memberResourceId) by appId) on $left.appId == $right.appId | project armId = tolower(id), id = tolower(id), type, appId, memberCount, memberResourceIds, properties, name, systemData.CreatedAt";
+
+                UserInputObj.LoggerObj.LogInformation($"Including {discoveryHubIds.Count} discovery hub(s) for applications in ARG query");
+            }
+
+            // Combine base query with discovery hub query
+            if (!string.IsNullOrEmpty(baseQuery) && !string.IsNullOrEmpty(discoveryHubQuery))
+            {
+                argQuery = baseQuery + " | union (" + discoveryHubQuery + ")";
+            }
+            else if (!string.IsNullOrEmpty(baseQuery))
+            {
+                argQuery = baseQuery;
+            }
+            else
+            {
+                // Fallback to subscription/resource group filter
+                argQuery = $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";
+                UserInputObj.LoggerObj.LogInformation("No sites or discovery hubs found, using subscription/resource group filter");
+            }
+
+
+            UserInputObj.LoggerObj.LogDebug($"Final ARG query: {argQuery}");
+            BusinessCaseInformation bizCaseObj = new BusinessCaseSettingsFactory().GetBusinessCaseSettings(UserInputObj, RandomSessionId, scopedMachineIds, discoveryHubIds, ListOfSites, applicationIds, workloadIds);
             KeyValuePair<BusinessCaseInformation, AssessmentPollResponse> bizCaseCompletionResultKvp = new KeyValuePair<BusinessCaseInformation, AssessmentPollResponse>(bizCaseObj, AssessmentPollResponse.NotCreated);
             try
             {
@@ -337,54 +401,6 @@ namespace Azure.Migrate.Explore.Assessment
             UserInputObj.LoggerObj.LogInformation($"Machines with SQL services: {SqlServicesVM.Count}");
 
             HttpClientHelper clientHelper = new HttpClientHelper();
-
-            // Fetch discovery hub IDs from resource links
-            List<string> discoveryHubIds = GetDiscoveryHubTargetIds().GetAwaiter().GetResult();
-
-            // Build combined ARG query with both site conditions and discovery hub application members
-            string argQuery;
-            string baseQuery = "";
-            string discoveryHubQuery = "";
-
-            // Add regular site conditions
-            if (ListOfSites != null && ListOfSites.Count > 0)
-            {
-                var siteConditions = string.Join(" or ", ListOfSites.Select(site =>
-                    $"id has '{site.Replace("'", "''")}'"));
-                baseQuery = $"migrateresources | where {siteConditions}";
-
-                UserInputObj.LoggerObj.LogInformation($"Including {ListOfSites.Count} site(s) in ARG query");
-            }
-
-            // Add discovery hub application query
-            if (discoveryHubIds != null && discoveryHubIds.Count > 0)
-            {
-                var hubConditions = string.Join(" or ", discoveryHubIds.Select(hub =>
-                    $"['id'] has '{hub.Replace("'", "''")}'"));
-
-                discoveryHubQuery = $"migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications' | where {hubConditions} | where properties.applicationType has '' | extend appId = tolower(id) | where true | join kind = leftouter (migrateresources | where type =~ 'microsoft.applicationmigration/discoveryhubs/applications/members' | where {hubConditions} | extend appId = tolower(tostring(split(id,'/members/')[0])) | summarize memberCount = count(), memberResourceIds = make_set(properties.memberResourceId) by appId) on $left.appId == $right.appId | project armId = tolower(id), id = tolower(id), type, appId, memberCount, memberResourceIds, properties, name, systemData.CreatedAt";
-
-                UserInputObj.LoggerObj.LogInformation($"Including {discoveryHubIds.Count} discovery hub(s) for applications in ARG query");
-            }
-
-            // Combine base query with discovery hub query
-            if (!string.IsNullOrEmpty(baseQuery) && !string.IsNullOrEmpty(discoveryHubQuery))
-            {
-                argQuery = baseQuery + " | union (" + discoveryHubQuery + ")";
-            }
-            else if (!string.IsNullOrEmpty(baseQuery))
-            {
-                argQuery = baseQuery;
-            }
-            else
-            {
-                // Fallback to subscription/resource group filter
-                argQuery = $"migrateresources | where id has '/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/'";
-                UserInputObj.LoggerObj.LogInformation("No sites or discovery hubs found, using subscription/resource group filter");
-            }
-
-
-            UserInputObj.LoggerObj.LogDebug($"Final ARG query: {argQuery}");
 
             List<string> resolvedScopes = clientHelper.ResolveScopeAsync(UserInputObj, argQuery.ToString()).Result;
             string assessmentProjectArmId = $"/subscriptions/{UserInputObj.Subscription.Key}/resourceGroups/{UserInputObj.ResourceGroupName.Value}/providers/Microsoft.Migrate/assessmentProjects/{UserInputObj.AssessmentProjectName}";
