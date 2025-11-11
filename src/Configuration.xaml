@@ -149,8 +149,8 @@
                                         <TextBlock Text="Comprehensive Proposal for IaaS and PaaS with Security" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <RadioButton x:Name="QuickAVSRadioButton" GroupName="BusinessProposalGroup" Checked="QuickAVSRadioButton_Checked" />
-                                        <TextBlock Text="AVS Proposal" VerticalAlignment="Center" Foreground="{StaticResource TextColor}" Margin="-80,0,0,0"/>
+                                        <RadioButton x:Name="QuickAVSRadioButton" GroupName="BusinessProposalGroup" Checked="QuickAVSRadioButton_Checked" IsEnabled="False"/>
+                                        <TextBlock Text="AVS Proposal" VerticalAlignment="Center" Foreground="{StaticResource DisabledTextColor}" Margin="-80,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

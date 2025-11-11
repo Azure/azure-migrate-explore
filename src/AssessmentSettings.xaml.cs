@@ -148,7 +148,7 @@ namespace AzureMigrateExplore
             ProgramOfferPicker.ItemsSource = programOffers;
             ProgramOfferPicker.SelectedValuePath = "Key";
             ProgramOfferPicker.DisplayMemberPath = "Value";
-            ProgramOfferPicker.SelectedItem = null;
+            ProgramOfferPicker.SelectedItem = programOffers[0];
 
             SubscriptionPicker.ItemsSource = Array.Empty<KeyValuePair<string, string>>();
             SubscriptionPicker.SelectedValuePath = "Key";
@@ -197,7 +197,7 @@ namespace AzureMigrateExplore
             AssessmentDurationPicker.ItemsSource = assessmentDurations;
             AssessmentDurationPicker.SelectedValuePath = "Key";
             AssessmentDurationPicker.DisplayMemberPath = "Value";
-            AssessmentDurationPicker.SelectedItem = new KeyValuePair<string, string>("week", "Week");
+            AssessmentDurationPicker.SelectedItem = assessmentDurations[2];
         }
 
         public void InitializeOptimizationPreference(BusinessProposal businessProposal)
