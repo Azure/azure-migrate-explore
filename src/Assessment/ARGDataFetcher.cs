@@ -93,52 +93,61 @@ namespace AzureMigrateExplore.Assessment
 
         const string SoftwareAnalysisQuery = @"
             machinesinventoryinsightsresources
-            | where type contains 'Microsoft.OffAzure/serversites/machines/inventoryinsights/software'
-                or type contains 'Microsoft.OffAzure/vmwaresites/machines/inventoryinsights/software'
-                or type contains 'Microsoft.OffAzure/hypervsites/machines/inventoryinsights/software'
-                or type contains 'Microsoft.OffAzure/importsites/machines/inventoryinsights/software'
-            | extend id = tolower(id)
-            | extend type = tolower(type)
-            | extend softwareId = tostring(properties.softwareId)
+            | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
+                'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
+                'microsoft.offazure/serversites/machines/inventoryinsights/software')
             | extend machineId = tolower(tostring(split(id, '/inventoryinsights')[0]))
             | where machineId in ({0})
-            | extend vulnerabilities = properties.vulnerabilityIds
-            | join kind=inner (
-                migrateresources
-                | where type contains 'Microsoft.OffAzure/serversites/machines'
-                    or type contains 'Microsoft.OffAzure/vmwaresites/machines'
-                    or type contains 'Microsoft.OffAzure/hypervsites/machines'
-                    or type contains 'Microsoft.OffAzure/importsites/machines'
-                | extend machineResourceId = tolower(id)
-                | where machineResourceId in ({0})
-            ) on $left.machineId == $right.machineResourceId
-            | summarize
-                vulnerabilitiesSet = make_set(vulnerabilities),
-                machinesSet = make_set(machineId),
-                properties = take_any(properties),
-                id = take_any(id)
-                by softwareId
+            | extend id = tolower(id)
+            | extend type = tolower(type)
+            | extend softwareId = strcat(properties.provider, ' - ', properties.softwareName, ' ', properties.version)
+            | join kind=leftouter (
+              migrateresources
+              | where type in~ ('Microsoft.OffAzure/vmwareSites/machines',
+                'Microsoft.OffAzure/hypervSites/machines',
+                'Microsoft.OffAzure/serverSites/machines')
+              | where id in ({0})
+              | project machineId=tolower(id), guestDetailsDiscoveryTimestamp=todatetime(properties.guestDetailsDiscoveryTimestamp)
+             ) on machineId
+            | summarize arg_max(guestDetailsDiscoveryTimestamp, *) by softwareId
             | extend
                 name = properties.softwareName,
                 category = properties.category,
-                provider = properties.provider,
                 subcategory = strcat_array(properties.subCategories, ', '),
-                supportStatus = properties.supportStatus,
+                publisher = properties.provider,
                 version = properties.version,
-                recommendations = strcat_array(properties.potentialTargets, ', '),
-                vulnerabilityCount = array_length(vulnerabilitiesSet),
-                machineCount = array_length(machinesSet)
+                supportStatus = properties.supportStatus,
+                recommendations = strcat_array(properties.potentialTargets, ', ')
+            | join kind=innerunique (
+                machinesinventoryinsightsresources
+            | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
+            'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
+            'microsoft.offazure/serversites/machines/inventoryinsights/software')
+            | extend machineId = tolower(tostring(split(id, '/InventoryInsights')[0]))
+            | where machineId in ({0})
+            | extend id = tolower(id)
+            | extend type=tolower(type)
+            | extend softwareId = strcat(properties.provider, ' - ', properties.softwareName, ' ', properties.version)
+            | extend vulnerabilities = properties.vulnerabilityIds
+            | summarize
+                vulnerabilitiesSet = make_set(vulnerabilities),
+                machinesSet = make_set(machineId)
+                by softwareId
+            | extend vulnerabilities = array_length(vulnerabilitiesSet),
+                serversCount = array_length(machinesSet)
+            | project softwareId, vulnerabilities, serversCount, machinesSet
+            ) on softwareId
             | project
                 softwareId,
                 name,
-                provider,
+                provider=publisher,
                 category,
                 subcategory,
                 version,
                 supportStatus,
                 recommendations,
-                vulnerabilityCount,
-                machineCount,
+                vulnerabilityCount=vulnerabilities,
+                machineCount=serversCount,
                 machinesSet
             ";
 
@@ -205,14 +214,14 @@ namespace AzureMigrateExplore.Assessment
                 osType,
                 version,
                 resourceType,
-                supportStatus = tostring(properties.productSupportStatus.supportStatus),
+                supportStatus = tostring(properties.productSupportStatus),
                 vulnerabilityCount = toint(properties.vulnerabilityCount),
                 criticalVulnerabilityCount = toint(properties.criticalVulnerabilityCount),
                 pendingUpdateCount = toint(properties.pendingUpdateCount),
                 pendingSecurityCriticalUpdateCount = toint(properties.pendingSecurityCriticalUpdateCount),
                 endOfSupportSoftwareCount = toint(properties.endOfSupportSoftwareCount),
-                hasSecuritySoftware = tobool(properties.hasSecuritySoftware),
-                hasPatchingSoftware = tobool(properties.hasPatchingSoftware)";
+                hasSecuritySoftware = properties.hasSecuritySoftware,
+                hasPatchingSoftware = properties.hasPatchingSoftware";
 
         const string PendingUpdatesServerCountQuery = @"
             machinesinventoryinsightsresources
@@ -584,8 +593,8 @@ namespace AzureMigrateExplore.Assessment
                         var pendingSecurityCriticalUpdateCount = int.TryParse(rowObject["pendingSecurityCriticalUpdateCount"]?.ToString(), out var secVal) ? secVal : 0;
                         var endOfSupportSoftwareCount = int.TryParse(rowObject["endOfSupportSoftwareCount"]?.ToString(), out var eosVal) ? eosVal : 0;
 
-                        var hasSecuritySoftware = bool.TryParse(rowObject["hasSecuritySoftware"]?.ToString(), out var hasSecVal) && hasSecVal;
-                        var hasPatchingSoftware = bool.TryParse(rowObject["hasPatchingSoftware"]?.ToString(), out var hasPatchVal) && hasPatchVal;
+                        var hasSecuritySoftware = rowObject["hasSecuritySoftware"]?.ToString() ?? "Unknown";
+                        var hasPatchingSoftware = rowObject["hasPatchingSoftware"]?.ToString() ?? "Unknown";
 
                         // Determine category based on resource type using centralized logic
                         var category = GetCategoryFromResourceType(resourceType);

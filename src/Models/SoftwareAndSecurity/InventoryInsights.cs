@@ -14,7 +14,7 @@ namespace AzureMigrateExplore.Models
         public int PendingUpdateCount { get; set; }
         public int PendingSecurityCriticalUpdateCount { get; set; }
         public int EndOfSupportSoftwareCount { get; set; }
-        public bool HasSecuritySoftware { get; set; }
-        public bool HasPatchingSoftware { get; set; }
+        public string HasSecuritySoftware { get; set; } = "Unknown";
+        public string HasPatchingSoftware { get; set; } = "Unknown";
     }
 }
