@@ -96,7 +96,7 @@ namespace AzureMigrateExplore.Assessment
             | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
                 'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
                 'microsoft.offazure/serversites/machines/inventoryinsights/software')
-            | extend machineId = tolower(tostring(split(id, '/inventoryinsights')[0]))
+            | extend machineId = tolower(tostring(split(id, '/inventoryInsights')[0]))
             | where machineId in ({0})
             | extend id = tolower(id)
             | extend type = tolower(type)
@@ -123,7 +123,7 @@ namespace AzureMigrateExplore.Assessment
             | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
             'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
             'microsoft.offazure/serversites/machines/inventoryinsights/software')
-            | extend machineId = tolower(tostring(split(id, '/InventoryInsights')[0]))
+            | extend machineId = tolower(tostring(split(id, '/inventoryInsights')[0]))
             | where machineId in ({0})
             | extend id = tolower(id)
             | extend type=tolower(type)
