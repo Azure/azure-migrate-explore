@@ -93,61 +93,52 @@ namespace AzureMigrateExplore.Assessment
 
         const string SoftwareAnalysisQuery = @"
             machinesinventoryinsightsresources
-            | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
-                'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
-                'microsoft.offazure/serversites/machines/inventoryinsights/software')
-            | extend machineId = tolower(tostring(split(id, '/inventoryInsights')[0]))
-            | where machineId in ({0})
+            | where type contains 'Microsoft.OffAzure/serversites/machines/inventoryinsights/software'
+                or type contains 'Microsoft.OffAzure/vmwaresites/machines/inventoryinsights/software'
+                or type contains 'Microsoft.OffAzure/hypervsites/machines/inventoryinsights/software'
+                or type contains 'Microsoft.OffAzure/importsites/machines/inventoryinsights/software'
             | extend id = tolower(id)
             | extend type = tolower(type)
             | extend softwareId = strcat(properties.provider, ' - ', properties.softwareName, ' ', properties.version)
-            | join kind=leftouter (
-              migrateresources
-              | where type in~ ('Microsoft.OffAzure/vmwareSites/machines',
-                'Microsoft.OffAzure/hypervSites/machines',
-                'Microsoft.OffAzure/serverSites/machines')
-              | where id in ({0})
-              | project machineId=tolower(id), guestDetailsDiscoveryTimestamp=todatetime(properties.guestDetailsDiscoveryTimestamp)
-             ) on machineId
-            | summarize arg_max(guestDetailsDiscoveryTimestamp, *) by softwareId
+            | extend machineId = tolower(tostring(split(id, '/inventoryinsights')[0]))
+            | where machineId in ({0})
+            | extend vulnerabilities = properties.vulnerabilityIds
+            | join kind=inner (
+                migrateresources
+                | where type contains 'Microsoft.OffAzure/serversites/machines'
+                    or type contains 'Microsoft.OffAzure/vmwaresites/machines'
+                    or type contains 'Microsoft.OffAzure/hypervsites/machines'
+                    or type contains 'Microsoft.OffAzure/importsites/machines'
+                | extend machineResourceId = tolower(id)
+                | where machineResourceId in ({0})
+            ) on $left.machineId == $right.machineResourceId
+            | summarize
+                vulnerabilitiesSet = make_set(vulnerabilities),
+                machinesSet = make_set(machineId),
+                properties = take_any(properties),
+                id = take_any(id)
+                by softwareId
             | extend
                 name = properties.softwareName,
                 category = properties.category,
+                provider = properties.provider,
                 subcategory = strcat_array(properties.subCategories, ', '),
-                publisher = properties.provider,
-                version = properties.version,
                 supportStatus = properties.supportStatus,
-                recommendations = strcat_array(properties.potentialTargets, ', ')
-            | join kind=innerunique (
-                machinesinventoryinsightsresources
-            | where type in~ ('microsoft.offazure/vmwaresites/machines/inventoryinsights/software',
-            'microsoft.offazure/hypervsites/machines/inventoryinsights/software',
-            'microsoft.offazure/serversites/machines/inventoryinsights/software')
-            | extend machineId = tolower(tostring(split(id, '/inventoryInsights')[0]))
-            | where machineId in ({0})
-            | extend id = tolower(id)
-            | extend type=tolower(type)
-            | extend softwareId = strcat(properties.provider, ' - ', properties.softwareName, ' ', properties.version)
-            | extend vulnerabilities = properties.vulnerabilityIds
-            | summarize
-                vulnerabilitiesSet = make_set(vulnerabilities),
-                machinesSet = make_set(machineId)
-                by softwareId
-            | extend vulnerabilities = array_length(vulnerabilitiesSet),
-                serversCount = array_length(machinesSet)
-            | project softwareId, vulnerabilities, serversCount, machinesSet
-            ) on softwareId
+                version = properties.version,
+                recommendations = strcat_array(properties.potentialTargets, ', '),
+                vulnerabilityCount = array_length(vulnerabilitiesSet),
+                machineCount = array_length(machinesSet)
             | project
                 softwareId,
                 name,
-                provider=publisher,
+                provider,
                 category,
                 subcategory,
                 version,
                 supportStatus,
                 recommendations,
-                vulnerabilityCount=vulnerabilities,
-                machineCount=serversCount,
+                vulnerabilityCount,
+                machineCount,
                 machinesSet
             ";
 
