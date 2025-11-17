@@ -32,8 +32,8 @@ namespace Azure.Migrate.Explore.Factory
             obj.Properties.Settings.BillingSettings.SubscriptionId = userInputObj.EamcaSubscription.Key;
 
             BusinessCaseTypes type = BusinessCaseTypes.OptimizeForPaas;
-            
-            
+
+
             if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MinimizetimewithAzureVM"))
                 type = BusinessCaseTypes.IaaSOnly;
             else if (userInputObj.PreferredOptimizationObj.OptimizationPreference.Key.Equals("MigrateToAvs"))
@@ -44,7 +44,7 @@ namespace Azure.Migrate.Explore.Factory
             if (userInputObj.AzureMigrateSourceAppliances.Contains("import"))
                 obj.Properties.Settings.CommonSettings.WorkloadDiscoverySource = BusinessCaseWorkloadDiscoverySource.Import.ToString();
 
-            obj.Properties.Settings.AzureSettings.SavingsOption = "SavingsPlan3Year";
+            obj.Properties.Settings.AzureSettings.SavingsOption = "RI3Year";
             if (userInputObj.BusinessProposal == BusinessProposal.AVS.ToString())
             {
                 obj.Properties.Settings.AzureSettings.SavingsOption = "RI3Year";
@@ -66,7 +66,7 @@ namespace Azure.Migrate.Explore.Factory
         private string GenerateArgQuery(UserInput userInputObj, List<string> scopedMachineIds, List<string>? discoveryHubIds = null, List<string>? sites = null, List<string>? applicationIds = null, List<string>? workloadIds = null)
         {
             try
-            {   
+            {
                 // Combine machine IDs and workload IDs
                 var allResourceIds = new List<string>(scopedMachineIds);
                 if (workloadIds != null && workloadIds.Any())
@@ -74,20 +74,20 @@ namespace Azure.Migrate.Explore.Factory
                     allResourceIds.AddRange(workloadIds);
                     userInputObj.LoggerObj.LogInformation($"Added {workloadIds.Count} workload IDs to scope");
                 }
-                
+
                 // Create the resource IDs filter (using discovery machine ARM IDs + workload IDs)
                 var resourceIdsList = allResourceIds.Select(id => $"\"{id}\"").ToArray();
                 string machineIdsFilter = string.Join(", ", resourceIdsList);
-                
+
                 // Construct the ARG query following the new format
                 var argQuery = new StringBuilder();
-                
+
                 // Part 1: Discovery Hub Applications Query (if there are discovery hubs and application IDs)
                 if (discoveryHubIds != null && discoveryHubIds.Any() && applicationIds != null && applicationIds.Any())
                 {
                     var hubConditions = string.Join(" or ", discoveryHubIds.Select(hub =>
                         $"['id'] has '{hub.Replace("'", "''")}'"));
-                    
+
                     argQuery.Append("(migrateresources\n");
                     argQuery.Append("                | where type =~ \"microsoft.applicationmigration/discoveryhubs/applications\"\n");
                     argQuery.Append($"                | where {hubConditions}\n");
@@ -102,12 +102,12 @@ namespace Azure.Migrate.Explore.Factory
                     argQuery.Append("                        )\n");
                     argQuery.Append("                        on $left.appId == $right.appId\n");
                     argQuery.Append("                        | project armId = tolower(id), id = tolower(id), type, appId, memberCount, memberResourceIds, properties, name, systemData.CreatedAt");
-                    
+
                     // Filter by application IDs
                     var appIdsList = applicationIds.Select(id => $"\"{id}\"").ToArray();
                     string appIdsFilter = string.Join(", ", appIdsList);
                     argQuery.Append($" | where id in~ ({appIdsFilter})");
-                    
+
                     // Add union for machine resources
                     argQuery.Append(" | union (migrateresources\n");
                 }
@@ -115,7 +115,7 @@ namespace Azure.Migrate.Explore.Factory
                 {
                     argQuery.Append("(migrateresources\n");
                 }
-                
+
                 // Part 2: Machines/Resources Query
                 argQuery.Append("        | where type in (\"microsoft.offazure/vmwaresites/machines\", \"microsoft.offazure/serversites/machines\", \"microsoft.offazure/hypervsites/machines\", \"microsoft.offazure/importsites/machines\", \"microsoft.offazure/mastersites/sqlsites/sqlservers\", \"microsoft.applicationmigration/pgsqlsites/pgsqlinstances\", \"microsoft.offazure/mastersites/webappsites/iiswebapplications\", \"microsoft.offazure/mastersites/webappsites/tomcatwebapplications\", \"microsoft.offazure/importsites/machines\")\n");
                 if (sites != null && sites.Any())
@@ -128,13 +128,13 @@ namespace Azure.Migrate.Explore.Factory
                 {
                     argQuery.Append($"        | where id has \"/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}\"\n");
                 }
-                
+
                 argQuery.Append("        | extend type=tolower(type)\n");
                 argQuery.Append("        | extend id = tolower(id)\n");
                 argQuery.Append("        | join kind = leftouter (\n");
                 argQuery.Append("            migrateresources\n");
                 argQuery.Append("            | where type =~ \"microsoft.applicationmigration/discoveryhubs/applications/members\"\n");
-                
+
                 // Filter by sites that don't contain "mastersites"
                 if (sites != null && sites.Any())
                 {
@@ -155,7 +155,7 @@ namespace Azure.Migrate.Explore.Factory
                 {
                     argQuery.Append($"            | where properties.memberResourceId has \"/subscriptions/{userInputObj.Subscription.Key}/resourceGroups/{userInputObj.ResourceGroupName.Value}\"\n");
                 }
-                
+
                 argQuery.Append("            | extend memberResourceId = tolower(properties.memberResourceId)\n");
                 argQuery.Append("            | parse kind=regex id with applicationId '/members/'\n");
                 argQuery.Append("            | project memberResourceId, applicationId\n");
@@ -205,13 +205,13 @@ namespace Azure.Migrate.Explore.Factory
                 argQuery.Append("            depmapErrorCount = array_length(properties.dependencyMapDiscovery.errors),\n");
                 argQuery.Append("            numberOfSoftware=tolong(properties.numberOfSoftware),\n");
                 argQuery.Append($"            numberOfSecurityRisks=tolong(properties.numberOfSecurityRisks) | where id in~ ({machineIdsFilter})");
-                
+
                 // Close the union if we have discovery hubs and applications
                 if (discoveryHubIds != null && discoveryHubIds.Any() && applicationIds != null && applicationIds.Any())
                 {
                     argQuery.Append(")");
                 }
-                
+
                 argQuery.Append(") | sort by id");
 
                 return argQuery.ToString();
@@ -226,14 +226,14 @@ namespace Azure.Migrate.Explore.Factory
         private string GetDiscoverySourceFilter(UserInput userInputObj)
         {
             var sources = new List<string>();
-            
-            if (userInputObj.AzureMigrateSourceAppliances.Contains("vmware") || 
-                userInputObj.AzureMigrateSourceAppliances.Contains("hyperv") || 
+
+            if (userInputObj.AzureMigrateSourceAppliances.Contains("vmware") ||
+                userInputObj.AzureMigrateSourceAppliances.Contains("hyperv") ||
                 userInputObj.AzureMigrateSourceAppliances.Contains("physical"))
             {
                 sources.Add("\"Appliance\"");
             }
-            
+
             if (userInputObj.AzureMigrateSourceAppliances.Contains("import"))
             {
                 sources.Add("\"Import\"");
