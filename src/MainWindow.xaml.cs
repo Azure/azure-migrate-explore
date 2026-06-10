@@ -64,6 +64,8 @@ namespace AzureMigrateExplore
 
         private Stopwatch stopwatch = new Stopwatch();
 
+        private static bool _deprecationNoticeShown = false;
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -89,11 +91,44 @@ namespace AzureMigrateExplore
 
                 var VersionLabel = GetVersion();
                 NavView.PaneTitle = "Azure Migrate Explore\n" + VersionLabel;
+
+                this.Loaded += MainWindow_Loaded;
             }
             catch (Exception ex)
             {
                 DisplayAlert("Initialization Error", $"An error occurred during initialization: {ex.Message}", "OK");
                 CloseForm();
+            }
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_deprecationNoticeShown)
+                return;
+            _deprecationNoticeShown = true;
+
+            await ShowDeprecationNoticeAsync();
+        }
+
+        private async Task ShowDeprecationNoticeAsync()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Azure Migrate Export - Deprecation Notice",
+                Content = "The Azure Migrate Export tool will be deprecated on 30th June. " +
+                          "A better and more robust experience is available on the Azure portal under the \"Reports\" heading.",
+                CloseButtonText = "OK",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch
+            {
+                // If the dialog cannot be shown (e.g., XamlRoot not ready), fail silently.
             }
         }
         private string GetVersion()
@@ -1288,7 +1323,8 @@ namespace AzureMigrateExplore
 
         public void ShowGenerateSummaryButton()
         {
-            GenerateSummaryButton.Visibility = Visibility.Visible;
+            // AI summary feature disabled; keep the button hidden.
+            GenerateSummaryButton.Visibility = Visibility.Collapsed;
         }
 
         public void HideGenerateSummaryButton()

@@ -87,17 +87,17 @@
                         <SymbolIcon Symbol="Sync"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
-                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Generate Summary with AI" Tag="CopilotQuestionnaire" x:Name="CopilotQuestionnaireTabButton">
+                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Generate Summary with AI" Tag="CopilotQuestionnaire" x:Name="CopilotQuestionnaireTabButton" Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xf4a5;" FontFamily="Segoe Fluent Icons" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Copilot Chat" Tag="CopilotChat" x:Name="CopilotChatTabButton">
+                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Copilot Chat" Tag="CopilotChat" x:Name="CopilotChatTabButton" Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="Message"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Review Summary" Tag="ChatPage" x:Name="ChatPageTabButton">
+                <NavigationViewItem Style="{StaticResource NavigationViewItemStyle}" Content="Review Summary" Tag="ChatPage" x:Name="ChatPageTabButton" Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <SymbolIcon Symbol="VideoChat"/>
                     </NavigationViewItem.Icon>
@@ -138,7 +138,7 @@
                 <Button Style="{StaticResource PrimaryButtonStyle}" Content="Stop" Click="StopButton_Click" x:Name="StopButton" Height="40" Width="100"/>
                 <Button Style="{StaticResource PrimaryButtonStyle}" Content="Retry" Click="RetryButton_Click" x:Name="RetryButton" Height="40" Width="100"/>
                 <Button Style="{StaticResource PrimaryButtonStyle}" Content="Assess" Click="AssessButton_Click" x:Name="AssessButton" Height="40" Width="100"/>
-                <Button Style="{StaticResource PrimaryButtonStyle}" Content="Summarize with AI" Click="GenerateSummaryButton_Click" Name="GenerateSummaryButton" Height="40" Width="150"/>
+                <Button Style="{StaticResource PrimaryButtonStyle}" Content="Summarize with AI" Click="GenerateSummaryButton_Click" Name="GenerateSummaryButton" Height="40" Width="150" Visibility="Collapsed"/>
             </StackPanel>
             <Button Style="{StaticResource PrimaryButtonStyle}" Content="Next" Click="NextButton_Click" Visibility="Collapsed" x:Name="NextButton" Height="40" Width="100" Grid.Column="2"/>
         </Grid>

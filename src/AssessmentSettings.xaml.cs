@@ -820,8 +820,7 @@ namespace AzureMigrateExplore
             if (ProgressBar.Value >= 100 && !UserInputObj.WorkflowObj.IsExpressWorkflow && !string.IsNullOrEmpty(UserInputObj.WorkflowObj.Module) && UserInputObj.WorkflowObj.Module.Equals("Discovery"))
             {
                 //mainObj.MakeTrackProgressActionButtonsEnabledDecisions(true, false, false);
-                mainObj.ShowNextButton();
-                mainObj.EnableNextButton();
+                mainObj.HideNextButton();
                 mainObj.EnableProjectDetailsTabButton();
                 mainObj.EnableConfigurationTabButton();
                 mainObj.EnableAssessmentSettingsTabButton();
@@ -831,9 +830,8 @@ namespace AzureMigrateExplore
             }
             else if (ProgressBar.Value >= 100 && !UserInputObj.WorkflowObj.IsExpressWorkflow && !string.IsNullOrEmpty(UserInputObj.WorkflowObj.Module) && UserInputObj.WorkflowObj.Module.Equals("Assessment"))
             {
-                mainObj.MakeTrackProgressActionButtonsEnabledDecisions(false, false, true);
-                mainObj.ShowNextButton();
-                mainObj.EnableNextButton();
+                mainObj.MakeTrackProgressActionButtonsEnabledDecisions(false, false, false);
+                mainObj.HideNextButton();
                 mainObj.ShowProjectDetailsTabButton();
                 mainObj.EnableConfigurationTabButton();
                 mainObj.EnableAssessmentSettingsTabButton();
@@ -843,9 +841,8 @@ namespace AzureMigrateExplore
             }
             else if (ProgressBar.Value >= 100 && UserInputObj.WorkflowObj.IsExpressWorkflow)
             {
-                mainObj.MakeTrackProgressActionButtonsEnabledDecisions(false, false, true);
-                mainObj.ShowNextButton();
-                mainObj.EnableNextButton();
+                mainObj.MakeTrackProgressActionButtonsEnabledDecisions(false, false, false);
+                mainObj.HideNextButton();
                 mainObj.EnableProjectDetailsTabButton();
                 mainObj.EnableConfigurationTabButton();
                 mainObj.EnableAssessmentSettingsTabButton();
