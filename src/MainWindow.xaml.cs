@@ -115,8 +115,10 @@ namespace AzureMigrateExplore
             var dialog = new ContentDialog
             {
                 Title = "Azure Migrate Export - Deprecation Notice",
-                Content = "The Azure Migrate Export tool will be deprecated on 30th June. " +
-                          "A better and more robust experience is available on the Azure portal under the \"Reports\" heading.",
+                Content = "The Azure Migrate Export GitHub utility will be deprecated on June 30, 2026. " +
+                          "The capability is now built right into the Azure Migrate portal, so you no longer need to run a tool to get your executive report. " +
+                          "Just log-on to your Azure Migrate project, go to Manage > Reports, and generate the executive report directly from the portal. " +
+                          "If you have questions or need help making the switch, reach out to the Azure Support <amesupport@microsoft.com>.",
                 CloseButtonText = "OK",
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot
