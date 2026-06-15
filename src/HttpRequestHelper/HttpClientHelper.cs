@@ -573,6 +573,17 @@ namespace Azure.Migrate.Explore.HttpRequestHelper
                         props["assessmentArmIds"] = prunedList;
                     }
                 }
+
+                // Handle networkAssessments
+                if (res.Value<string>("type")?.ToLowerInvariant().EndsWith("/networkassessments") == true)
+                {
+                    JObject props = (JObject)res["properties"];
+                    if (props?["assessmentArmIds"] is JArray armIds)
+                    {
+                        JArray prunedList = new JArray(armIds.Where(a => keptIds.Contains(a.ToString())));
+                        props["assessmentArmIds"] = prunedList;
+                    }
+                }
             }
 
             // Replace filtered resources in template
