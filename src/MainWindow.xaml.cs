@@ -1420,7 +1420,8 @@ namespace AzureMigrateExplore
 
         public void ShowCopilotQuestionnaireTabButton()
         {
-            CopilotQuestionnaireTabButton.Visibility = Visibility.Visible;
+            // Tab is permanently hidden
+            CopilotQuestionnaireTabButton.Visibility = Visibility.Collapsed;
         }
 
         public void HideCopilotQuestionnaireTabButton()
