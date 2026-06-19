@@ -64,6 +64,8 @@ namespace AzureMigrateExplore
 
         private Stopwatch stopwatch = new Stopwatch();
 
+        private static bool _deprecationNoticeShown = false;
+
         public MainWindow()
         {
             this.InitializeComponent();
@@ -89,11 +91,46 @@ namespace AzureMigrateExplore
 
                 var VersionLabel = GetVersion();
                 NavView.PaneTitle = "Azure Migrate Explore\n" + VersionLabel;
+
+                this.Loaded += MainWindow_Loaded;
             }
             catch (Exception ex)
             {
                 DisplayAlert("Initialization Error", $"An error occurred during initialization: {ex.Message}", "OK");
                 CloseForm();
+            }
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_deprecationNoticeShown)
+                return;
+            _deprecationNoticeShown = true;
+
+            await ShowDeprecationNoticeAsync();
+        }
+
+        private async Task ShowDeprecationNoticeAsync()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Azure Migrate Export - Deprecation Notice",
+                Content = "The Azure Migrate Export GitHub utility will be deprecated on June 30, 2026. " +
+                          "The capability is now built right into the Azure Migrate portal, so you no longer need to run a tool to get your executive report. " +
+                          "Just log-on to your Azure Migrate project, go to Manage > Reports, and generate the executive report directly from the portal. " +
+                          "If you have questions or need help making the switch, reach out to the Azure Support <amesupport@microsoft.com>.",
+                CloseButtonText = "OK",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            try
+            {
+                await dialog.ShowAsync();
+            }
+            catch
+            {
+                // If the dialog cannot be shown (e.g., XamlRoot not ready), fail silently.
             }
         }
         private string GetVersion()
@@ -1288,7 +1325,8 @@ namespace AzureMigrateExplore
 
         public void ShowGenerateSummaryButton()
         {
-            GenerateSummaryButton.Visibility = Visibility.Visible;
+            // AI summary feature disabled; keep the button hidden.
+            GenerateSummaryButton.Visibility = Visibility.Collapsed;
         }
 
         public void HideGenerateSummaryButton()
@@ -1382,7 +1420,8 @@ namespace AzureMigrateExplore
 
         public void ShowCopilotQuestionnaireTabButton()
         {
-            CopilotQuestionnaireTabButton.Visibility = Visibility.Visible;
+            // Tab is permanently hidden
+            CopilotQuestionnaireTabButton.Visibility = Visibility.Collapsed;
         }
 
         public void HideCopilotQuestionnaireTabButton()
