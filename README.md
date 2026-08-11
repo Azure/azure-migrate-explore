@@ -1,48 +1,48 @@
 [![Build Status](https://dev.azure.com/AzureMigrate-OpenSource/azure-migrate-export/_apis/build/status/Azure.azure-migrate-export?branchName=main)](https://dev.azure.com/AzureMigrate-OpenSource/azure-migrate-export/_build/latest?definitionId=1&branchName=main)
 # <img src="./src/icons/azure_migrate_icon_logo.png" alt="Azure Migrate Icon" style="width:27px; height=27px"> Azure Migrate Explore
 
-This repository contains the Azure Migrate Explore utility package that uses Azure Migrate's discovery and assessment information from and already deployed Azure Migrate project to generate a cohesive presentation for executives.
+> [!IMPORTANT]
+> **Azure Migrate Explore is retired.**
+>
+> The Azure Migrate Explore utility was retired on June 30, 2026. This repository is archived and will receive no further updates, bug fixes, or security patches. Existing installations will continue to run but are unsupported.
+>
+> It is recommended that customers use our recently introduced **Reports** feature in the Azure Migrate portal to generate the executive Migration and Modernization Report. It delivers richer executive-ready presentations - covering security insights, discovery summaries, TCO/ROI analysis, readiness, and Azure cost estimates. It is integrated directly into the portal with no additional installation required, at no additional cost.
+>
+> To get started, see [Azure Migrate Reports Overview](https://learn.microsoft.com/en-us/azure/migrate/reports-overview). For questions, contact Microsoft Azure Support.
+
+---
+
+## Retirement Notice
+
+The Azure Migrate Explore utility was retired on **June 30, 2026**.
+
+This utility was introduced to help field, sellers and customers, to turn Azure Migrate discovery and assessment data into executive-ready presentations. It served that purpose well, but required a local download, manual execution, and ongoing updates outside the Azure portal - overhead that slowed adoption and made it difficult to keep pace with Azure Migrate's growing capabilities.
+
+The **Reports** feature, now built directly into the Azure Migrate portal, delivers enhanced executive-ready outputs without that overhead. Reports are natively integrated with your Azure Migrate project, always current, and backed by full Microsoft support. Retiring this standalone utility allowed us to concentrate investment on the portal experience and deliver a better, more sustainable solution to customers.
+
+### Impact on Existing Customers
+
+- **This repository is archived.** No new releases, bug fixes, or security patches will be published.
+- **Existing installations will continue to run** on machines where they are already installed, but any issues that arise will not be investigated or resolved.
+- **Resources in the Usage section below are preserved for historical reference** and are no longer maintained.
+
+### Recommended Action
+
+Switch to the **Reports** feature in the Azure Migrate portal. Reports are available to all Azure Migrate customers at no additional cost and require no additional installation.
+
+1. Open your Azure Migrate project in the [Azure portal](https://portal.azure.com).
+2. Select **Reports** from the left navigation.
+3. Provide the report configuration, scope, and planning strategy.
+4. Export your report package for stakeholder and executive presentations.
+
+For full documentation, see [Azure Migrate Reports Overview](https://learn.microsoft.com/en-us/azure/migrate/reports-overview).
+
+## Download (Deprecated)
+
+> [!WARNING]
+> Downloads are no longer supported. Use the [Reports feature in the Azure Migrate portal](https://learn.microsoft.com/en-us/azure/migrate/reports-overview) instead.
 
 ## Release
-The following table consists of the link to latest release of the Azure Migrate Explore utility
-
-Description          | Release Link | Download Link
----------------------|--------------|--------------
-Azure Migrate Explore |  [AzureMigrateExplore][LatestReleaseLink] | [Download][DownloadLink]
-
-## Download
-
-### Express Download
-The users can download the zip file for the latest version of the Azure Migrate Explore utility from [Download][DownloadLink]
-
-### Customize Download
-1. To download older versions or entire releases, please click this link [AzureMigrateExplore Releases][AllReleasesLink].
-2. Click on the release which is to be download.
-3. Click on the AzureMigrateExplore.zip release asset to inititate the download.
-
-## Usage
-Refer to the detailed "Azure Migrate Explore" knowledge material from the links below:
-1. AME detailed documentation - https://aka.ms/amecopilotdocs
-2. AME sample presentation: https://aka.ms/amepresentation
-3. AME sample reports: https://aka.ms/amesamplereports
-4. AME demo and training video for Partners: https://aka.ms/amedemovideo/partners
-5. AME demo and training video for Sellers: https://aka.ms/amedemovideo/sellers
-5. Download the Azure Migrate Explore utility: https://aka.ms/azuremigrateexplore
-6. Link to Github repo : https://aka.ms/azuremigrateexplorerepo
-
-## Reporting Issues and Feedback
-
-### Issues
-If you find any bugs when using Azure Migrate Explore utility, file an issue in our [GitHub repository][GithubRepositoryIssues]. Please fill out the issue template with the appropriate information.
-
-Alternatively, see [Azure Community Suppport][AzureCommunitySupportLink], if you have any issues with Azure Migrate Explore or Azure Migrate Services.
-
-For any bugs that need urgent escalation, please write to us @ amesupport@microsoft.com
-
-### Feedback
-If there is a feature you would like to see in Azure PowerShell, please file an issue in our [GitHub repository][GithubRepositoryIssues].
-
-For escalation, please write to us @ amesupport@microsoft.com
 
 ### Reporting Security Issues and Security Bugs
 
@@ -50,22 +50,10 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 For escalating any security report or issue, please write to us @ amesupport@microsoft.com.
 
-Additional infomration about reporting a security issur or bug can be found in [`SECURITY.md`][SecurityMarkDown]
+Additional information about reporting a security issue or bug can be found in [`SECURITY.md`][SecurityMarkDown]
 
 > **_Note:_** Please do not report security vulnerabilities through public GitHub issues.
 
-## Contributing Code
-If you would like to become a contributor to this project, see the instructions provided in [Microsoft Azure Projects Contribution Guidelines][AzureProjectContributionGuidelinesLink]:
-
-Additional information about contributing to this repository can be found in [`CONTRIBUTING.md`][ContributingMarkDown].
-
-This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, please visit [CLA at Microsoft][CLAMicrosoftLink].
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
-
-## Telemetry
-The data collected during the execution of Azure Migrate Explore utility is the same as data collected by Azure Migrate during creation of Groups and Assessments via the portal. For further information, please read [Azure Migrate Documentaion][AzureMigrateDocumentationLink].
-This data helps us gauge the usability of the tool by counting the number of assessments that were created and the number of assessments that computed successfully.
 
 ## License
 Azure Migrate Explore utility is licensed under the [MIT][License] License
@@ -91,7 +79,7 @@ _This project has adopted the [Microsoft Open Source Code of Conduct][CodeOfCond
 [SecurityMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/SECURITY.md
 [ContributingMarkDown]: https://github.com/Azure/azure-migrate-explore/blob/main/CONTRIBUTING.md
 [License]: https://github.com/Azure/azure-migrate-explore/blob/main/LICENSE
-[GithubRepositoryIssues]: (https://github.com/Azure/azure-migrate-explore/issues)
+[GithubRepositoryIssues]: https://github.com/Azure/azure-migrate-explore/issues
 
 <!-- Global -->
 [AzureCommunitySupportLink]: https://aka.ms/azurecommunitysupport
