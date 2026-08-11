@@ -239,6 +239,49 @@
     {
       "apiVersion": "2025-09-09-preview",
       "properties": {
+        "assessmentArmIds": [
+          "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]"
+        ],
+        "settings": {
+          "sizingCriterion": "[parameters('sizingCriterion')]",
+          "environmentType": "[parameters('environmentType')]",
+          "azureLocation": "[parameters('azureLocation')]",
+          "currency": "[parameters('currency')]",
+          "azureSecurityOfferingType": "NO",
+          "discountPercentage": "[parameters('discountPercentage')]",
+          "billingSettings": {
+            "licensingProgram": "[parameters('billingLicensingProgram')]",
+            "subscriptionId": "[if(equals(parameters('billingSubscriptionId'), ''), json('null'), parameters('billingSubscriptionId'))]"
+          },
+          "savingsSettings": {
+            "savingsOptions": "[parameters('savingsOptions')]"
+          },
+          "performanceData": {},
+          "scalingFactor": 1,
+          "networkSettings": {
+            "includePlatformNetworkComponents": true,
+            "useWafAndCafForNetworkDesign": true,
+            "mimicOnPremNetwork": true
+          }
+        },
+        "details": {
+          "status": "Created"
+        },
+        "scope": {
+          "azureResourceGraphQuery": "[variables('azureResourceGraphQuery')]",
+          "scopeType": "AzureResourceGraphQuery"
+        }
+      },
+      "dependsOn": [
+        "[concat(parameters('assessmentProjectId'), '/assessments/', parameters('assessmentName'), '-vm')]"
+      ],
+      "id": "[concat(parameters('assessmentProjectId'), '/networkAssessments/', parameters('assessmentName'), '-network')]",
+      "name": "[concat(parameters('assessmentProjectName'), '/', parameters('assessmentName'), '-network')]",
+      "type": "Microsoft.Migrate/assessmentprojects/networkAssessments"
+    },
+    {
+      "apiVersion": "2025-09-09-preview",
+      "properties": {
         "settings": {
           "appSvcContainerSettings": {
             "isolationRequired": false
